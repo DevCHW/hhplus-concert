@@ -1,0 +1,15 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+= 항해플러스 콘서트 예약 서비스 REST API 문서
+:hardbreaks:
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+// 공통 사항
+include::common/common.adoc[]
+
