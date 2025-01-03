@@ -13,3 +13,89 @@ endif::[]
 // 공통 사항
 include::common/common.adoc[]
 
+=== 예약 API
+
+==== Request HTTP Example
+include::{snippets}/예약/http-request.adoc[]
+==== Request Fields
+include::{snippets}/예약/request-fields.adoc[]
+==== Response HTTP Example
+include::{snippets}/예약/http-response.adoc[]
+==== Response Fields
+include::{snippets}/예약/response-fields.adoc[]
+
+
+=== 대기열 토큰 생성 API
+==== Request HTTP Example
+include::{snippets}/대기열 토큰 생성/http-request.adoc[]
+==== Request Fields
+include::{snippets}/대기열 토큰 생성/request-fields.adoc[]
+==== Response HTTP Example
+include::{snippets}/대기열 토큰 생성/http-response.adoc[]
+==== Response Fields
+include::{snippets}/대기열 토큰 생성/response-fields.adoc[]
+
+=== 대기열 토큰 상태 조회 API
+==== Request HTTP Example
+include::{snippets}/대기열 토큰 상태 조회/http-request.adoc[]
+==== Response HTTP Example
+include::{snippets}/대기열 토큰 상태 조회/http-response.adoc[]
+==== Response Fields
+include::{snippets}/대기열 토큰 상태 조회/response-fields.adoc[]
+
+=== 예약 가능 날짜 목록 조회 API
+==== Request HTTP Example
+include::{snippets}/예약 가능 날짜 목록 조회/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/예약 가능 날짜 목록 조회/path-parameters.adoc[]
+==== Query Parameters
+include::{snippets}/예약 가능 날짜 목록 조회/query-parameters.adoc[]
+==== Response HTTP Example
+include::{snippets}/예약 가능 날짜 목록 조회/http-response.adoc[]
+==== Response Fields
+include::{snippets}/예약 가능 날짜 목록 조회/response-fields.adoc[]
+
+=== 예약 가능 날짜 목록 조회 API
+==== Request HTTP Example
+include::{snippets}/예약 가능 날짜 목록 조회/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/예약 가능 날짜 목록 조회/path-parameters.adoc[]
+==== Query Parameters
+include::{snippets}/예약 가능 날짜 목록 조회/query-parameters.adoc[]
+==== Response HTTP Example
+include::{snippets}/예약 가능 날짜 목록 조회/http-response.adoc[]
+==== Response Fields
+include::{snippets}/예약 가능 날짜 목록 조회/response-fields.adoc[]
+
+=== 예약 가능 좌석 목록 조회 API
+==== Request HTTP Example
+include::{snippets}/예약 가능 좌석 목록 조회/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/예약 가능 좌석 목록 조회/path-parameters.adoc[]
+==== Query Parameters
+include::{snippets}/예약 가능 좌석 목록 조회/query-parameters.adoc[]
+==== Response HTTP Example
+include::{snippets}/예약 가능 좌석 목록 조회/http-response.adoc[]
+==== Response Fields
+include::{snippets}/예약 가능 좌석 목록 조회/response-fields.adoc[]
+
+
+=== 잔고 조회 API
+==== Request HTTP Example
+include::{snippets}/잔고 조회/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/잔고 조회/query-parameters.adoc[]
+==== Response HTTP Example
+include::{snippets}/잔고 조회/http-response.adoc[]
+==== Response Fields
+include::{snippets}/잔고 조회/response-fields.adoc[]
+
+=== 잔고 충전 API
+==== Request HTTP Example
+include::{snippets}/잔고 충전/http-request.adoc[]
+==== Request Fields
+include::{snippets}/대기열 토큰 생성/request-fields.adoc[]
+==== Response HTTP Example
+include::{snippets}/잔고 충전/http-response.adoc[]
+==== Response Fields
+include::{snippets}/잔고 충전/response-fields.adoc[]

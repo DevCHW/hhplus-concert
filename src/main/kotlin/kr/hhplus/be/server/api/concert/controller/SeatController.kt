@@ -15,11 +15,11 @@ class SeatController {
      * 예약 가능 좌석 목록 조회
      * TODO : 구현
      */
-    @GetMapping("/api/v1/concerts/{concertId}/schedules/{scheduleId}/seats")
+    @GetMapping("/api/v1/concerts/{concertId}/schedules/{concertScheduleId}/seats")
     fun getSeats(
         @RequestParam("status") status: String,
         @PathVariable("concertId") concertId: String,
-        @PathVariable("scheduleId") scheduleId: String,
+        @PathVariable("concertScheduleId") scheduleId: String,
     ): ApiResponse<List<SeatsResponse>> {
         val data = listOf(
             SeatsResponse(
