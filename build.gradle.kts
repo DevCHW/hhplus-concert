@@ -9,12 +9,8 @@ plugins {
 	id("org.asciidoctor.jvm.convert")
 }
 
-val asciidoctorExt = "asciidoctorExt"
-configurations.create(asciidoctorExt) {
-	extendsFrom(configurations.testImplementation.get())
-}
-
-val snippetsDir = file("build/generated-snippets") // 스니펫 경로
+val asciidoctorExt: Configuration by configurations.creating
+val snippetsDir by extra { file("build/generated-snippets") }
 
 fun getGitHash(): String {
 	return providers.exec {
@@ -75,6 +71,7 @@ dependencies {
 	testImplementation("org.testcontainers:mysql")
 
 	// Test - restdocs
+	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 	testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
 	testImplementation("io.rest-assured:spring-mock-mvc")
@@ -89,24 +86,36 @@ tasks.withType<Test> {
 }
 
 tasks.asciidoctor {
-	configurations("asciidoctorExt")
+	dependsOn(tasks.test)
+	configurations(asciidoctorExt.name)
 	baseDirFollowsSourceFile()
 	inputs.dir(snippetsDir)
-	dependsOn(tasks.test)
+	outputs.file("build/docs/asciidoc")
+
 	sources {
 		include("**/index.adoc") // html로 만들 adoc 파일 설정.
 	}
 }
 
+tasks.resolveMainClassName {
+	dependsOn(tasks.getByName("copyDocument"))
+}
+
 tasks.register("copyDocument", Copy::class) {
 	dependsOn(tasks.asciidoctor)
+	from(file("build/docs/asciidoc"))
+	into(file("build/resources/main/static/docs"))
+
+	include("index.html")
 	doFirst {
 		delete(file("src/main/resources/static/docs"))
 	}
-	from(file("build/docs/asciidoc"))
-	into(file("src/main/resources/static/docs"))
 }
 
 tasks.build {
+	dependsOn(tasks.getByName("copyDocument"))
+}
+
+tasks.bootJar {
 	dependsOn(tasks.getByName("copyDocument"))
 }
