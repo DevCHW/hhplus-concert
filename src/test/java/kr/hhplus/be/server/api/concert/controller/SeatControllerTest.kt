@@ -24,33 +24,37 @@ class SeatControllerTest : RestDocsTestSupport() {
         mockMvc = mockController(seatController)
     }
 
-@Test
-fun `예약 가능 좌석 목록 조회 API`() {
-    given()
-        .queryParams("status", "AVAILABLE")
-        .contentType(ContentType.JSON)
-        .get("/api/v1/concerts/{concertId}/schedules/{concertScheduleId}/seats", UUID.randomUUID().toString(), UUID.randomUUID().toString())
-        .then()
-        .status(HttpStatus.OK)
-        .apply(
-            document(
-                "예약 가능 좌석 목록 조회",
-                requestPreprocessor(),
-                responsePreprocessor(),
-                queryParameters(
-                    parameterWithName("status").description("상태"),
+    @Test
+    fun `예약 가능 좌석 목록 조회 API`() {
+        given()
+            .queryParams("status", "AVAILABLE")
+            .contentType(ContentType.JSON)
+            .get(
+                "/api/v1/concerts/{concertId}/schedules/{concertScheduleId}/seats",
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString()
+            )
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "예약 가능 좌석 목록 조회",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    queryParameters(
+                        parameterWithName("status").description("상태"),
+                    ),
+                    pathParameters(
+                        parameterWithName("concertId").description("콘서트 ID"),
+                        parameterWithName("concertScheduleId").description("콘서트 스케줄 ID"),
+                    ),
+                    responseFields(
+                        fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
+                        fieldWithPath("data[]").type(ARRAY).description("결과 데이터"),
+                        fieldWithPath("data[].seatId").type(STRING).description("좌석 ID"),
+                        fieldWithPath("data[].number").type(NUMBER).description("좌석 번호"),
+                    ),
                 ),
-                pathParameters(
-                    parameterWithName("concertId").description("콘서트 ID"),
-                    parameterWithName("concertScheduleId").description("콘서트 스케줄 ID"),
-                ),
-                responseFields(
-                    fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
-                    fieldWithPath("data[]").type(ARRAY).description("결과 데이터"),
-                    fieldWithPath("data[].seatId").type(STRING).description("좌석 ID"),
-                    fieldWithPath("data[].number").type(NUMBER).description("좌석 번호"),
-                ),
-            ),
-        )
-}
+            )
+    }
 }

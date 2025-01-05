@@ -1,12 +1,13 @@
-package kr.hhplus.be.server
+package kr.hhplus.be.server.support.testcontainers
 
 import jakarta.annotation.PreDestroy
 import org.springframework.context.annotation.Configuration
 import org.testcontainers.containers.MySQLContainer
+import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
 
 @Configuration
-class TestcontainersConfiguration {
+class TestcontainersConfig {
     @PreDestroy
     fun preDestroy() {
         if (mySqlContainer.isRunning) mySqlContainer.stop()
@@ -17,6 +18,9 @@ class TestcontainersConfiguration {
             .withDatabaseName("hhplus")
             .withUsername("test")
             .withPassword("test")
+            .withInitScript("sql/schema.sql")
+            .waitingFor(Wait.forHttp("/"))
+            .withReuse(true)
             .apply {
                 start()
             }

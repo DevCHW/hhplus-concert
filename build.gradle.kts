@@ -44,6 +44,7 @@ dependencyManagement {
 	}
 }
 
+// Production Dependencies
 dependencies {
 	// Kotlin
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -60,8 +61,14 @@ dependencies {
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
-    // Test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// TSID
+	implementation("com.github.f4b6a3:tsid-creator:5.2.6")
+}
+
+// Test Dependencies
+dependencies {
+	// Spring Test
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation("com.ninja-squad:springmockk:${property("springMockkVersion")}")
 
