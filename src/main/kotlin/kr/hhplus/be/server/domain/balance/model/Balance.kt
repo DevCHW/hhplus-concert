@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.balance
+package kr.hhplus.be.server.domain.balance.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -7,7 +7,7 @@ import kr.hhplus.be.server.domain.BaseEntity
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "balance", schema = "hhplus")
+@Table(name = "balance")
 class Balance(
     @Column(name = "user_id")
     var userId: String,

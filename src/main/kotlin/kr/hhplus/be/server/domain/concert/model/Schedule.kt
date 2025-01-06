@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.concert
+package kr.hhplus.be.server.domain.concert.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -7,8 +7,8 @@ import kr.hhplus.be.server.domain.BaseEntity
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "concert_schedule", schema = "hhplus")
-class ConcertSchedule (
+@Table(name = "concert_schedule")
+class Schedule (
     @Column(name = "concert_id")
     val concertId: String,
 
