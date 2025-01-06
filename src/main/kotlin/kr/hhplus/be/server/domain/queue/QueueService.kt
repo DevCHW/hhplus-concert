@@ -20,4 +20,11 @@ class QueueService(
             )
         )
     }
+
+    /**
+     * 대기열 토큰 상태 조회
+     */
+    fun getTokenStatus(token: UUID): QueueToken.Status {
+        return repository.getByToken(token).status
+    }
 }

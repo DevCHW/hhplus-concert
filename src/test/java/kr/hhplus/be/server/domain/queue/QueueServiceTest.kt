@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.*
 
 @DisplayName("대기열 서비스 단위 테스트")
 class QueueServiceTest {
@@ -37,6 +38,25 @@ class QueueServiceTest {
             // then
             assertThat(result.id).isEqualTo(waitingQueue.id)
             assertThat(result.userId).isEqualTo(waitingQueue.userId)
+        }
+    }
+
+    @Nested
+    inner class `대기열 토큰 상태 조회` {
+        @Test
+        fun `대기열 토큰 상태를 조회할 수 있다`() {
+            // given
+            val token = UUID.randomUUID()
+            val waitingQueueToken = QueueFixture.queueToken(
+                token = token,
+            )
+            every { waitingQueueTokenRepository.getByToken(token) } returns waitingQueueToken
+
+            // when
+            val result = waitingQueueService.getTokenStatus(token)
+
+            // then
+            assertThat(result).isEqualTo(waitingQueueToken.status)
         }
     }
 }
