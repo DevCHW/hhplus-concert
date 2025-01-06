@@ -1,12 +1,16 @@
-drop table if exists balance;
-drop table if exists concert;
-drop table if exists concert_schedule;
-drop table if exists payment;
-drop table if exists reservation;
-drop table if exists seat;
-drop table if exists user;
-drop table if exists waiting_queue;
+-- 모든 테이블 삭제 쿼리 생성
+set @tables = NULL;
+select group_concat('`', table_name, '`') into @tables
+from information_schema.tables
+where table_schema = (select DATABASE());
 
+-- 삭제 쿼리 실행
+set @sql = CONCAT('DROP TABLE IF EXISTS ', @tables);
+prepare stmt from @sql;
+execute stmt;
+deallocate prepare stmt;
+
+-- 테이블 생성
 create table balance
 (
     id         varchar(13)  not null comment 'PK'
@@ -76,7 +80,7 @@ create table seat
 )
     comment '좌석';
 
-create table user
+create table users
 (
     id         varchar(13)  not null comment 'PK'
         primary key,
@@ -85,11 +89,11 @@ create table user
 )
     comment '유저';
 
-create table waiting_queue
+create table queue_token
 (
     id         varchar(13)  not null comment 'PK'
         primary key,
-    user_id    varchar(13)  not null comment 'PK',
+    user_id    varchar(13)  not null comment '유저 ID',
     token      varchar(255) not null comment '토큰 (UUID)',
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점',
@@ -98,4 +102,4 @@ create table waiting_queue
     constraint waiting_queue_pk_2
         unique (user_id)
 )
-    comment '대기열';
+    comment '대기열 토큰';
