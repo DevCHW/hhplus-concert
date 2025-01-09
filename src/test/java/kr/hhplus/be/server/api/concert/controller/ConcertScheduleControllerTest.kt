@@ -5,6 +5,7 @@ import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
 import io.restassured.http.ContentType
+import kr.hhplus.be.server.api.concert.controller.dto.response.SchedulesResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -12,10 +13,12 @@ import org.springframework.restdocs.payload.JsonFieldType.ARRAY
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import java.time.LocalDate
 import java.util.*
 
-class ScheduleControllerTest : RestDocsTestSupport() {
+class ConcertScheduleControllerTest : RestDocsTestSupport() {
     private lateinit var scheduleController: ScheduleController
 
     @BeforeEach
@@ -26,10 +29,20 @@ class ScheduleControllerTest : RestDocsTestSupport() {
 
     @Test
     fun `예약 가능 날짜 목록 조회 API`() {
+        val responseData = listOf(
+            SchedulesResponse(
+                concertScheduleId = UUID.randomUUID().toString(),
+                date = LocalDate.now(),
+            ),
+            SchedulesResponse(
+                concertScheduleId = UUID.randomUUID().toString(),
+                date = LocalDate.now(),
+            ),
+        )
+
         given()
-            .queryParams("status", "AVAILABLE")
             .contentType(ContentType.JSON)
-            .get("/api/v1/concerts/{concertId}/schedules", UUID.randomUUID().toString())
+            .get("/api/v1/concerts/{concertId}/schedules/available", UUID.randomUUID().toString())
             .then()
             .status(HttpStatus.OK)
             .apply(
@@ -39,9 +52,6 @@ class ScheduleControllerTest : RestDocsTestSupport() {
                     responsePreprocessor(),
                     pathParameters(
                         parameterWithName("concertId").description("콘서트 ID"),
-                    ),
-                    queryParameters(
-                        parameterWithName("status").description("상태"),
                     ),
                     responseFields(
                         fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
