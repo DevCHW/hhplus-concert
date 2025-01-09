@@ -18,4 +18,12 @@ class ReservationRepositoryImpl(
     override fun save(reservation: Reservation): Reservation {
         return reservationJpaRepository.save(reservation)
     }
+
+    override fun getByStatus(status: Reservation.Status): List<Reservation> {
+        return reservationJpaRepository.findByStatus(status)
+    }
+
+    override fun updateStatusByIdsIn(status: Reservation.Status, timeoutReservationsIds: List<String>): Int {
+        return reservationJpaRepository.updateStatusByIdsIn(status, timeoutReservationsIds)
+    }
 }

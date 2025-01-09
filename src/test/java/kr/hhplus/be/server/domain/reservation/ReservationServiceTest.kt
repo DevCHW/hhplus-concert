@@ -2,14 +2,19 @@ package kr.hhplus.be.server.domain.reservation
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kr.hhplus.be.server.domain.reservation.error.SeatAlreadyReservedException
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
+import kr.hhplus.be.server.domain.reservation.model.Reservation
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
+@DisplayName("예약 서비스 단위 테스트")
 class ReservationServiceTest {
     private lateinit var reservationService: ReservationService
     private lateinit var reservationRepository: ReservationRepository
@@ -57,6 +62,52 @@ class ReservationServiceTest {
             }
                 .isInstanceOf(SeatAlreadyReservedException::class.java)
                 .hasMessage("이미 예약된 좌석입니다.")
+        }
+    }
+
+    @Nested
+    inner class `대기 시간 초과 예약 취소` {
+        @Test
+        fun `PENDING 상태의 예약 목록을 조회하여 시간이 초과된 예약을 취소 처리한다`() {
+            // given
+            val timeoutDuration = 60L
+            val now = LocalDateTime.now()
+            val reservation1 = ReservationFixture.createReservation(
+                status = Reservation.Status.PENDING,
+                updatedAt = now.minusSeconds(timeoutDuration + 1)
+            )
+            val reservation2 = ReservationFixture.createReservation(
+                status = Reservation.Status.PENDING,
+                updatedAt = now.minusSeconds(timeoutDuration + 1)
+            )
+
+            every { reservationRepository.getByStatus(Reservation.Status.PENDING) }
+                .returns(listOf(reservation1, reservation2))
+
+            every { reservationRepository.updateStatusByIdsIn(Reservation.Status.CANCEL, any()) }
+                .returns(2)
+
+            // when
+            reservationService.cancelTimeoutReservations(timeoutDuration, now)
+
+            // then
+            verify(exactly = 1) { reservationRepository.updateStatusByIdsIn(Reservation.Status.CANCEL, any()) }
+        }
+
+        @Test
+        fun `PENDING 상태의 예약 목록이 없는 경우 아무 작업도 수행하지 않는다`() {
+            // given
+            val timeoutDuration = 60L
+            val now = LocalDateTime.now()
+
+            every { reservationRepository.getByStatus(Reservation.Status.PENDING) }
+                .returns(emptyList())
+
+            // when
+            reservationService.cancelTimeoutReservations(timeoutDuration, now)
+
+            // then
+            verify(exactly = 0) { reservationRepository.updateStatusByIdsIn(any(), any()) }
         }
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar
 class SchedulerConfig : SchedulingConfigurer {
     override fun configureTasks(scheduledTaskRegistrar: ScheduledTaskRegistrar) {
         val threadPoolTaskScheduler = ThreadPoolTaskScheduler()
-        threadPoolTaskScheduler.poolSize = 1
+        threadPoolTaskScheduler.poolSize = 2
         threadPoolTaskScheduler.initialize()
         threadPoolTaskScheduler.setThreadNamePrefix("ScheduleThread-")
 

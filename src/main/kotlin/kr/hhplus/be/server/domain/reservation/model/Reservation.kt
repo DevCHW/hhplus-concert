@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "reservation")
-class Reservation private constructor (
+class Reservation(
     @Column(name = "seat_id")
     val seatId: String,
 
@@ -25,7 +25,7 @@ class Reservation private constructor (
         val description: String,
     ) {
         PENDING("대기"),
-        RESERVED("예약 완료"),
+        COMPLETED("예약 완료"),
         CANCEL("예약 취소")
     }
 
