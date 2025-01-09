@@ -64,4 +64,11 @@ class ReservationService(
         reservation.modifyStatus(status)
         reservationRepository.save(reservation)
     }
+
+    /**
+     * 좌석 ID 목록에 해당하는 예약 목록 조회
+     */
+    fun getBySeatIds(seatIds: List<String>): List<Reservation> {
+        return reservationRepository.getBySeatIds(seatIds)
+    }
 }

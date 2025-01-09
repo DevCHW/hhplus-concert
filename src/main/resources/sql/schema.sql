@@ -36,6 +36,7 @@ create table concert_schedule
 (
     id         varchar(13)  not null comment 'PK'
         primary key,
+    location   varchar(255) not null comment '장소',
     concert_id varchar(13)  not null comment '콘서트 ID',
     concert_at timestamp    not null comment '콘서트 시작 시점',
     created_at timestamp(6) not null comment '생성 시점',
@@ -75,7 +76,6 @@ create table seat
     id                  varchar(13)  not null comment 'PK'
         primary key,
     concert_schedule_id varchar(13)  not null comment '콘서트 일정 ID',
-    location            varchar(255) not null comment '장소',
     number              int          not null comment '좌석번호',
     created_at          timestamp(6) not null comment '생성 시점',
     updated_at          timestamp(6) not null comment '마지막 수정 시점'

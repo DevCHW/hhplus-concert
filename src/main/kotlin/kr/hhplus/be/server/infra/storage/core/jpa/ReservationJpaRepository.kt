@@ -20,9 +20,11 @@ interface ReservationJpaRepository : JpaRepository<Reservation, String> {
         SET reservation.status = :status, reservation.updatedAt = :now
         WHERE reservation.id IN :ids
     """)
-    fun updateStatusByIdsIn(
+    fun updateStatusByIds(
         @Param("status") status: Reservation.Status,
         @Param("ids") ids: List<String>,
         @Param("now") now: LocalDateTime = LocalDateTime.now()
     ): Int
+
+    fun findBySeatIdIn(seatIds: List<String>): List<Reservation>
 }

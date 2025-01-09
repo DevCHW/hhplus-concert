@@ -12,4 +12,6 @@ interface ReservationRepository {
     fun updateStatusByIdsIn(status: Reservation.Status, timeoutReservationsIds: List<String>): Int
 
     fun getById(reservationId: String): Reservation
+
+    fun getBySeatIds(seatIds: List<String>): List<Reservation>
 }

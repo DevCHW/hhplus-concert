@@ -10,10 +10,12 @@ class ConcertScheduleFixture {
         fun createConcertSchedule(
             concertId: String = TsidCreator.getTsid().toString(),
             concertAt: LocalDateTime = LocalDateTime.now(),
+            location: String = "상암월드컵경기장",
         ): ConcertSchedule {
             return ConcertSchedule(
                 concertId = concertId,
                 concertAt = concertAt,
+                location = location,
             )
         }
     }

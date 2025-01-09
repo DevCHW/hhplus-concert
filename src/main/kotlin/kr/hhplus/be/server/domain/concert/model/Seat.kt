@@ -9,10 +9,7 @@ import kr.hhplus.be.server.domain.BaseEntity
 @Table(name = "seat")
 class Seat(
     @Column(name = "concert_schedule_id")
-    val scheduleId: String,
-
-    @Column(name = "location")
-    val location: String,
+    val concertScheduleId: String,
 
     @Column(name = "number")
     val number: Int,

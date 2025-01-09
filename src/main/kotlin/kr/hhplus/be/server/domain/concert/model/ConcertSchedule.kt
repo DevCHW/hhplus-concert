@@ -12,6 +12,9 @@ class ConcertSchedule (
     @Column(name = "concert_id")
     val concertId: String,
 
+    @Column(name = "location")
+    val location: String,
+
     @Column(name = "concert_at")
     val concertAt: LocalDateTime,
 ) : BaseEntity()
