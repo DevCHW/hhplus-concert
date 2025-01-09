@@ -89,17 +89,19 @@ create table users
 )
     comment '유저';
 
-create table queue_token
+create table token
 (
     id         varchar(13)  not null comment 'PK'
         primary key,
     user_id    varchar(13)  not null comment '유저 ID',
     token      varchar(255) not null comment '토큰 (UUID)',
+    status     varchar(255) not null comment '토큰 상태 (CREATED: 생성 / ACTIVE: 활성)',
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점',
-    constraint waiting_queue_pk
+
+    constraint token_unique
         unique (token),
-    constraint waiting_queue_pk_2
+    constraint token_unique_2
         unique (user_id)
 )
-    comment '대기열 토큰';
+    comment '토큰';
