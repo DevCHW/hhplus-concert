@@ -1,10 +1,9 @@
-package kr.hhplus.be.server.scheduler
+package kr.hhplus.be.server.scheduler.token
 
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kr.hhplus.be.server.domain.token.TokenService
-import kr.hhplus.be.server.scheduler.token.TokenScheduler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
