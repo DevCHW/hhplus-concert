@@ -62,12 +62,14 @@ create table reservation
 (
     id                  varchar(13)  not null comment 'PK'
         primary key,
-    concert_schedule_id varchar(13)  not null comment '콘서트 일정 ID',
     seat_id             varchar(13)  not null comment '좌석 ID',
     user_id             varchar(13)  not null comment '유저 ID',
     status              varchar(255) not null comment 'PENDING / COMPLETED / CANCEL',
     created_at          timestamp(6) not null comment '생성 시점',
-    updated_at          timestamp(6) not null comment '마지막 수정 시점'
+    updated_at          timestamp(6) not null comment '마지막 수정 시점',
+
+    constraint reservation_unique
+        unique (seat_id)
 )
     comment '예약';
 

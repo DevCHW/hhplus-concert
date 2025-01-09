@@ -1,16 +1,12 @@
 package kr.hhplus.be.server.domain.reservation.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import kr.hhplus.be.server.domain.BaseEntity
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "reservation")
-class Reservation (
-    @Column(name = "concert_schedule_id")
-    val concertScheduleId: String,
-
+class Reservation private constructor (
     @Column(name = "seat_id")
     val seatId: String,
 
@@ -18,5 +14,28 @@ class Reservation (
     val userId: String,
 
     @Column(name = "status")
-    val status: String,
-) : BaseEntity()
+    @Enumerated(EnumType.STRING)
+    val status: Status,
+
+    createdAt: LocalDateTime = LocalDateTime.now(),
+    updatedAt: LocalDateTime = LocalDateTime.now(),
+) : BaseEntity(createdAt = createdAt, updatedAt = updatedAt) {
+
+    enum class Status(
+        val description: String,
+    ) {
+        PENDING("대기"),
+        RESERVED("예약 완료"),
+        CANCEL("예약 취소")
+    }
+
+    companion object {
+        fun create(createReservation: CreateReservation): Reservation {
+            return Reservation(
+                seatId = createReservation.seatId,
+                userId = createReservation.userId,
+                status = createReservation.status,
+            )
+        }
+    }
+}
