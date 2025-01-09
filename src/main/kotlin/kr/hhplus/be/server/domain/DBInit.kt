@@ -4,10 +4,12 @@ import com.github.f4b6a3.tsid.TsidCreator
 import jakarta.annotation.PostConstruct
 import kr.hhplus.be.server.domain.token.model.Token
 import kr.hhplus.be.server.infra.storage.core.jpa.TokenJpaRepository
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
+@Profile("local")
 class DBInit(
     private val tokenJpaRepository: TokenJpaRepository,
 ) {

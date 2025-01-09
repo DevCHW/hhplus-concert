@@ -19,6 +19,9 @@ create table balance
     balance    decimal      not null comment '잔액',
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점'
+
+    constraint balance_unique
+        unique (user_id),
 )
     comment '잔고';
 
@@ -84,6 +87,7 @@ create table users
 (
     id         varchar(13)  not null comment 'PK'
         primary key,
+    username   varchar(255) not null comment '이름'
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점'
 )

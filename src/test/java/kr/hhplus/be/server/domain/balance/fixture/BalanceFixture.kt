@@ -1,26 +1,26 @@
-package kr.hhplus.be.server.domain.token.fixture
+package kr.hhplus.be.server.domain.balance.fixture
 
 import com.github.f4b6a3.tsid.TsidCreator
-import kr.hhplus.be.server.domain.token.model.Token
+import kr.hhplus.be.server.domain.balance.model.Balance
+import java.math.BigDecimal
 import java.time.LocalDateTime
-import java.util.*
 
-class TokenFixture {
+class BalanceFixture {
+
     companion object {
-        fun createToken(
+        fun createBalance(
             userId: String = TsidCreator.getTsid().toString(),
-            token: UUID = UUID.randomUUID(),
-            status: Token.Status = Token.Status.ACTIVE,
+            balance: BigDecimal = BigDecimal.ZERO,
             createdAt: LocalDateTime = LocalDateTime.now(),
             updatedAt: LocalDateTime = LocalDateTime.now(),
-        ): Token {
-            return Token(
+        ): Balance {
+            return Balance(
                 userId = userId,
-                token = token,
-                status = status,
+                balance = balance,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
             )
         }
     }
+
 }

@@ -22,7 +22,7 @@ class Token (
 
     updatedAt: LocalDateTime = LocalDateTime.now(),
     createdAt: LocalDateTime = LocalDateTime.now(),
-) : BaseEntity(createdAt, updatedAt) {
+) : BaseEntity(createdAt = createdAt, updatedAt = updatedAt) {
 
     enum class Status (
         val description: String,
