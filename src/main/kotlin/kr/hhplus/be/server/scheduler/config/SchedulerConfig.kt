@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.scheduler.config
 
-import kr.hhplus.be.server.scheduler.support.error.SchedulerErrorHandler
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.SchedulingConfigurer
@@ -13,8 +12,8 @@ class SchedulerConfig : SchedulingConfigurer {
     override fun configureTasks(scheduledTaskRegistrar: ScheduledTaskRegistrar) {
         val threadPoolTaskScheduler = ThreadPoolTaskScheduler()
         threadPoolTaskScheduler.poolSize = 1
-        threadPoolTaskScheduler.setErrorHandler(SchedulerErrorHandler())
         threadPoolTaskScheduler.initialize()
+        threadPoolTaskScheduler.setThreadNamePrefix("ScheduleThread-")
 
         scheduledTaskRegistrar.setTaskScheduler(threadPoolTaskScheduler)
     }
