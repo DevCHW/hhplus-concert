@@ -4,11 +4,7 @@ import com.hhplus.board.support.response.ApiResponse
 import kr.hhplus.be.server.api.balance.controller.dto.request.ChargeRequest
 import kr.hhplus.be.server.api.balance.controller.dto.response.BalanceResponse
 import kr.hhplus.be.server.api.balance.controller.dto.response.ChargeResponse
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 
 @RestController
@@ -18,7 +14,7 @@ class BalanceController {
      * 잔고 충전 API
      * TODO: 구현
      */
-    @PostMapping("/api/v1/balance/charge")
+    @PutMapping("/api/v1/balance/charge")
     fun charge(
         @RequestBody request: ChargeRequest,
     ): ApiResponse<ChargeResponse> {

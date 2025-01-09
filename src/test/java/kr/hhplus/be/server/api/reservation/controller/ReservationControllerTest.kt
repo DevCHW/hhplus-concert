@@ -9,9 +9,10 @@ import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import org.springframework.restdocs.payload.JsonFieldType.*
+import org.springframework.restdocs.payload.JsonFieldType.OBJECT
+import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.*
-import java.util.UUID
+import java.util.*
 
 class ReservationControllerTest : RestDocsTestSupport() {
     private lateinit var reservationController: ReservationController

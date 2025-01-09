@@ -10,17 +10,18 @@ import java.time.LocalDateTime
 import java.util.*
 
 @MappedSuperclass
-abstract class BaseEntity : Persistable<String> {
-    @Id
-    private val id: String = TsidCreator.getTsid().toString()
-
+abstract class BaseEntity(
     @CreationTimestamp
     @Column(name = "created_at")
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
+
+) : Persistable<String> {
+    @Id
+    private val id: String = TsidCreator.getTsid().toString()
 
     @Transient
     private var _isNew = true
