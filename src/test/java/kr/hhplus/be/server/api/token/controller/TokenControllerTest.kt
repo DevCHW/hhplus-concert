@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.token.controller
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document
+import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
 import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
@@ -18,7 +19,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 
 class TokenControllerTest : RestDocsTestSupport() {
 
@@ -50,19 +51,27 @@ class TokenControllerTest : RestDocsTestSupport() {
             .status(HttpStatus.OK)
             .apply(
                 document(
-                    "대기열 토큰 생성",
+                    "토큰 생성",
+                    ResourceSnippetParametersBuilder()
+                        .tag("대기열")
+                        .summary("대기열 토큰 생성")
+                        .description(
+                            """
+                            유저 ID를 입력받아 대기열 토큰을 생성합니다.
+                        """.trimIndent()
+                        )
+                        .requestFields(
+                            fieldWithPath("userId").type(STRING).description("유저 ID"),
+                        )
+                        .responseFields(
+                            fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
+                            fieldWithPath("data").type(OBJECT).description("결과 데이터"),
+                            fieldWithPath("data.id").type(STRING).description("토큰 ID"),
+                            fieldWithPath("data.token").type(STRING).description("토큰 값"),
+                            fieldWithPath("data.status").type(STRING).description("토큰 상태"),
+                        ),
                     requestPreprocessor(),
                     responsePreprocessor(),
-                    requestFields(
-                        fieldWithPath("userId").type(STRING).description("유저 ID"),
-                    ),
-                    responseFields(
-                        fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
-                        fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                        fieldWithPath("data.id").type(STRING).description("토큰 ID"),
-                        fieldWithPath("data.token").type(STRING).description("토큰 값"),
-                        fieldWithPath("data.status").type(STRING).description("토큰 상태"),
-                    ),
                 ),
             )
     }
@@ -89,15 +98,23 @@ class TokenControllerTest : RestDocsTestSupport() {
             .apply(
                 document(
                     "토큰 조회",
+                    ResourceSnippetParametersBuilder()
+                        .tag("대기열")
+                        .summary("대기열 토큰 조회")
+                        .description(
+                            """
+                            입력받은 토큰의 정보를 조회합니다.
+                        """.trimIndent()
+                        )
+                        .responseFields(
+                            fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
+                            fieldWithPath("data").type(OBJECT).description("결과 데이터"),
+                            fieldWithPath("data.id").type(STRING).description("토큰 ID"),
+                            fieldWithPath("data.token").type(STRING).description("토큰 값"),
+                            fieldWithPath("data.status").type(STRING).description("토큰 상태"),
+                        ),
                     requestPreprocessor(),
                     responsePreprocessor(),
-                    responseFields(
-                        fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
-                        fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                        fieldWithPath("data.id").type(STRING).description("토큰 ID"),
-                        fieldWithPath("data.token").type(STRING).description("토큰 값"),
-                        fieldWithPath("data.status").type(STRING).description("토큰 상태"),
-                    ),
                 ),
             )
     }

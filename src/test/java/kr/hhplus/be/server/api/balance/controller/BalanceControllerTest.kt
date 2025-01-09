@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.*
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import java.math.BigDecimal
 
@@ -52,18 +52,23 @@ class BalanceControllerTest : RestDocsTestSupport() {
             .apply(
                 document(
                     "잔고 충전",
+                    ResourceSnippetParametersBuilder()
+                        .tag("잔고")
+                        .summary("잔고 충전")
+                        .description("사용자 ID를 입력받아 잔고를 충전합니다.")
+                        .requestFields(
+                            fieldWithPath("userId").type(STRING).description("유저 ID"),
+                            fieldWithPath("amount").type(NUMBER).description("충전 금액"),
+                        )
+                        .responseFields(
+                            fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
+                            fieldWithPath("data").type(OBJECT).description("결과 데이터"),
+                            fieldWithPath("data.balance").type(NUMBER).description("잔고"),
+                        ),
                     requestPreprocessor(),
                     responsePreprocessor(),
-                    requestFields(
-                        fieldWithPath("userId").type(STRING).description("유저 ID"),
-                        fieldWithPath("amount").type(NUMBER).description("충전 금액"),
+
                     ),
-                    responseFields(
-                        fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
-                        fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                        fieldWithPath("data.balance").type(NUMBER).description("잔고"),
-                    ),
-                ),
             )
     }
 
@@ -76,7 +81,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
             .returns(balance)
 
         given()
-            .queryParam("userId", )
+            .queryParam("userId", userId)
             .contentType(ContentType.JSON)
             .get("/api/v1/balance")
             .then()
@@ -85,9 +90,9 @@ class BalanceControllerTest : RestDocsTestSupport() {
                 document(
                     "잔고 조회",
                     ResourceSnippetParametersBuilder()
-                        .tag("태그")
-                        .summary("요약")
-                        .description("설명")
+                        .tag("잔고")
+                        .summary("잔고 조회")
+                        .description("사용자 ID를 입력받아 잔고를 조회합니다.")
                         .queryParameters(
                             parameterWithName("userId").description("유저 ID"),
                         )

@@ -9,9 +9,6 @@ plugins {
 	id("org.asciidoctor.jvm.convert")
 }
 
-val asciidoctorExt: Configuration by configurations.creating
-val snippetsDir by extra { file("build/generated-snippets") }
-
 fun getGitHash(): String {
 	return providers.exec {
 		commandLine("git", "rev-parse", "--short", "HEAD")
@@ -63,6 +60,9 @@ dependencies {
 
 	// TSID
 	implementation("com.github.f4b6a3:tsid-creator:5.2.6")
+
+	// Swagger UI
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
 }
 
 // Test Dependencies
@@ -78,7 +78,6 @@ dependencies {
 	testImplementation("org.testcontainers:mysql")
 
 	// Test - restdocs
-	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 	testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
 	testImplementation("io.rest-assured:spring-mock-mvc")
@@ -86,43 +85,21 @@ dependencies {
 	testImplementation("com.epages:restdocs-api-spec-mockmvc:${property("restDocsApiSpecVersion")}")
 }
 
+// OpenAPI Specification
+configure<com.epages.restdocs.apispec.gradle.OpenApi3Extension> {
+	setServer("http://localhost:8080")
+	title = "콘서트 예약 서비스 API"
+	description = "콘서트 예약 서비스 API 명세서"
+	version = getGitHash()
+	format = "json"
+	outputDirectory = "build/resources/main/static"
+}
+
 tasks.withType<Test> {
-	outputs.dir(snippetsDir)
 	useJUnitPlatform()
 	systemProperty("user.timezone", "UTC")
 }
 
-tasks.asciidoctor {
-	dependsOn(tasks.test)
-	configurations(asciidoctorExt.name)
-	baseDirFollowsSourceFile()
-	inputs.dir(snippetsDir)
-	outputs.file("build/docs/asciidoc")
-
-	sources {
-		include("**/index.adoc") // html로 만들 adoc 파일 설정.
-	}
-}
-
-tasks.resolveMainClassName {
-	dependsOn(tasks.getByName("copyDocument"))
-}
-
-tasks.register("copyDocument", Copy::class) {
-	dependsOn(tasks.asciidoctor)
-	from(file("build/docs/asciidoc"))
-	into(file("build/resources/main/static/docs"))
-
-	include("index.html")
-	doFirst {
-		delete(file("src/main/resources/static/docs"))
-	}
-}
-
-tasks.build {
-	dependsOn(tasks.getByName("copyDocument"))
-}
-
 tasks.bootJar {
-	dependsOn(tasks.getByName("copyDocument"))
+	dependsOn(":openapi3")
 }
