@@ -15,7 +15,7 @@ class PaymentController{
      * TODO : 구현
      */
     @PostMapping("/api/v1/payment")
-    fun pay(
+    fun createPayment(
         @RequestBody request: PaymentRequest
     ): ApiResponse<PaymentResponse> {
         val data = PaymentResponse(paymentId = UUID.randomUUID().toString())

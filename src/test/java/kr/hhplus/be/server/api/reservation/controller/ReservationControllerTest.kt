@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.reservation.controller
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document
+import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.*
-import java.util.*
 
 class ReservationControllerTest : RestDocsTestSupport() {
     private lateinit var reservationController: ReservationController
@@ -26,8 +26,9 @@ class ReservationControllerTest : RestDocsTestSupport() {
     @Test
     fun `예약 API`() {
         val request = CreateReservationRequest(
-            concertScheduleId = UUID.randomUUID().toString(),
-            seatId = UUID.randomUUID().toString(),
+            concertId = TsidCreator.getTsid().toString(),
+            seatId = TsidCreator.getTsid().toString(),
+            userId = TsidCreator.getTsid().toString(),
         )
 
         given()
@@ -42,7 +43,8 @@ class ReservationControllerTest : RestDocsTestSupport() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     requestFields(
-                        fieldWithPath("concertScheduleId").type(STRING).description("콘서트 일정 ID"),
+                        fieldWithPath("concertId").type(STRING).description("콘서트 일정 ID"),
+                        fieldWithPath("userId").type(STRING).description("유저 ID"),
                         fieldWithPath("seatId").type(STRING).description("좌석 ID"),
                     ),
                     responseFields(

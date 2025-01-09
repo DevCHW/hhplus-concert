@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.api.payment.controller.dto.request
 
+import java.util.*
+
 data class PaymentRequest(
-    val seatId: String,
-    val concertScheduleId: String,
+    val reservationId: String,
+    val token: UUID,
 )

@@ -24,10 +24,14 @@ class ReservationRepositoryImpl(
     }
 
     override fun updateStatusByIdsIn(status: Reservation.Status, timeoutReservationsIds: List<String>): Int {
-        return reservationJpaRepository.updateStatusByIdsIn(status, timeoutReservationsIds)
+        return reservationJpaRepository.updateStatusByIds(status, timeoutReservationsIds)
     }
 
     override fun getById(reservationId: String): Reservation {
         return reservationJpaRepository.findByIdOrThrow(reservationId)
+    }
+
+    override fun getBySeatIds(seatIds: List<String>): List<Reservation> {
+        return reservationJpaRepository.findBySeatIdIn(seatIds)
     }
 }

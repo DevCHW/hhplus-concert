@@ -5,7 +5,7 @@ import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
 import io.restassured.http.ContentType
-import kr.hhplus.be.server.api.concert.controller.dto.response.SchedulesResponse
+import kr.hhplus.be.server.api.concert.controller.dto.response.ConcertSchedulesResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -18,24 +18,24 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import java.time.LocalDate
 import java.util.*
 
-class ConcertScheduleControllerTest : RestDocsTestSupport() {
-    private lateinit var scheduleController: ScheduleController
+class ConcertConcertScheduleControllerTest : RestDocsTestSupport() {
+    private lateinit var scheduleController: ConcertScheduleController
 
     @BeforeEach
     fun setup() {
-        scheduleController = ScheduleController()
+        scheduleController = ConcertScheduleController()
         mockMvc = mockController(scheduleController)
     }
 
     @Test
     fun `예약 가능 날짜 목록 조회 API`() {
         val responseData = listOf(
-            SchedulesResponse(
-                concertScheduleId = UUID.randomUUID().toString(),
+            ConcertSchedulesResponse(
+                id = UUID.randomUUID().toString(),
                 date = LocalDate.now(),
             ),
-            SchedulesResponse(
-                concertScheduleId = UUID.randomUUID().toString(),
+            ConcertSchedulesResponse(
+                id = UUID.randomUUID().toString(),
                 date = LocalDate.now(),
             ),
         )
@@ -56,7 +56,7 @@ class ConcertScheduleControllerTest : RestDocsTestSupport() {
                     responseFields(
                         fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                         fieldWithPath("data[]").type(ARRAY).description("결과 데이터"),
-                        fieldWithPath("data[].concertScheduleId").type(STRING).description("콘서트 스케줄 ID"),
+                        fieldWithPath("data[].id").type(STRING).description("콘서트 일정 ID"),
                         fieldWithPath("data[].date").type(STRING).description("날짜"),
                     ),
                 ),
