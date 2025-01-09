@@ -5,32 +5,42 @@ import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
+import io.mockk.every
+import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.token.controller.dto.enums.TokenStatus
 import kr.hhplus.be.server.api.token.controller.dto.request.CreateTokenRequest
 import kr.hhplus.be.server.api.token.controller.dto.response.GetTokenResponse
+import kr.hhplus.be.server.domain.token.TokenService
+import kr.hhplus.be.server.domain.token.fixture.TokenFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import org.springframework.restdocs.payload.JsonFieldType.*
+import org.springframework.restdocs.payload.JsonFieldType.OBJECT
+import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.*
-import java.util.*
 
 class TokenControllerTest : RestDocsTestSupport() {
 
-    private lateinit var queueController: TokenController
+    private lateinit var tokenController: TokenController
+    private lateinit var tokenService: TokenService
 
     @BeforeEach
     fun setup() {
-        queueController = TokenController()
-        mockMvc = mockController(queueController)
+        tokenService = mockk()
+        tokenController = TokenController(tokenService)
+        mockMvc = mockController(tokenController)
     }
 
     @Test
     fun `토큰 생성 API`() {
         val request = CreateTokenRequest(
-            userId = UUID.randomUUID().toString(),
+            userId = TsidCreator.getTsid().toString(),
         )
+
+        val token = TokenFixture.createToken(userId = request.userId)
+        every { tokenService.createToken(any()) }
+            .returns(token)
 
         given()
             .contentType(ContentType.JSON)
@@ -58,24 +68,27 @@ class TokenControllerTest : RestDocsTestSupport() {
     }
 
     @Test
-    fun `토큰 상태 조회 API`() {
-        val token = UUID.randomUUID()
+    fun `토큰 조회 API`() {
+        val token = TokenFixture.createToken()
+
         val request = GetTokenResponse(
-            id = TsidCreator.getTsid().toString(),
-            token = token,
-            position = 100,
-            status = TokenStatus.ACTIVE,
+            id = token.id,
+            token = token.token,
+            status = TokenStatus.INACTIVE,
         )
+
+        every { tokenService.getToken(any()) }
+            .returns(token)
 
         given()
             .contentType(ContentType.JSON)
             .body(request)
-            .get("/api/v1/token/{token}", token.toString())
+            .get("/api/v1/token/{token}", token.token.toString())
             .then()
             .status(HttpStatus.OK)
             .apply(
                 document(
-                    "토큰 상태 조회",
+                    "토큰 조회",
                     requestPreprocessor(),
                     responsePreprocessor(),
                     responseFields(
@@ -84,7 +97,6 @@ class TokenControllerTest : RestDocsTestSupport() {
                         fieldWithPath("data.id").type(STRING).description("토큰 ID"),
                         fieldWithPath("data.token").type(STRING).description("토큰 값"),
                         fieldWithPath("data.status").type(STRING).description("토큰 상태"),
-                        fieldWithPath("data.position").type(NUMBER).description("순서"),
                     ),
                 ),
             )

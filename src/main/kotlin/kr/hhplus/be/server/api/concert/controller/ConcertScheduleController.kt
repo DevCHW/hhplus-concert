@@ -2,14 +2,15 @@ package kr.hhplus.be.server.api.concert.controller
 
 import com.hhplus.board.support.response.ApiResponse
 import kr.hhplus.be.server.api.concert.controller.dto.response.ConcertSchedulesResponse
+import kr.hhplus.be.server.domain.concert.ConcertScheduleService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDate
-import java.util.*
 
 @RestController
-class ConcertScheduleController {
+class ConcertScheduleController(
+    private val concertScheduleService: ConcertScheduleService,
+) {
 
     /**
      * 예약 가능 날짜 목록 조회 API
@@ -18,16 +19,7 @@ class ConcertScheduleController {
     fun getSchedules(
         @PathVariable("concertId") concertId: String,
     ): ApiResponse<List<ConcertSchedulesResponse>> {
-        val data = listOf(
-            ConcertSchedulesResponse(
-                id = UUID.randomUUID().toString(),
-                date = LocalDate.now(),
-            ),
-            ConcertSchedulesResponse(
-                id = UUID.randomUUID().toString(),
-                date = LocalDate.now(),
-            ),
-        )
-        return ApiResponse.success(data)
+        val data = concertScheduleService.getAvailableConcertSchedules(concertId)
+        return ApiResponse.success(data.map { ConcertSchedulesResponse.from(it) })
     }
 }

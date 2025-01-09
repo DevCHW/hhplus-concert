@@ -1,24 +1,26 @@
 package kr.hhplus.be.server.api.payment.controller
 
 import com.hhplus.board.support.response.ApiResponse
-import kr.hhplus.be.server.api.payment.controller.dto.request.PaymentRequest
-import kr.hhplus.be.server.api.payment.controller.dto.response.PaymentResponse
+import kr.hhplus.be.server.api.payment.application.PaymentFacade
+import kr.hhplus.be.server.api.payment.controller.dto.request.CreatePaymentRequest
+import kr.hhplus.be.server.api.payment.controller.dto.response.CreatePaymentResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 
 @RestController
-class PaymentController{
+class PaymentController(
+    private val paymentFacade: PaymentFacade,
+){
+
     /**
      * 결제 API
-     * TODO : 구현
      */
     @PostMapping("/api/v1/payment")
     fun createPayment(
-        @RequestBody request: PaymentRequest
-    ): ApiResponse<PaymentResponse> {
-        val data = PaymentResponse(paymentId = UUID.randomUUID().toString())
-        return ApiResponse.success(data)
+        @RequestBody request: CreatePaymentRequest
+    ): ApiResponse<CreatePaymentResponse> {
+        val result = paymentFacade.createPayment(request.reservationId, request.token)
+        return ApiResponse.success(CreatePaymentResponse(result.paymentId))
     }
 }

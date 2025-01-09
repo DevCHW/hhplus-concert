@@ -6,9 +6,12 @@ import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
+import io.mockk.every
+import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.balance.controller.dto.request.ChargeRequest
-import kr.hhplus.be.server.api.balance.controller.dto.response.ChargeResponse
+import kr.hhplus.be.server.domain.balance.BalanceService
+import kr.hhplus.be.server.domain.balance.fixture.BalanceFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -16,15 +19,16 @@ import org.springframework.restdocs.payload.JsonFieldType.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import java.math.BigDecimal
-import java.util.*
 
 
 class BalanceControllerTest : RestDocsTestSupport() {
     private lateinit var balanceController: BalanceController
+    private lateinit var balanceService: BalanceService
 
     @BeforeEach
     fun setup() {
-        balanceController = BalanceController()
+        balanceService = mockk()
+        balanceController = BalanceController(balanceService)
         mockMvc = mockController(balanceController)
     }
 
@@ -35,9 +39,10 @@ class BalanceControllerTest : RestDocsTestSupport() {
             amount = BigDecimal.valueOf(100),
         )
 
-        val response = ChargeResponse(
-            balance = BigDecimal.valueOf(100L),
-        )
+        val balance = BalanceFixture.createBalance(userId = request.userId, balance = request.amount)
+        every { balanceService.charge(any(), any()) }
+            .returns(balance)
+
         given()
             .body(request)
             .contentType(ContentType.JSON)
@@ -64,8 +69,14 @@ class BalanceControllerTest : RestDocsTestSupport() {
 
     @Test
     fun `잔고 조회 API`() {
+        val userId = TsidCreator.getTsid().toString()
+        val balance = BalanceFixture.createBalance(userId = userId)
+
+        every { balanceService.getBalance(any()) }
+            .returns(balance)
+
         given()
-            .queryParam("userId", UUID.randomUUID().toString())
+            .queryParam("userId", )
             .contentType(ContentType.JSON)
             .get("/api/v1/balance")
             .then()

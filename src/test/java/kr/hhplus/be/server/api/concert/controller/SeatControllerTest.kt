@@ -5,7 +5,11 @@ import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
+import io.mockk.every
+import io.mockk.mockk
 import io.restassured.http.ContentType
+import kr.hhplus.be.server.api.concert.application.SeatFacade
+import kr.hhplus.be.server.api.concert.application.dto.GetAvailableSeatResult
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -17,17 +21,33 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 
 class SeatControllerTest : RestDocsTestSupport() {
     private lateinit var seatController: SeatController
+    private lateinit var seatFacade: SeatFacade
 
     @BeforeEach
     fun setup() {
-        seatController = SeatController()
+        seatFacade = mockk()
+        seatController = SeatController(seatFacade)
         mockMvc = mockController(seatController)
     }
 
     @Test
     fun `예약 가능 좌석 목록 조회 API`() {
+
         val concertId = TsidCreator.getTsid().toString()
         val concertScheduleId = TsidCreator.getTsid().toString()
+
+        val result1 = GetAvailableSeatResult(
+            id = TsidCreator.getTsid().toString(),
+            number = 1,
+        )
+
+        val result2 = GetAvailableSeatResult(
+            id = TsidCreator.getTsid().toString(),
+            number = 2,
+        )
+
+        every { seatFacade.getAvailableSeats(any()) }
+            .returns(listOf(result1, result2))
 
         given()
             .contentType(ContentType.JSON)
@@ -50,7 +70,7 @@ class SeatControllerTest : RestDocsTestSupport() {
                     responseFields(
                         fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                         fieldWithPath("data[]").type(ARRAY).description("결과 데이터"),
-                        fieldWithPath("data[].seatId").type(STRING).description("좌석 ID"),
+                        fieldWithPath("data[].id").type(STRING).description("좌석 ID"),
                         fieldWithPath("data[].number").type(NUMBER).description("좌석 번호"),
                     ),
                 ),

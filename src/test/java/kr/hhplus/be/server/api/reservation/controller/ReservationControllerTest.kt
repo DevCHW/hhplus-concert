@@ -5,7 +5,11 @@ import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
+import io.mockk.every
+import io.mockk.mockk
 import io.restassured.http.ContentType
+import kr.hhplus.be.server.api.reservation.application.ReservationFacade
+import kr.hhplus.be.server.api.reservation.application.dto.CreateReservationResult
 import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservationRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,13 +17,16 @@ import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.*
+import java.time.LocalDateTime
 
 class ReservationControllerTest : RestDocsTestSupport() {
+    private lateinit var reservationFacade: ReservationFacade
     private lateinit var reservationController: ReservationController
 
     @BeforeEach
     fun setup() {
-        reservationController = ReservationController()
+        reservationFacade = mockk()
+        reservationController = ReservationController(reservationFacade)
         mockMvc = mockController(reservationController)
     }
 
@@ -30,6 +37,18 @@ class ReservationControllerTest : RestDocsTestSupport() {
             seatId = TsidCreator.getTsid().toString(),
             userId = TsidCreator.getTsid().toString(),
         )
+
+        val result = CreateReservationResult(
+            id = TsidCreator.getTsid().toString(),
+            userId = request.userId,
+            seatId = request.seatId,
+            status = "PENDING",
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+        )
+
+        every { reservationFacade.createReservation(any(), any(), any()) }
+            .returns(result)
 
         given()
             .contentType(ContentType.JSON)
