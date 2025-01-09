@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.reservation.model
 
 import jakarta.persistence.*
 import kr.hhplus.be.server.domain.BaseEntity
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
@@ -15,11 +16,19 @@ class Reservation(
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    val status: Status,
+    var status: Status,
+
+    @Column(name = "pay_amount")
+    val payAmount: BigDecimal,
 
     createdAt: LocalDateTime = LocalDateTime.now(),
     updatedAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity(createdAt = createdAt, updatedAt = updatedAt) {
+
+    fun modifyStatus(status: Status): Reservation {
+        this.status = status
+        return this
+    }
 
     enum class Status(
         val description: String,
@@ -34,6 +43,7 @@ class Reservation(
             return Reservation(
                 seatId = createReservation.seatId,
                 userId = createReservation.userId,
+                payAmount = createReservation.payAmount,
                 status = createReservation.status,
             )
         }

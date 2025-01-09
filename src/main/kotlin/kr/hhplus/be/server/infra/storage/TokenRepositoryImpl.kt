@@ -41,4 +41,8 @@ class TokenRepositoryImpl(
         }
         return tokenJpaRepository.updateStatusByIdsIn(status, inactiveTokenIds)
     }
+
+    override fun deleteByToken(token: UUID) {
+        tokenJpaRepository.deleteByToken(token)
+    }
 }

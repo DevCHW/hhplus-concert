@@ -66,4 +66,11 @@ class TokenService(
         // 추출한 ID 목록을 통해 ACTIVE 상태로 업데이트
         val result = repository.updateStatusByIdsIn(Token.Status.ACTIVE, inactiveTokenIds)
     }
+
+    /**
+     * 토큰 삭제
+     */
+    fun deleteToken(token: UUID) {
+        repository.deleteByToken(token)
+    }
 }

@@ -15,4 +15,6 @@ interface TokenRepository {
     fun deleteTokens(expiredTokens: List<Token>)
 
     fun updateStatusByIdsIn(status: Token.Status, inactiveTokenIds: List<String>): Int
+
+    fun deleteByToken(token: UUID)
 }

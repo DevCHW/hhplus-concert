@@ -4,6 +4,7 @@ import kr.hhplus.be.server.domain.reservation.error.SeatAlreadyReservedException
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -42,5 +43,25 @@ class ReservationService(
         if (timeoutReservationsIds.isNotEmpty()) {
             reservationRepository.updateStatusByIdsIn(Reservation.Status.CANCEL, timeoutReservationsIds)
         }
+    }
+
+    /**
+     * 예약 조회
+     */
+    fun getReservation(reservationId: String): Reservation {
+        return reservationRepository.getById(reservationId)
+    }
+
+    /**
+     * 예약 상태 변경
+     */
+    @Transactional
+    fun modifyStatus(
+        reservationId: String,
+        status: Reservation.Status
+    ) {
+        val reservation = reservationRepository.getById(reservationId)
+        reservation.modifyStatus(status)
+        reservationRepository.save(reservation)
     }
 }

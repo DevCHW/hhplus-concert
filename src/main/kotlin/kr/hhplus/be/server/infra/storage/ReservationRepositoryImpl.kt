@@ -2,6 +2,7 @@ package kr.hhplus.be.server.infra.storage
 
 import kr.hhplus.be.server.domain.reservation.ReservationRepository
 import kr.hhplus.be.server.domain.reservation.model.Reservation
+import kr.hhplus.be.server.infra.storage.core.findByIdOrThrow
 import kr.hhplus.be.server.infra.storage.core.jpa.ReservationJpaRepository
 import org.springframework.stereotype.Repository
 
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Repository
 class ReservationRepositoryImpl(
     private val reservationJpaRepository: ReservationJpaRepository,
 ) : ReservationRepository {
-
 
     override fun isExistBySeatId(seatId: String): Boolean {
         return reservationJpaRepository.existsBySeatId(seatId)
@@ -25,5 +25,9 @@ class ReservationRepositoryImpl(
 
     override fun updateStatusByIdsIn(status: Reservation.Status, timeoutReservationsIds: List<String>): Int {
         return reservationJpaRepository.updateStatusByIdsIn(status, timeoutReservationsIds)
+    }
+
+    override fun getById(reservationId: String): Reservation {
+        return reservationJpaRepository.findByIdOrThrow(reservationId)
     }
 }

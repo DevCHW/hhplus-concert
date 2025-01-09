@@ -18,4 +18,8 @@ class BalanceRepositoryImpl(
         return balanceJpaRepository.save(balance)
     }
 
+    override fun getByUserIdWithLock(userId: String): Balance {
+        return balanceJpaRepository.findForUpdateById(userId)
+    }
+
 }

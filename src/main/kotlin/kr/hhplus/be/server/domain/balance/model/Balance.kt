@@ -24,4 +24,12 @@ class Balance(
         this.balance = this.balance.plus(amount)
         return this
     }
+
+    fun decrease(amount: BigDecimal): Balance {
+        if (amount > this.balance) {
+            throw IllegalArgumentException("잔액이 부족합니다.")
+        }
+        this.balance = this.balance.minus(amount)
+        return this
+    }
 }

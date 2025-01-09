@@ -19,7 +19,7 @@ class TokenServiceTest {
 
     @BeforeEach
     fun setUp() {
-        tokenRepository = mockk()
+        tokenRepository = mockk(relaxed = true)
         tokenService = TokenService(tokenRepository)
     }
 
@@ -128,7 +128,7 @@ class TokenServiceTest {
     }
 
     @Nested
-    inner class `토큰 활성` {
+    inner class `비활성 토큰 목록 활성 상태 변경` {
         @Test
         fun `활성 토큰의 최대 갯수를 받아 비활성 토큰을 활성 상태로 변경한다`() {
             // given
@@ -158,7 +158,6 @@ class TokenServiceTest {
             val activeTokenMaxSize = 5
             val activeTokens = List(5) { TokenFixture.createToken(status = Token.Status.ACTIVE) }
 
-            // stubbing
             every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
             every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, any()) } returns emptyList()
 
@@ -175,7 +174,6 @@ class TokenServiceTest {
             val activeTokenMaxSize = 5
             val activeTokens = List(4) { TokenFixture.createToken(status = Token.Status.ACTIVE) }
 
-            // stubbing
             every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
             every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, any()) } returns emptyList()
 
@@ -185,6 +183,22 @@ class TokenServiceTest {
             // then
             verify(exactly = 0) { tokenRepository.updateStatusByIdsIn(any(), any()) } // 아무 작업도 하지 않아야 한다
         }
+    }
 
+    @Nested
+    inner class `토큰 삭제` {
+        @Test
+        fun `TokenRepository의 deleteByToken 함수가 호출된다`() {
+            // given
+            val token = UUID.randomUUID()
+
+            // when
+            tokenService.deleteToken(token)
+
+            // then
+            verify(exactly = 1) {
+                tokenRepository.deleteByToken(token)
+            }
+        }
     }
 }

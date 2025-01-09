@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kr.hhplus.be.server.domain.token.TokenService
+import kr.hhplus.be.server.scheduler.token.TokenScheduler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -23,7 +24,7 @@ class TokenSchedulerTest {
     @Nested
     inner class `활성 토큰 만료 및 비활성 토큰 활성 상태로 변경` {
         @Test
-        fun `활성 토큰 만료와 비활성 토큰 활성 상태로 변경이 차례대로 호출된다`() {
+        fun `토큰 서비스의 expireActiveTokens 메서드와 ActivateTokens 메서드가 차례대로 호출된다`() {
             // given
             every { tokenService.expireActiveTokens(any(), any()) } returns Unit
             every { tokenService.ActivateTokens(any()) } returns Unit

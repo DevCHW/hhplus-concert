@@ -18,14 +18,14 @@ class BalanceServiceTest {
 
     @BeforeEach
     fun setUp() {
-        balanceRepository = mockk()
+        balanceRepository = mockk(relaxed = true)
         balanceService = BalanceService(balanceRepository)
     }
 
     @Nested
     inner class `잔고 충전` {
         @Test
-        fun `사용자가 존재하는 잔고가 있을 경우 충전한다`() {
+        fun `유저 ID에 해당하는 잔고가 있을 경우 잔액을 증가시키고 반환한다`() {
             // given
             val balance = BalanceFixture.createBalance(balance = BigDecimal.ZERO)
             val userId = balance.userId
@@ -42,7 +42,7 @@ class BalanceServiceTest {
         }
 
         @Test
-        fun `사용자가 잔고가 없으면 새로 생성하여 충전한다`() {
+        fun `유저 ID에 해당하는 잔고가 없는 경우 새로 생성하여 충전하고 반환한다`() {
             // given
             val amount = BigDecimal.valueOf(100)
             val balance = BalanceFixture.createBalance(balance = amount)
@@ -86,6 +86,26 @@ class BalanceServiceTest {
 
             // then
             assertThat(result.balance).isEqualTo(BigDecimal.ZERO)
+        }
+    }
+
+    @Nested
+    inner class `잔액 차감` {
+        @Test
+        fun `유저 ID에 해당하는 잔고를 조회하여 잔액을 차감하고 반환한다`() {
+            // given
+            val userId = TsidCreator.getTsid().toString()
+            val amount = BigDecimal.valueOf(100)
+            every { balanceRepository.getByUserIdWithLock(userId) }
+                .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(200)))
+
+            every { balanceRepository.save(any()) }
+                .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(100)))
+            // when
+            val result = balanceService.decreaseBalance(userId, amount)
+
+            // then
+            assertThat(result.balance).isEqualTo(BigDecimal.valueOf(100))
         }
     }
 

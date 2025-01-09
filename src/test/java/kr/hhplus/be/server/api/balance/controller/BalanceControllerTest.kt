@@ -75,6 +75,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
                     "잔고 조회",
                     ResourceSnippetParametersBuilder()
                         .tag("태그")
+                        .summary("요약")
                         .description("설명")
                         .queryParameters(
                             parameterWithName("userId").description("유저 ID"),

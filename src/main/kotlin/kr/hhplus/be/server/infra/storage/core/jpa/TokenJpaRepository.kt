@@ -20,16 +20,16 @@ interface TokenJpaRepository : JpaRepository<Token, String> {
 
     @Transactional
     @Modifying
-    @Query(
-        """
+    @Query("""
         UPDATE Token token 
         SET token.status = :status, token.updatedAt = :now
         WHERE token.id IN :ids
-    """
-    )
+    """)
     fun updateStatusByIdsIn(
         @Param("status") status: Token.Status,
         @Param("ids") ids: List<String>,
         @Param("now") now: LocalDateTime = LocalDateTime.now()
     ): Int
+
+    fun deleteByToken(token: UUID)
 }
