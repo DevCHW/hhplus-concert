@@ -4,7 +4,7 @@ import kr.hhplus.be.server.domain.token.model.Token
 import java.util.*
 
 interface TokenRepository {
-    fun saveToken(token: Token): Token
+    fun save(token: Token): Token
 
     fun getByToken(token: UUID): Token
 

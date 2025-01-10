@@ -31,7 +31,7 @@ class TokenServiceTest {
             val userId = TsidCreator.getTsid().toString()
             val token = TokenFixture.createToken(userId = userId, status = Token.Status.CREATED)
 
-            every { tokenRepository.saveToken(any()) }
+            every { tokenRepository.save(any()) }
                 .returns(token)
 
             // when

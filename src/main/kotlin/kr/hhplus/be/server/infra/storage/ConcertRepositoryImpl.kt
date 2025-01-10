@@ -15,4 +15,8 @@ class ConcertRepositoryImpl(
         return concertJpaRepository.findByIdOrThrow(concertId)
     }
 
+    override fun save(concert: Concert): Concert {
+        return concertJpaRepository.save(concert)
+    }
+
 }

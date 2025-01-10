@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 @Table(name = "balance")
 class Balance(
     @Column(name = "user_id")
-    var userId: String,
+    val userId: String,
 
     @Column(name = "balance")
     var balance: BigDecimal,

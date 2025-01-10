@@ -1,4 +1,5 @@
 drop table if exists balance cascade;
+drop table if exists balance_charge_lock cascade;
 drop table if exists concert cascade;
 drop table if exists concert_schedule cascade;
 drop table if exists payment cascade;
@@ -20,6 +21,18 @@ create table balance
         unique (user_id)
 )
     comment '잔고';
+
+create table balance_charge_lock
+(
+    id         varchar(13)  not null comment 'PK'
+        primary key,
+    user_id    varchar(13)  not null comment '유저 ID',
+    created_at timestamp(6) not null comment '생성 시점',
+    updated_at timestamp(6) not null comment '마지막 수정 시점',
+    constraint balance_unique
+        unique (user_id)
+)
+    comment '잔고 충전 잠금';
 
 create table concert
 (

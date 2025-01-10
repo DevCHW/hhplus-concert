@@ -14,7 +14,7 @@ class TokenService(
      * 토큰 생성
      */
     fun createToken(userId: String): Token {
-        return repository.saveToken(
+        return repository.save(
             Token(
                 userId = userId,
                 token = UUID.randomUUID(),

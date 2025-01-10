@@ -13,4 +13,8 @@ class SeatRepositoryImpl(
     override fun getByConcertScheduleId(concertScheduleId: String): List<Seat> {
         return seatJpaRepository.findByConcertScheduleId(concertScheduleId)
     }
+
+    override fun save(seat: Seat): Seat {
+        return seatJpaRepository.save(seat)
+    }
 }
