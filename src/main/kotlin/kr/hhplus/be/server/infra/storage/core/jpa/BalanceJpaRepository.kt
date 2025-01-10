@@ -9,5 +9,7 @@ interface BalanceJpaRepository : JpaRepository<Balance, String> {
     fun findNullableByUserId(userId: String): Balance?
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    fun findForUpdateById(userId: String): Balance
+    fun findForUpdateByUserId(userId: String): Balance
+
+    fun findByUserId(userId: String): Balance
 }
