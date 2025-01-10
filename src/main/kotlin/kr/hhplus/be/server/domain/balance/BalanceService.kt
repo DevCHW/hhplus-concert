@@ -13,12 +13,17 @@ class BalanceService(
     /**
      * 잔고 충전
      */
-    @Transactional
     fun charge(userId: String, amount: BigDecimal): Balance {
-        val chargedBalance = balanceRepository.getByUserIdOrNull(userId)?.charge(amount)
-            ?: Balance(userId = userId, balance = amount)
+        val lock = balanceRepository.chargeLock(userId)
+        try {
+            val chargedBalance = balanceRepository.getByUserIdOrNull(userId)?.charge(amount)
+                ?: Balance(userId = userId, balance = amount)
 
-        return balanceRepository.save(chargedBalance)
+            return balanceRepository.save(chargedBalance)
+        } finally {
+            balanceRepository.chargeUnLock(lock.id)
+        }
+
     }
 
     /**

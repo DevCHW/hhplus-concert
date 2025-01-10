@@ -13,7 +13,7 @@ class TokenRepositoryImpl(
     private val tokenJpaRepository: TokenJpaRepository,
 ) : TokenRepository {
 
-    override fun saveToken(token: Token): Token {
+    override fun save(token: Token): Token {
         return tokenJpaRepository.save(token)
     }
 
