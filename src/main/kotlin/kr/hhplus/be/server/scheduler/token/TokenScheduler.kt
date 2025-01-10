@@ -19,8 +19,8 @@ class TokenScheduler(
     }
 
     companion object {
-        // 최대 활성 대기열 수
-        private const val ACTIVE_TOKEN_SIZE_MAX_SIZE: Int = 2
+        // 최대 활성 토큰 수 (1000개)
+        private const val ACTIVE_TOKEN_SIZE_MAX_SIZE: Int = 1000
 
         // 활성 토큰 만료 시간 (3분)
         private const val ACTIVE_TOKEN_TTL_SECONDS: Long = 3 * 60
