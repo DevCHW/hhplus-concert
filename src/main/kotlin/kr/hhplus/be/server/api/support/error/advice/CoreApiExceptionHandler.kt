@@ -1,8 +1,8 @@
 package io.hhplus.cleanarchitecture.api.support.error.advice
 
+import com.hhplus.board.support.response.ApiResponse
 import kr.hhplus.be.server.api.support.error.CoreApiException
 import kr.hhplus.be.server.api.support.error.ErrorType
-import com.hhplus.board.support.response.ApiResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.logging.LogLevel

@@ -2,7 +2,7 @@ package kr.hhplus.be.server.api.support.error
 
 import org.springframework.boot.logging.LogLevel
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 
 enum class ErrorType(
     val status: HttpStatus,

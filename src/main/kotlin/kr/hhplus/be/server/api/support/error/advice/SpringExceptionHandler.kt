@@ -1,10 +1,10 @@
 package io.hhplus.cleanarchitecture.api.support.error.advice
 
-import kr.hhplus.be.server.api.support.error.ErrorType
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.hhplus.board.support.response.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import kr.hhplus.be.server.api.support.error.ErrorType
 import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
