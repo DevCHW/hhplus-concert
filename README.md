@@ -5,6 +5,4 @@
 - [마일스톤](./docs/마일스톤.md)
 - [시퀀스 다이어그램](./docs/시퀀스_다이어그램.md)
 - [ERD](./docs/images/erd/ERD_v2.png)
-
-## 히스토리 문서
-- [ERD 히스토리](./docs/history/db/DB_ERD.md)
+- [API 명세](./docs/API명세.md)
