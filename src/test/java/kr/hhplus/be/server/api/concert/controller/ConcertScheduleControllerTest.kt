@@ -19,7 +19,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import java.util.*
 
-class ConcertConcertEntityScheduleEntityControllerTest : RestDocsTestSupport() {
+class ConcertScheduleControllerTest : RestDocsTestSupport() {
     private lateinit var concertScheduleService: ConcertScheduleService
     private lateinit var scheduleController: ConcertScheduleController
 

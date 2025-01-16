@@ -21,7 +21,7 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import java.math.BigDecimal
 
 
-class BalanceEntityControllerTest : RestDocsTestSupport() {
+class BalanceControllerTest : RestDocsTestSupport() {
     private lateinit var balanceController: BalanceController
     private lateinit var balanceService: BalanceService
 

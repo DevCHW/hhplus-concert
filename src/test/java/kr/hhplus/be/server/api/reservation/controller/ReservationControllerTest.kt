@@ -24,7 +24,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
-class ReservationEntityControllerTest : RestDocsTestSupport() {
+class ReservationControllerTest : RestDocsTestSupport() {
     private lateinit var reservationFacade: ReservationFacade
     private lateinit var reservationController: ReservationController
 

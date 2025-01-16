@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 @DisplayName("잔고 서비스 단위 테스트")
-class BalanceEntityServiceTest {
+class BalanceServiceTest {
     private lateinit var balanceService: BalanceService
     private lateinit var balanceRepository: BalanceRepository
 

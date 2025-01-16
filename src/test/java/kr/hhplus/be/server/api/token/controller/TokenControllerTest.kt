@@ -21,7 +21,7 @@ import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 
-class TokenEntityControllerTest : RestDocsTestSupport() {
+class TokenControllerTest : RestDocsTestSupport() {
 
     private lateinit var tokenController: TokenController
     private lateinit var tokenService: TokenService

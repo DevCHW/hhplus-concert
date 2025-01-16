@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 @DisplayName("예약 Facade 단위 테스트")
-class ReservationEntityFacadeTest {
+class ReservationFacadeTest {
     private lateinit var reservationFacade: ReservationFacade
     private lateinit var reservationService: ReservationService
     private lateinit var concertService: ConcertService

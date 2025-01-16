@@ -18,7 +18,7 @@ import org.springframework.restdocs.payload.JsonFieldType.*
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
-class SeatEntityControllerTest : RestDocsTestSupport() {
+class SeatControllerTest : RestDocsTestSupport() {
     private lateinit var seatController: SeatController
     private lateinit var seatFacade: SeatFacade
 

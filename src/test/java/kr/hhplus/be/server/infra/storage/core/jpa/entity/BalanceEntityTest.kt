@@ -1,14 +1,14 @@
-package kr.hhplus.be.server.domain.balance.model
+package kr.hhplus.be.server.infra.storage.core.jpa.entity
 
 import com.github.f4b6a3.tsid.TsidCreator
-import kr.hhplus.be.server.infra.storage.core.jpa.entity.BalanceEntity
+import kr.hhplus.be.server.domain.balance.model.ModifyBalance
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
-@DisplayName("잔고 단위 테스트")
+@DisplayName("잔고 엔티티 단위 테스트")
 class BalanceEntityTest {
 
     @Nested

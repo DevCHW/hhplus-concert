@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("좌석 Facade 단위 테스트")
-class SeatEntityFacadeTest {
+class SeatFacadeTest {
     private lateinit var seatFacade : SeatFacade
     private lateinit var seatService: SeatService
     private lateinit var reservationService: ReservationService
