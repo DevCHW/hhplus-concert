@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.infra.storage.core.jpa.repository
 
+import kr.hhplus.be.server.domain.token.model.Token
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.TokenEntity
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -14,9 +15,9 @@ import java.util.*
 interface TokenEntityJpaRepository : JpaRepository<TokenEntity, String> {
     fun findByToken(token: UUID): TokenEntity?
 
-    fun findByStatus(status: TokenEntity.Status): List<TokenEntity>
+    fun findByStatus(status: Token.Status): List<TokenEntity>
 
-    fun findByStatusNotOrderByIdAsc(status: TokenEntity.Status, pageable: Pageable): List<TokenEntity>
+    fun findByStatusNotOrderByIdAsc(status: Token.Status, pageable: Pageable): List<TokenEntity>
 
     @Transactional
     @Modifying
@@ -28,7 +29,7 @@ interface TokenEntityJpaRepository : JpaRepository<TokenEntity, String> {
     """
     )
     fun updateStatusByIdsIn(
-        @Param("status") status: TokenEntity.Status,
+        @Param("status") status: Token.Status,
         @Param("ids") ids: List<String>,
         @Param("now") now: LocalDateTime = LocalDateTime.now()
     ): Int

@@ -31,13 +31,13 @@ class TokenCoreRepository(
     }
 
     override fun getTokenByStatus(status: Token.Status): List<Token> {
-        return tokenJpaRepository.findByStatus(TokenEntity.Status.fromDomain(status))
+        return tokenJpaRepository.findByStatus(status)
             .map { it.toDomain() }
     }
 
     override fun getTokenByStatusNotSortByIdAsc(status: Token.Status, limit: Int): List<Token> {
         if (limit == 0) return emptyList()
-        return tokenJpaRepository.findByStatusNotOrderByIdAsc(TokenEntity.Status.fromDomain(status), PageRequest.of(0, limit))
+        return tokenJpaRepository.findByStatusNotOrderByIdAsc(status, PageRequest.of(0, limit))
             .map { it.toDomain() }
     }
 
@@ -49,7 +49,7 @@ class TokenCoreRepository(
         if (tokenIds.isEmpty()) {
             return 0
         }
-        return tokenJpaRepository.updateStatusByIdsIn(TokenEntity.Status.fromDomain(status), tokenIds)
+        return tokenJpaRepository.updateStatusByIdsIn(status, tokenIds)
     }
 
     override fun deleteByToken(token: UUID) {

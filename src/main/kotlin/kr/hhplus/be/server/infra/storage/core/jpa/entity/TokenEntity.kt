@@ -18,52 +18,21 @@ class TokenEntity (
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    val status: Status = Status.CREATED,
+    val status: Token.Status = Token.Status.CREATED,
 
     updatedAt: LocalDateTime = LocalDateTime.now(),
     createdAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity(createdAt = createdAt, updatedAt = updatedAt) {
-
-    enum class Status (
-        val description: String,
-    ) {
-        CREATED("생성"), ACTIVE("활성");
-
-        fun toDomainStatus(): Token.Status {
-            return when(this) {
-                CREATED -> Token.Status.CREATED
-                ACTIVE -> Token.Status.ACTIVE
-            }
-        }
-
-        companion object {
-            fun fromDomain(tokenStatus: Token.Status): Status {
-                return when(tokenStatus) {
-                    Token.Status.CREATED -> CREATED
-                    Token.Status.ACTIVE -> ACTIVE
-                }
-            }
-        }
-    }
 
     fun toDomain(): Token {
         return Token(
             id = this.id,
             userId = this.userId,
             token = this.token,
-            status = this.status.toDomainStatus(),
+            status = this.status,
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
         )
-    }
-
-    companion object {
-        fun fromDomain(token: Token): TokenEntity {
-            return TokenEntity(
-                userId = token.userId,
-                token.token
-            )
-        }
     }
 }
 
