@@ -2,7 +2,9 @@ package kr.hhplus.be.server.api.reservation.controller
 
 import com.hhplus.board.support.response.ApiResponse
 import kr.hhplus.be.server.api.reservation.application.ReservationFacade
+import kr.hhplus.be.server.api.reservation.controller.dto.request.CreatePaymentRequest
 import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservationRequest
+import kr.hhplus.be.server.api.reservation.controller.dto.response.CreatePaymentResponse
 import kr.hhplus.be.server.api.reservation.controller.dto.response.CreateReservationResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,6 +29,17 @@ class ReservationController(
         )
 
         return ApiResponse.success(CreateReservationResponse(result.id))
+    }
+
+    /**
+     * 예약 결제 API
+     */
+    @PostMapping("/api/v1/reservations/pay")
+    fun createPayment(
+        @RequestBody request: CreatePaymentRequest
+    ): ApiResponse<CreatePaymentResponse> {
+        val result = reservationFacade.createPayment(request.reservationId, request.token)
+        return ApiResponse.success(CreatePaymentResponse(result.paymentId))
     }
 
 }

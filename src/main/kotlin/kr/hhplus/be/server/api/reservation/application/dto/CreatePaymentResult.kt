@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.payment.application.dto
+package kr.hhplus.be.server.api.reservation.application.dto
 
 import kr.hhplus.be.server.domain.payment.model.Payment
 import java.math.BigDecimal

@@ -10,7 +10,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.reservation.application.ReservationFacade
+import kr.hhplus.be.server.api.reservation.application.dto.CreatePaymentResult
 import kr.hhplus.be.server.api.reservation.application.dto.CreateReservationResult
+import kr.hhplus.be.server.api.reservation.controller.dto.request.CreatePaymentRequest
 import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservationRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,7 +20,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.*
 
 class ReservationEntityControllerTest : RestDocsTestSupport() {
     private lateinit var reservationFacade: ReservationFacade
@@ -66,7 +70,7 @@ class ReservationEntityControllerTest : RestDocsTestSupport() {
                         .description("""
                             예약에 필요한 정보를 입력받아 예약을 생성합니다.
                             예약 성공 이후 약 5분간 결제가 이루어지지 않을 경우 자동 취소처리됩니다.
-                        """.trimIndent())
+                        """)
                         .requestFields(
                             fieldWithPath("concertId").type(STRING).description("콘서트 일정 ID"),
                             fieldWithPath("userId").type(STRING).description("유저 ID"),
@@ -76,6 +80,52 @@ class ReservationEntityControllerTest : RestDocsTestSupport() {
                             fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                             fieldWithPath("data").type(OBJECT).description("결과 데이터"),
                             fieldWithPath("data.reservationId").type(STRING).description("예약 ID"),
+                        ),
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                ),
+            )
+    }
+
+    @Test
+    fun `결제 API`() {
+        val request = CreatePaymentRequest(
+            reservationId = TsidCreator.getTsid().toString(),
+            token = UUID.randomUUID(),
+        )
+
+        val result = CreatePaymentResult(
+            paymentId = TsidCreator.getTsid().toString(),
+            reservationId = request.reservationId,
+            amount = BigDecimal.ZERO,
+        )
+
+        every { reservationFacade.createPayment(any(), any()) } returns result
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(request)
+            .post("/api/v1/reservations/pay")
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "결제",
+                    ResourceSnippetParametersBuilder()
+                        .tag("결제")
+                        .summary("결제 생성")
+                        .description("""
+                            결제에 필요한 정보를 받아 사용자의 잔액을 차감하고 결제를 생성합니다.
+                            결제 완료 시 대기열 토큰을 삭제 처리합니다.
+                        """.trimIndent())
+                        .requestFields(
+                            fieldWithPath("reservationId").type(STRING).description("예약 ID"),
+                            fieldWithPath("token").type(STRING).description("토큰"),
+                        )
+                        .responseFields(
+                            fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
+                            fieldWithPath("data").type(OBJECT).description("결과 데이터"),
+                            fieldWithPath("data.id").type(STRING).description("결제 ID"),
                         ),
                     requestPreprocessor(),
                     responsePreprocessor(),
