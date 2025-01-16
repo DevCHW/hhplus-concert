@@ -1,17 +1,12 @@
 package kr.hhplus.be.server.domain.concert.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
-import kr.hhplus.be.server.domain.BaseEntity
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
-@Entity
-@Table(name = "concert")
-class Concert (
-    @Column(name = "title")
+data class Concert(
+    val id: String,
     val title: String,
-
-    @Column(name = "price")
     val price: BigDecimal,
-) : BaseEntity()
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+)

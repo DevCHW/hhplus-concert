@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.reservation
 
 import kr.hhplus.be.server.domain.reservation.error.SeatAlreadyReservedException
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
+import kr.hhplus.be.server.domain.reservation.model.ModifyReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,10 +23,7 @@ class ReservationService(
         if (exist) {
             throw SeatAlreadyReservedException("이미 예약된 좌석입니다.")
         }
-
-        val reservation = Reservation.create(createReservation)
-
-        return reservationRepository.save(reservation)
+        return reservationRepository.save(createReservation)
     }
 
     /**
@@ -41,7 +39,7 @@ class ReservationService(
             .map { it.id }
 
         if (timeoutReservationsIds.isNotEmpty()) {
-            reservationRepository.updateStatusByIdsIn(Reservation.Status.CANCEL, timeoutReservationsIds)
+            reservationRepository.modifyStatusByIdsIn(Reservation.Status.CANCEL, timeoutReservationsIds)
         }
     }
 
@@ -56,13 +54,16 @@ class ReservationService(
      * 예약 상태 변경
      */
     @Transactional
-    fun modifyStatus(
+    fun modifyReservation(
         reservationId: String,
         status: Reservation.Status
-    ) {
-        val reservation = reservationRepository.getById(reservationId)
-        reservation.modifyStatus(status)
-        reservationRepository.save(reservation)
+    ): Reservation {
+        return reservationRepository.modify(
+            ModifyReservation(
+                id = reservationId,
+                status = status,
+            )
+        )
     }
 
     /**

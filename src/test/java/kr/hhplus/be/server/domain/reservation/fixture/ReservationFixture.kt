@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 class ReservationFixture {
     companion object {
         fun createReservation(
+            id: String = TsidCreator.getTsid().toString(),
             seatId: String = TsidCreator.getTsid().toString(),
             userId: String = TsidCreator.getTsid().toString(),
             payAmount: BigDecimal = BigDecimal.valueOf(100),
@@ -17,6 +18,7 @@ class ReservationFixture {
             updatedAt: LocalDateTime = LocalDateTime.now(),
         ): Reservation {
             return Reservation(
+                id = id,
                 seatId = seatId,
                 userId = userId,
                 status = status,

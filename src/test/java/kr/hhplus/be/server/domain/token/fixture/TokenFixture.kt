@@ -8,6 +8,7 @@ import java.util.*
 class TokenFixture {
     companion object {
         fun createToken(
+            id: String = TsidCreator.getTsid().toString(),
             userId: String = TsidCreator.getTsid().toString(),
             token: UUID = UUID.randomUUID(),
             status: Token.Status = Token.Status.ACTIVE,
@@ -15,6 +16,7 @@ class TokenFixture {
             updatedAt: LocalDateTime = LocalDateTime.now(),
         ): Token {
             return Token(
+                id = id,
                 userId = userId,
                 token = token,
                 status = status,

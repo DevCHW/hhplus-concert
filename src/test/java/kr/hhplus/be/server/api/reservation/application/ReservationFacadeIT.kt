@@ -4,8 +4,8 @@ import com.github.f4b6a3.tsid.TsidCreator
 import io.hhplus.cleanarchitecture.support.concurrent.ConcurrencyTestUtils
 import kr.hhplus.be.server.domain.concert.ConcertRepository
 import kr.hhplus.be.server.domain.concert.SeatRepository
-import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
-import kr.hhplus.be.server.domain.concert.fixture.SeatFixture
+import kr.hhplus.be.server.domain.concert.model.CreateConcert
+import kr.hhplus.be.server.domain.concert.model.CreateSeat
 import kr.hhplus.be.server.domain.reservation.ReservationRepository
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.support.IntegrationTestSupport
@@ -29,13 +29,17 @@ class ReservationFacadeIT(
         // given
         val userId = TsidCreator.getTsid().toString()
         val concert = concertRepository.save(
-            ConcertFixture.createConcert(
-                price = BigDecimal.valueOf(100)
+            CreateConcert(
+                title = "title",
+                price = BigDecimal(100)
             )
         )
 
         val seat = seatRepository.save(
-            SeatFixture.createSeat()
+            CreateSeat(
+                concertScheduleId = TsidCreator.getTsid().toString(),
+                number = 1
+            )
         )
 
         // when
@@ -67,13 +71,17 @@ class ReservationFacadeIT(
             // given
             val userId = TsidCreator.getTsid().toString()
             val concert = concertRepository.save(
-                ConcertFixture.createConcert(
+                CreateConcert(
+                    title = "title",
                     price = BigDecimal.valueOf(100)
                 )
             )
 
             val seat = seatRepository.save(
-                SeatFixture.createSeat(number = 2)
+                CreateSeat(
+                    concertScheduleId = TsidCreator.getTsid().toString(),
+                    number = 1,
+                )
             )
 
             val successCount = AtomicInteger()

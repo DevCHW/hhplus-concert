@@ -30,7 +30,7 @@ class PaymentFacade(
         balanceService.decreaseBalance(reservation.userId, reservation.payAmount)
 
         // 예약 상태 변경
-        reservationService.modifyStatus(reservationId, Reservation.Status.COMPLETED)
+        reservationService.modifyReservation(reservationId, Reservation.Status.COMPLETED)
 
         // 토큰 삭제
         tokenService.deleteToken(token)

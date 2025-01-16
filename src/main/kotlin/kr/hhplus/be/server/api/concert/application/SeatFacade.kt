@@ -24,9 +24,7 @@ class SeatFacade(
         val reservationMap = reservations.associateBy { it.seatId }
 
         return seats
-            .filter {
-                reservationMap.get(it.id) == null
-            }
+            .filter { reservationMap.get(it.id) == null }
             .map(GetAvailableSeatResult.Companion::from)
     }
 }

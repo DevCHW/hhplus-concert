@@ -1,10 +1,11 @@
 package kr.hhplus.be.server.domain.token
 
+import kr.hhplus.be.server.domain.token.model.CreateToken
 import kr.hhplus.be.server.domain.token.model.Token
 import java.util.*
 
 interface TokenRepository {
-    fun save(token: Token): Token
+    fun save(createToken: CreateToken): Token
 
     fun getByToken(token: UUID): Token
 
@@ -12,9 +13,9 @@ interface TokenRepository {
 
     fun getTokenByStatusNotSortByIdAsc(status: Token.Status, limit: Int): List<Token>
 
-    fun deleteTokens(expiredTokens: List<Token>)
+    fun deleteByIds(tokenIds: List<String>)
 
-    fun updateStatusByIdsIn(status: Token.Status, inactiveTokenIds: List<String>): Int
+    fun updateStatusByIdsIn(status: Token.Status, tokenIds: List<String>): Int
 
     fun deleteByToken(token: UUID)
 }

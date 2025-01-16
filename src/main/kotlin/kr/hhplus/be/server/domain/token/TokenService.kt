@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.token
 
+import kr.hhplus.be.server.domain.token.model.CreateToken
 import kr.hhplus.be.server.domain.token.model.Token
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -15,7 +16,7 @@ class TokenService(
      */
     fun createToken(userId: String): Token {
         return repository.save(
-            Token(
+            CreateToken(
                 userId = userId,
                 token = UUID.randomUUID(),
             )
@@ -40,7 +41,8 @@ class TokenService(
             }
 
         if (expiredActiveTokens.isNotEmpty()) {
-            repository.deleteTokens(expiredActiveTokens)
+            val expiredTokenIds = expiredActiveTokens.map { it.id }
+            repository.deleteByIds(expiredTokenIds)
         }
     }
 
