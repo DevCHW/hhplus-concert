@@ -37,4 +37,6 @@ interface TokenEntityJpaRepository : JpaRepository<TokenEntity, String> {
     fun deleteByToken(token: UUID)
 
     fun existsByUserId(userId: String): Boolean
+
+    fun findNullableByToken(token: UUID): TokenEntity?
 }

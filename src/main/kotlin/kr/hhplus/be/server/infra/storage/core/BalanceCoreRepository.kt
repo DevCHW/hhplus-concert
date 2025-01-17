@@ -8,6 +8,7 @@ import kr.hhplus.be.server.infra.storage.core.jpa.entity.BalanceChargeLockEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.BalanceEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.BalanceChargeLockEntityJpaRepository
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.BalanceEntityJpaRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
 
@@ -37,6 +38,10 @@ class BalanceCoreRepository(
 
     override fun deleteChargeLock(chargeLockId: String) {
         return balanceChargeLockJpaRepository.deleteById(chargeLockId)
+    }
+
+    override fun getNullableChargeLock(chargeLockId: String): BalanceChargeLock? {
+        return balanceChargeLockJpaRepository.findByIdOrNull(chargeLockId)?.toDomain()
     }
 
     override fun getByUserId(userId: String): Balance {

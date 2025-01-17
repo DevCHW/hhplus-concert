@@ -30,6 +30,10 @@ class TokenCoreRepository(
         return tokenEntity.toDomain()
     }
 
+    override fun getNullableByToken(token: UUID): Token? {
+        return tokenJpaRepository.findNullableByToken(token)?.toDomain()
+    }
+
     override fun getTokenByStatus(status: Token.Status): List<Token> {
         return tokenJpaRepository.findByStatus(status)
             .map { it.toDomain() }

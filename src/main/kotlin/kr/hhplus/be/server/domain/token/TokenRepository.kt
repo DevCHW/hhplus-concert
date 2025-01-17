@@ -9,6 +9,8 @@ interface TokenRepository {
 
     fun getByToken(token: UUID): Token
 
+    fun getNullableByToken(token: UUID): Token?
+
     fun getTokenByStatus(status: Token.Status): List<Token>
 
     fun getTokenByStatusNotSortByIdAsc(status: Token.Status, limit: Int): List<Token>

@@ -4,9 +4,11 @@ import com.github.f4b6a3.tsid.TsidCreator
 import io.hhplus.cleanarchitecture.support.concurrent.ConcurrencyTestUtils
 import kr.hhplus.be.server.support.IntegrationTestSupport
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.dao.DataIntegrityViolationException
 import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -78,6 +80,39 @@ class BalanceServiceIT(
             assertThat(successCount.get()).isEqualTo(10)
             assertThat(failCount.get()).isEqualTo(0)
             assertThat(result.balance).isEqualTo(BigDecimal.ZERO)
+        }
+    }
+
+    @Nested
+    inner class `잔고 충전 잠금` {
+        @Test
+        fun `동일한 유저가 충전 잠금을 두번 시도할 경우 DataIntegrityViolationException이 발생한다`() {
+            // given
+            val userId = TsidCreator.getTsid().toString()
+            balanceService.chargeLock(userId) // first
+
+            // when & then
+            assertThatThrownBy {
+                balanceService.chargeLock(userId) // second
+            }
+                .isInstanceOf(DataIntegrityViolationException::class.java)
+        }
+    }
+
+    @Nested
+    inner class `잔고 충전 잠금 해제` {
+        @Test
+        fun `잔고 충전 잠금 ID를 통해 잠금을 해제할 수 있다`() {
+            // given
+            val userId = TsidCreator.getTsid().toString()
+            val lock = balanceRepository.createChargeLock(userId)
+
+            // when
+            balanceService.chargeUnLock(lock.id)
+            val result = balanceRepository.getNullableChargeLock(lock.id)
+
+            // then
+            assertThat(result).isNull() // 해제 이후 락 조회 시 Null이 되어야 한다.
         }
     }
 }
