@@ -27,7 +27,7 @@ class SpringExceptionHandler {
 
     // Request Body 검증을 통과하지 못한 경우 예외 처리
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    protected fun handleMethodArgumentNotValid(
+    fun handleMethodArgumentNotValid(
         request: HttpServletRequest?,
         response: HttpServletResponse,
         e: MethodArgumentNotValidException

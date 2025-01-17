@@ -1,0 +1,19 @@
+# 변수 설정
+@userId = {{userId}}
+
+### 잔고 충전
+PUT {{host}}/api/v1/balance/charge
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "amount": 100
+}
+
+### 잔고 조회
+GET {{host}}/api/v1/balance?userId={{userId}}
+Content-Type: application/json
+
+
+
+
