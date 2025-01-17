@@ -21,4 +21,9 @@ class ConcertCoreRepository(
         return concertJpaRepository.save(concertEntity).toDomain()
     }
 
+    override fun getAll(): List<Concert> {
+        return concertJpaRepository.findAll()
+            .map { it.toDomain() }
+    }
+
 }

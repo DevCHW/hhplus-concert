@@ -7,4 +7,6 @@ interface ConcertRepository {
     fun getById(concertId: String): Concert
 
     fun save(createConcert: CreateConcert): Concert
+
+    fun getAll(): List<Concert>
 }
