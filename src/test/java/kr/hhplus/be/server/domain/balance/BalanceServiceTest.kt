@@ -31,7 +31,7 @@ class BalanceServiceTest {
             val userId = balance.userId
             val amount = BigDecimal.valueOf(100)
 
-            every { balanceRepository.getByUserId(any()) } returns balance
+            every { balanceRepository.getNullableByUserId(any()) } returns balance
             every { balanceRepository.modify(any()) } returns BalanceFixture.createBalance(balance = balance.balance.plus(amount))
 
             // when
@@ -50,7 +50,7 @@ class BalanceServiceTest {
             // given
             val balance = BalanceFixture.createBalance()
 
-            every { balanceRepository.getByUserIdOrNull(balance.userId) } returns balance
+            every { balanceRepository.getNullableByUserId(balance.userId) } returns balance
 
             // when
             val result = balanceService.getBalance(balance.userId)
@@ -63,13 +63,12 @@ class BalanceServiceTest {
         fun `조회된 잔고가 없으면 0원인 잔고를 반환한다`() {
             // given
             val userId = TsidCreator.getTsid().toString()
-            every { balanceRepository.getByUserIdOrNull(any()) } returns null
+            every { balanceRepository.getNullableByUserId(any()) } returns null
 
             // when
             val result = balanceService.getBalance(userId)
 
             // then
-            println("result.balance = ${result.balance}")
             assertThat(result.balance).isEqualTo(BigDecimal.ZERO)
         }
     }
@@ -82,7 +81,7 @@ class BalanceServiceTest {
             val userId = TsidCreator.getTsid().toString()
             val amount = BigDecimal.valueOf(100)
 
-            every { balanceRepository.getByUserIdWithLock(userId) }
+            every { balanceRepository.getNullableByUserIdWithLock(userId) }
                 .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(200)))
 
             every { balanceRepository.modify(any()) }

@@ -2,6 +2,7 @@ package kr.hhplus.be.server.infra.storage.core
 
 import kr.hhplus.be.server.domain.balance.BalanceRepository
 import kr.hhplus.be.server.domain.balance.model.Balance
+import kr.hhplus.be.server.domain.balance.model.BalanceChargeLock
 import kr.hhplus.be.server.domain.balance.model.ModifyBalance
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.BalanceChargeLockEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.BalanceEntity
@@ -16,7 +17,7 @@ class BalanceCoreRepository(
     private val balanceChargeLockJpaRepository: BalanceChargeLockEntityJpaRepository
 ) : BalanceRepository {
 
-    override fun getByUserIdOrNull(userId: String): Balance? {
+    override fun getNullableByUserId(userId: String): Balance? {
         val balanceEntity = balanceJpaRepository.findNullableByUserId(userId)
         return balanceEntity?.toDomain()
     }
@@ -26,12 +27,12 @@ class BalanceCoreRepository(
         return balanceJpaRepository.save(balanceEntity).toDomain()
     }
 
-    override fun getByUserIdWithLock(userId: String): Balance {
-        return balanceJpaRepository.findForUpdateByUserId(userId).toDomain()
+    override fun getNullableByUserIdWithLock(userId: String): Balance? {
+        return balanceJpaRepository.findForUpdateByUserId(userId)?.toDomain()
     }
 
-    override fun chargeLock(userId: String): BalanceChargeLockEntity {
-        return balanceChargeLockJpaRepository.save(BalanceChargeLockEntity(userId))
+    override fun chargeLock(userId: String): BalanceChargeLock {
+        return balanceChargeLockJpaRepository.save(BalanceChargeLockEntity(userId)).toDomain()
     }
 
     override fun chargeUnLock(chargeLockId: String) {

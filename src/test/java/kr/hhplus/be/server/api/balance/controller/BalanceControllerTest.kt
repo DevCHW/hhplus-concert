@@ -9,8 +9,10 @@ import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.http.ContentType
+import kr.hhplus.be.server.api.balance.application.BalanceFacade
+import kr.hhplus.be.server.api.balance.application.dto.ChargeBalanceResult
+import kr.hhplus.be.server.api.balance.application.dto.GetBalanceResult
 import kr.hhplus.be.server.api.balance.controller.dto.request.ChargeRequest
-import kr.hhplus.be.server.domain.balance.BalanceService
 import kr.hhplus.be.server.domain.balance.fixture.BalanceFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,12 +25,12 @@ import java.math.BigDecimal
 
 class BalanceControllerTest : RestDocsTestSupport() {
     private lateinit var balanceController: BalanceController
-    private lateinit var balanceService: BalanceService
+    private lateinit var balanceFacade: BalanceFacade
 
     @BeforeEach
     fun setup() {
-        balanceService = mockk()
-        balanceController = BalanceController(balanceService)
+        balanceFacade = mockk()
+        balanceController = BalanceController(balanceFacade)
         mockMvc = mockController(balanceController)
     }
 
@@ -39,9 +41,9 @@ class BalanceControllerTest : RestDocsTestSupport() {
             amount = BigDecimal.valueOf(100),
         )
 
-        val balance = BalanceFixture.createBalance(userId = request.userId, balance = request.amount)
-        every { balanceService.charge(any(), any()) }
-            .returns(balance)
+        val chargeResult = ChargeBalanceResult.from(BalanceFixture.createBalance(userId = request.userId, balance = request.amount))
+        every { balanceFacade.charge(any(), any()) }
+            .returns(chargeResult)
 
         given()
             .body(request)
@@ -76,9 +78,9 @@ class BalanceControllerTest : RestDocsTestSupport() {
     fun `잔고 조회 API`() {
         val userId = TsidCreator.getTsid().toString()
         val balance = BalanceFixture.createBalance(userId = userId)
-
-        every { balanceService.getBalance(any()) }
-            .returns(balance)
+        val getBalanceResult = GetBalanceResult.from(balance)
+        every { balanceFacade.getBalance(any()) }
+            .returns(getBalanceResult)
 
         given()
             .queryParam("userId", userId)

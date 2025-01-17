@@ -32,32 +32,6 @@ class BalanceServiceIT(
             // then
             assertThat(result.balance).isEqualTo(balance.balance.plus(amount))
         }
-
-        @Test
-        fun `동일한 유저에게 동시에 10번 충전 요청이 들어와도 1번만 성공해야 한다`() {
-            // given
-            val userId = TsidCreator.getTsid().toString()
-            val balance = balanceRepository.create(userId)
-            val amount = BigDecimal.valueOf(100)
-
-            val successCount = AtomicInteger()
-            val failCount = AtomicInteger()
-            val action = Runnable {
-                try {
-                    balanceService.charge(balance.userId, amount)
-                    successCount.incrementAndGet()
-                } catch (e: Exception) {
-                    failCount.incrementAndGet()
-                }
-            }
-
-            // when
-            ConcurrencyTestUtils.executeConcurrently(10, action)
-
-            // then
-            assertThat(successCount.get()).isEqualTo(1)
-            assertThat(failCount.get()).isEqualTo(9)
-        }
     }
 
     @Nested
