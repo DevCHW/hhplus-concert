@@ -1,8 +1,8 @@
-package io.hhplus.cleanarchitecture.api.support.error.advice
+package kr.hhplus.be.server.api.support.error
 
 import com.hhplus.board.support.response.ApiResponse
-import kr.hhplus.be.server.api.support.error.CoreApiException
-import kr.hhplus.be.server.api.support.error.ErrorType
+import kr.hhplus.be.server.domain.support.error.CoreException
+import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.logging.LogLevel
@@ -17,8 +17,8 @@ class CoreApiExceptionHandler {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    @ExceptionHandler(CoreApiException::class)
-    fun handleCoreException(e: CoreApiException): ResponseEntity<ApiResponse<Any>> {
+    @ExceptionHandler(CoreException::class)
+    fun handleCoreException(e: CoreException): ResponseEntity<ApiResponse<Any>> {
         when (e.errorType.logLevel) {
             LogLevel.ERROR -> log.error("{} : {}", e.errorType, e.errorMessage, e)
             LogLevel.FATAL -> log.error("{} : {}", e.errorType, e.errorMessage, e)

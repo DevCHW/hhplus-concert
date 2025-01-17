@@ -1,7 +1,7 @@
 package com.hhplus.board.support.response
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import kr.hhplus.be.server.api.support.error.ErrorType
+import kr.hhplus.be.server.domain.support.error.ErrorType
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ApiResponse<T> private constructor(

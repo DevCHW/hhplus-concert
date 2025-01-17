@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.api.support.error
+package kr.hhplus.be.server.domain.support.error
 
-class CoreApiException(
+class CoreException(
     val errorType: ErrorType,
     val errorMessage: String? = null,
 ) : RuntimeException(errorMessage?: errorType.message)

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.support.error
+package kr.hhplus.be.server.domain.support.error
 
 import org.springframework.boot.logging.LogLevel
 import org.springframework.http.HttpStatus
