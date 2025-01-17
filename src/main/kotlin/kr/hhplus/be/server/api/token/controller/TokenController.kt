@@ -17,7 +17,7 @@ class TokenController(
      * 토큰 생성
      */
     @PostMapping("/api/v1/token")
-    fun getToken(
+    fun createToken(
         @RequestBody request: CreateTokenRequest,
     ): ApiResponse<CreateTokenResponse> {
         val data = tokenService.createToken(request.userId)
@@ -27,9 +27,9 @@ class TokenController(
     /**
      * 토큰 조회
      */
-    @GetMapping("/api/v1/token/{token}")
-    fun getStatus(
-        @PathVariable("token") token: UUID,
+    @GetMapping("/api/v1/token")
+    fun getToken(
+        @RequestParam("token") token: UUID,
     ): ApiResponse<GetTokenResponse> {
         val data = tokenService.getToken(token)
         return ApiResponse.success(GetTokenResponse.from(data))

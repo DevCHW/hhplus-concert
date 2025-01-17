@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
 class TokenControllerTest : RestDocsTestSupport() {
 
@@ -92,7 +93,8 @@ class TokenControllerTest : RestDocsTestSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(request)
-            .get("/api/v1/token/{token}", token.token.toString())
+            .queryParam("token", token.token.toString())
+            .get("/api/v1/token")
             .then()
             .status(HttpStatus.OK)
             .apply(
@@ -105,6 +107,9 @@ class TokenControllerTest : RestDocsTestSupport() {
                             """
                             입력받은 토큰의 정보를 조회합니다.
                         """.trimIndent()
+                        )
+                        .queryParameters(
+                            parameterWithName("token").description("대기열 토큰"),
                         )
                         .responseFields(
                             fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
