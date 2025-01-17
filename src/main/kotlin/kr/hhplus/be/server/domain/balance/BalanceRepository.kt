@@ -12,9 +12,9 @@ interface BalanceRepository {
 
     fun getNullableByUserIdWithLock(userId: String): Balance?
 
-    fun chargeLock(userId: String): BalanceChargeLock
+    fun createChargeLock(userId: String): BalanceChargeLock
 
-    fun chargeUnLock(chargeLockId: String)
+    fun deleteChargeLock(chargeLockId: String)
 
     fun getByUserId(userId: String): Balance
 

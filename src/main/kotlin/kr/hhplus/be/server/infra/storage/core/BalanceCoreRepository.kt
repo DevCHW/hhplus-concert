@@ -31,11 +31,11 @@ class BalanceCoreRepository(
         return balanceJpaRepository.findForUpdateByUserId(userId)?.toDomain()
     }
 
-    override fun chargeLock(userId: String): BalanceChargeLock {
+    override fun createChargeLock(userId: String): BalanceChargeLock {
         return balanceChargeLockJpaRepository.save(BalanceChargeLockEntity(userId)).toDomain()
     }
 
-    override fun chargeUnLock(chargeLockId: String) {
+    override fun deleteChargeLock(chargeLockId: String) {
         return balanceChargeLockJpaRepository.deleteById(chargeLockId)
     }
 

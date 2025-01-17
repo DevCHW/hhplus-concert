@@ -32,12 +32,18 @@ class BalanceService(
         return balanceRepository.getNullableByUserId(userId) ?: Balance.default(userId)
     }
 
+    /**
+     * 잔고 충전 잠금
+     */
     fun chargeLock(userId: String): BalanceChargeLock {
-        return balanceRepository.chargeLock(userId)
+        return balanceRepository.createChargeLock(userId)
     }
 
+    /**
+     * 잔고 충전 잠금 해제
+     */
     fun chargeUnLock(chargeLockId: String) {
-        balanceRepository.chargeUnLock(chargeLockId)
+        balanceRepository.deleteChargeLock(chargeLockId)
     }
 
     /**
