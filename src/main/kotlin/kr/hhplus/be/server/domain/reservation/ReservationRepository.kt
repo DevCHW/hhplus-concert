@@ -11,11 +11,13 @@ interface ReservationRepository {
 
     fun getByStatus(status: Reservation.Status): List<Reservation>
 
-    fun modifyStatusByIdsIn(status: Reservation.Status, reservationIds: List<String>): Int
+    fun modifyStatusByIds(status: Reservation.Status, reservationIds: List<String>): Int
 
     fun modify(modifyReservation: ModifyReservation): Reservation
 
     fun getById(reservationId: String): Reservation
 
     fun getBySeatIds(seatIds: List<String>): List<Reservation>
+
+    fun getByIdWithLock(reservationId: String): Reservation
 }

@@ -15,7 +15,7 @@ data class Reservation(
     enum class Status(
         val description: String,
     ) {
-        PENDING("대기"),
+        PENDING("결제 대기"),
         COMPLETED("예약 완료"),
         CANCEL("예약 취소")
     }

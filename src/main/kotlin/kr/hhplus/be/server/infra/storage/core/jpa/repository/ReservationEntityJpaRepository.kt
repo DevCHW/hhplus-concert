@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.infra.storage.core.jpa.repository
 
+import jakarta.persistence.LockModeType
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.ReservationEntity
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -29,4 +31,7 @@ interface ReservationEntityJpaRepository : JpaRepository<ReservationEntity, Stri
     ): Int
 
     fun findBySeatIdIn(seatIds: List<String>): List<ReservationEntity>
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    fun findForUpdateById(reservationId: String): Reservation
 }

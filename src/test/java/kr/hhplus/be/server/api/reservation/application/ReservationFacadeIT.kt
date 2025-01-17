@@ -15,7 +15,6 @@ import kr.hhplus.be.server.domain.token.TokenRepository
 import kr.hhplus.be.server.domain.token.model.CreateToken
 import kr.hhplus.be.server.support.IntegrationTestSupport
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -134,17 +133,15 @@ class ReservationFacadeIT(
 
         val token = tokenRepository.save(
             CreateToken(
-            userId = balance.userId,
-            token = UUID.randomUUID(),
+                userId = balance.userId,
+                token = UUID.randomUUID(),
+            )
         )
-        )
-
-        // when
-        val result = reservationFacade.createPayment(reservation.id, token.token)
 
         @Test
         fun `성공 시 결제 내역이 남는다`() {
             // when
+            val result = reservationFacade.payReservation(reservation.id, token.token)
             val payment = paymentRepository.getById(result.paymentId)
 
             // then
@@ -154,6 +151,7 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 예약의 결제 금액만큼 잔고가 차감된다`() {
             // when
+            reservationFacade.payReservation(reservation.id, token.token)
             val result = balanceRepository.getByUserId(balance.userId)
 
             // then
@@ -163,17 +161,43 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 대기열 토큰은 삭제된다`() {
             // when
-            assertThatThrownBy { tokenRepository.getByToken(token.token) }
-                .isInstanceOf(Exception::class.java)
+            reservationFacade.payReservation(reservation.id, token.token)
+            val result = tokenRepository.getNullableByToken(token.token)
+
+            // then
+            assertThat(result).isNull()
         }
 
         @Test
         fun `성공 시 예약 상태는 COMPLETED 상태가 된다`() {
             // when
+            reservationFacade.payReservation(reservation.id, token.token)
             val reservation = reservationRepository.getById(reservation.id)
 
             // then
             assertThat(reservation.status).isEqualTo(Reservation.Status.COMPLETED)
+        }
+
+        @Test
+        fun `같은 예약에 대해 동시에 결제 요청이 5번 들어오더라도 1번만 성공해야 한다`() {
+            // given
+            val successCount = AtomicInteger()
+            val failCount = AtomicInteger()
+            val action = Runnable {
+                try {
+                    reservationFacade.payReservation(reservation.id, token.token)
+                    successCount.incrementAndGet()
+                } catch (e: Exception) {
+                    failCount.incrementAndGet()
+                }
+            }
+
+            // when
+            ConcurrencyTestUtils.executeConcurrently(5, action)
+
+            // then
+            assertThat(successCount.get()).isEqualTo(1)
+            assertThat(failCount.get()).isEqualTo(4)
         }
     }
 }

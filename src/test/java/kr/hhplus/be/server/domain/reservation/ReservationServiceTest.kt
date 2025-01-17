@@ -84,14 +84,14 @@ class ReservationServiceTest {
             every { reservationRepository.getByStatus(Reservation.Status.PENDING) }
                 .returns(listOf(reservation1, reservation2))
 
-            every { reservationRepository.modifyStatusByIdsIn(Reservation.Status.CANCEL, any()) }
+            every { reservationRepository.modifyStatusByIds(Reservation.Status.CANCEL, any()) }
                 .returns(2)
 
             // when
             reservationService.cancelTimeoutReservations(timeoutDuration, now)
 
             // then
-            verify(exactly = 1) { reservationRepository.modifyStatusByIdsIn(Reservation.Status.CANCEL, any()) }
+            verify(exactly = 1) { reservationRepository.modifyStatusByIds(Reservation.Status.CANCEL, any()) }
         }
 
         @Test
@@ -107,7 +107,7 @@ class ReservationServiceTest {
             reservationService.cancelTimeoutReservations(timeoutDuration, now)
 
             // then
-            verify(exactly = 0) { reservationRepository.modifyStatusByIdsIn(any(), any()) }
+            verify(exactly = 0) { reservationRepository.modifyStatusByIds(any(), any()) }
         }
     }
 }

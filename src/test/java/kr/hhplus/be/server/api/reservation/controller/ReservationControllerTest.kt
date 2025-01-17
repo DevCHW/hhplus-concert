@@ -10,10 +10,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.reservation.application.ReservationFacade
-import kr.hhplus.be.server.api.reservation.application.dto.CreatePaymentResult
 import kr.hhplus.be.server.api.reservation.application.dto.CreateReservationResult
-import kr.hhplus.be.server.api.reservation.controller.dto.request.CreatePaymentRequest
+import kr.hhplus.be.server.api.reservation.application.dto.PayReservationResult
 import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservationRequest
+import kr.hhplus.be.server.api.reservation.controller.dto.request.PayReservationRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -89,18 +89,18 @@ class ReservationControllerTest : RestDocsTestSupport() {
 
     @Test
     fun `결제 API`() {
-        val request = CreatePaymentRequest(
+        val request = PayReservationRequest(
             reservationId = TsidCreator.getTsid().toString(),
             token = UUID.randomUUID(),
         )
 
-        val result = CreatePaymentResult(
+        val result = PayReservationResult(
             paymentId = TsidCreator.getTsid().toString(),
             reservationId = request.reservationId,
             amount = BigDecimal.ZERO,
         )
 
-        every { reservationFacade.createPayment(any(), any()) } returns result
+        every { reservationFacade.payReservation(any(), any()) } returns result
 
         given()
             .contentType(ContentType.JSON)

@@ -28,7 +28,7 @@ class ReservationCoreRepository(
             .map { it.toDomain() }
     }
 
-    override fun modifyStatusByIdsIn(status: Reservation.Status, reservationIds: List<String>): Int {
+    override fun modifyStatusByIds(status: Reservation.Status, reservationIds: List<String>): Int {
         return reservationJpaRepository.updateStatusByIds(status, reservationIds)
     }
 
@@ -45,6 +45,10 @@ class ReservationCoreRepository(
     override fun getBySeatIds(seatIds: List<String>): List<Reservation> {
         return reservationJpaRepository.findBySeatIdIn(seatIds)
             .map { it.toDomain() }
+    }
+
+    override fun getByIdWithLock(reservationId: String): Reservation {
+        return reservationJpaRepository.findForUpdateById(reservationId)
     }
 
 
