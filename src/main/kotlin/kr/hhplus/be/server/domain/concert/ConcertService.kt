@@ -11,4 +11,8 @@ class ConcertService(
     fun getConcert(concertId: String): Concert {
         return concertRepository.getById(concertId)
     }
+
+    fun getConcerts(): List<Concert> {
+        return concertRepository.getAll()
+    }
 }

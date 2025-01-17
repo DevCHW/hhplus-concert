@@ -1,13 +1,10 @@
 package kr.hhplus.be.server.domain.balance.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
-import kr.hhplus.be.server.domain.BaseEntity
+import java.time.LocalDateTime
 
-@Entity
-@Table(name = "balance_charge_lock")
-class BalanceChargeLock(
-    @Column(name = "user_id")
+data class BalanceChargeLock(
+    val id: String,
     val userId: String,
-) : BaseEntity()
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+)

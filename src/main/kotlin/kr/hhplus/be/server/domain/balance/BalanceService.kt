@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.balance
 
 import kr.hhplus.be.server.domain.balance.model.Balance
+import kr.hhplus.be.server.domain.balance.model.BalanceChargeLock
+import kr.hhplus.be.server.domain.balance.model.ModifyBalance
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -14,24 +16,34 @@ class BalanceService(
      * 잔고 충전
      */
     fun charge(userId: String, amount: BigDecimal): Balance {
-        val lock = balanceRepository.chargeLock(userId)
-        try {
-            val chargedBalance = balanceRepository.getByUserIdOrNull(userId)?.charge(amount)
-                ?: Balance(userId = userId, balance = amount)
+        val balance = balanceRepository.getNullableByUserId(userId) ?: balanceRepository.create(userId)
+        val modifyBalance = ModifyBalance(userId, balance.balance.plus(amount))
+        return balanceRepository.modify(modifyBalance)
+    }
 
-            return balanceRepository.save(chargedBalance)
-        } finally {
-            balanceRepository.chargeUnLock(lock.id)
-        }
-
+    fun create(userId: String, amount: BigDecimal = BigDecimal.ZERO): Balance {
+        return balanceRepository.create(userId, amount)
     }
 
     /**
      * 잔고 조회
      */
     fun getBalance(userId: String): Balance {
-        return balanceRepository.getByUserIdOrNull(userId)
-            ?: Balance(userId = userId, balance = BigDecimal.ZERO)
+        return balanceRepository.getNullableByUserId(userId) ?: Balance.default(userId)
+    }
+
+    /**
+     * 잔고 충전 잠금
+     */
+    fun chargeLock(userId: String): BalanceChargeLock {
+        return balanceRepository.createChargeLock(userId)
+    }
+
+    /**
+     * 잔고 충전 잠금 해제
+     */
+    fun chargeUnLock(chargeLockId: String) {
+        balanceRepository.deleteChargeLock(chargeLockId)
     }
 
     /**
@@ -39,9 +51,9 @@ class BalanceService(
      */
     @Transactional
     fun decreaseBalance(userId: String, amount: BigDecimal): Balance {
-        val balance = balanceRepository.getByUserIdWithLock(userId)
-
-        return balanceRepository.save(balance.decrease(amount))
+        val balance = balanceRepository.getNullableByUserIdWithLock(userId) ?: balanceRepository.create(userId)
+        val modifyBalance = ModifyBalance(userId, balance.balance.minus(amount))
+        return balanceRepository.modify(modifyBalance)
     }
 
 }

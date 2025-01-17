@@ -87,13 +87,13 @@ class TokenServiceTest {
             val activeTokens = listOf(expiredToken1, expiredToken2)
 
             every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
-            every { tokenRepository.deleteTokens(any()) } just Runs
+            every { tokenRepository.deleteByIds(any()) } just Runs
 
             // when
             tokenService.expireActiveTokens(activeTokenLifeTime, now)
 
             // then
-            verify(exactly = 1) { tokenRepository.deleteTokens(listOf(expiredToken1, expiredToken2)) }
+            verify(exactly = 1) { tokenRepository.deleteByIds(listOf(expiredToken1.id, expiredToken2.id)) }
         }
 
         @Test
@@ -117,13 +117,13 @@ class TokenServiceTest {
             val activeTokens = listOf(expiredToken, nonExpiredToken)
 
             every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
-            every { tokenRepository.deleteTokens(any()) } just Runs
+            every { tokenRepository.deleteByIds(any()) } just Runs
 
             // when
             tokenService.expireActiveTokens(activeTokenLifeTime, now)
 
             // then
-            verify(exactly = 1) { tokenRepository.deleteTokens(listOf(expiredToken)) } // 만료된 토큰만 삭제가 호출되어야 한다.
+            verify(exactly = 1) { tokenRepository.deleteByIds(listOf(expiredToken.id)) } // 만료된 토큰만 삭제가 호출되어야 한다.
         }
     }
 

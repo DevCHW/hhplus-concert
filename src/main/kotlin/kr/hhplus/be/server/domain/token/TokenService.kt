@@ -1,5 +1,8 @@
 package kr.hhplus.be.server.domain.token
 
+import kr.hhplus.be.server.domain.support.error.CoreException
+import kr.hhplus.be.server.domain.support.error.ErrorType
+import kr.hhplus.be.server.domain.token.model.CreateToken
 import kr.hhplus.be.server.domain.token.model.Token
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -9,13 +12,15 @@ import java.util.*
 class TokenService(
     private val repository: TokenRepository,
 ) {
-
     /**
      * 토큰 생성
      */
     fun createToken(userId: String): Token {
+        if (repository.isExistByUserId(userId)) {
+            throw CoreException(ErrorType.TOKEN_ALREADY_EXIST)
+        }
         return repository.save(
-            Token(
+            CreateToken(
                 userId = userId,
                 token = UUID.randomUUID(),
             )
@@ -40,7 +45,8 @@ class TokenService(
             }
 
         if (expiredActiveTokens.isNotEmpty()) {
-            repository.deleteTokens(expiredActiveTokens)
+            val expiredTokenIds = expiredActiveTokens.map { it.id }
+            repository.deleteByIds(expiredTokenIds)
         }
     }
 
@@ -72,5 +78,13 @@ class TokenService(
      */
     fun deleteToken(token: UUID) {
         repository.deleteByToken(token)
+    }
+
+    /**
+     * 토큰 검증
+     */
+    fun isActive(tokenValue: UUID): Boolean {
+        val token = repository.getByToken(tokenValue)
+        return token.status == Token.Status.ACTIVE
     }
 }

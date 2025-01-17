@@ -1,0 +1,18 @@
+# 변수 설정
+@userId = {{userId}}
+
+### 대기열 토큰 생성
+POST {{host}}/api/v1/token
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+> {%
+    client.global.set("queueToken", response.body.data.token)
+%}
+
+### 대기열 토큰 조회
+GET {{host}}/api/v1/token?token={{queueToken}}
+Content-Type: application/json

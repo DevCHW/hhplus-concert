@@ -1,16 +1,11 @@
 package kr.hhplus.be.server.domain.concert.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
-import kr.hhplus.be.server.domain.BaseEntity
+import java.time.LocalDateTime
 
-@Entity
-@Table(name = "seat")
-class Seat(
-    @Column(name = "concert_schedule_id")
+data class Seat(
+    val id: String,
     val concertScheduleId: String,
-
-    @Column(name = "number")
     val number: Int,
-) : BaseEntity()
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+)

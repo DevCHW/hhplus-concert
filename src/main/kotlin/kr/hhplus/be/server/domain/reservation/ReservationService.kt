@@ -2,9 +2,9 @@ package kr.hhplus.be.server.domain.reservation
 
 import kr.hhplus.be.server.domain.reservation.error.SeatAlreadyReservedException
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
+import kr.hhplus.be.server.domain.reservation.model.ModifyReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -22,10 +22,7 @@ class ReservationService(
         if (exist) {
             throw SeatAlreadyReservedException("이미 예약된 좌석입니다.")
         }
-
-        val reservation = Reservation.create(createReservation)
-
-        return reservationRepository.save(reservation)
+        return reservationRepository.save(createReservation)
     }
 
     /**
@@ -35,13 +32,17 @@ class ReservationService(
         timeoutDuration: Long,
         now: LocalDateTime
     ) {
+        // 결제 대기 예약 목록 조회
         val pendingReservations = reservationRepository.getByStatus(Reservation.Status.PENDING)
+
+        // 결제 시간 초과 예약 ID 목록 추출
         val timeoutReservationsIds = pendingReservations
             .filter { it.updatedAt.plusSeconds(timeoutDuration).isBefore(now) }
             .map { it.id }
 
+        // 결제 시간 초과 ID 목록이 있는 경우 취소 상태로 변경
         if (timeoutReservationsIds.isNotEmpty()) {
-            reservationRepository.updateStatusByIdsIn(Reservation.Status.CANCEL, timeoutReservationsIds)
+            reservationRepository.modifyStatusByIds(Reservation.Status.CANCEL, timeoutReservationsIds)
         }
     }
 
@@ -53,16 +54,25 @@ class ReservationService(
     }
 
     /**
+     * 예약 조회 락 걸고 조회
+     */
+    fun getReservationWithLock(reservationId: String): Reservation {
+        return reservationRepository.getByIdWithLock(reservationId)
+    }
+
+    /**
      * 예약 상태 변경
      */
-    @Transactional
-    fun modifyStatus(
+    fun modifyReservation(
         reservationId: String,
         status: Reservation.Status
-    ) {
-        val reservation = reservationRepository.getById(reservationId)
-        reservation.modifyStatus(status)
-        reservationRepository.save(reservation)
+    ): Reservation {
+        return reservationRepository.modify(
+            ModifyReservation(
+                id = reservationId,
+                status = status,
+            )
+        )
     }
 
     /**

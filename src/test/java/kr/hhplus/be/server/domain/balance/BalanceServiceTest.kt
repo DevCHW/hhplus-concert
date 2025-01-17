@@ -25,14 +25,14 @@ class BalanceServiceTest {
     @Nested
     inner class `잔고 충전` {
         @Test
-        fun `유저 ID에 해당하는 잔고가 있을 경우 잔액을 증가시키고 반환한다`() {
+        fun `잔액을 충전 금액만큼 증가시키고 반환한다`() {
             // given
             val balance = BalanceFixture.createBalance(balance = BigDecimal.ZERO)
             val userId = balance.userId
             val amount = BigDecimal.valueOf(100)
 
-            every { balanceRepository.getByUserIdOrNull(userId) } returns balance
-            every { balanceRepository.save(any()) } returns balance
+            every { balanceRepository.getNullableByUserId(any()) } returns balance
+            every { balanceRepository.modify(any()) } returns BalanceFixture.createBalance(balance = balance.balance.plus(amount))
 
             // when
             val result = balanceService.charge(userId, amount)
@@ -41,22 +41,6 @@ class BalanceServiceTest {
             assertThat(result.balance).isEqualTo(amount)
         }
 
-        @Test
-        fun `유저 ID에 해당하는 잔고가 없는 경우 새로 생성하여 충전하고 반환한다`() {
-            // given
-            val amount = BigDecimal.valueOf(100)
-            val balance = BalanceFixture.createBalance(balance = amount)
-            val userId = balance.userId
-
-            every { balanceRepository.getByUserIdOrNull(userId) } returns null
-            every { balanceRepository.save(any()) } returns balance
-
-            // when
-            val result = balanceService.charge(userId, amount)
-
-            // then
-            assertThat(result.balance).isEqualTo(amount)
-        }
     }
 
     @Nested
@@ -66,7 +50,7 @@ class BalanceServiceTest {
             // given
             val balance = BalanceFixture.createBalance()
 
-            every { balanceRepository.getByUserIdOrNull(balance.userId) } returns balance
+            every { balanceRepository.getNullableByUserId(balance.userId) } returns balance
 
             // when
             val result = balanceService.getBalance(balance.userId)
@@ -79,7 +63,7 @@ class BalanceServiceTest {
         fun `조회된 잔고가 없으면 0원인 잔고를 반환한다`() {
             // given
             val userId = TsidCreator.getTsid().toString()
-            every { balanceRepository.getByUserIdOrNull(any()) } returns null
+            every { balanceRepository.getNullableByUserId(any()) } returns null
 
             // when
             val result = balanceService.getBalance(userId)
@@ -92,15 +76,17 @@ class BalanceServiceTest {
     @Nested
     inner class `잔액 차감` {
         @Test
-        fun `유저 ID에 해당하는 잔고를 조회하여 잔액을 차감하고 반환한다`() {
+        fun `잔액을 차감 금액만큼 차감하고 반환한다`() {
             // given
             val userId = TsidCreator.getTsid().toString()
             val amount = BigDecimal.valueOf(100)
-            every { balanceRepository.getByUserIdWithLock(userId) }
+
+            every { balanceRepository.getNullableByUserIdWithLock(userId) }
                 .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(200)))
 
-            every { balanceRepository.save(any()) }
+            every { balanceRepository.modify(any()) }
                 .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(100)))
+
             // when
             val result = balanceService.decreaseBalance(userId, amount)
 
