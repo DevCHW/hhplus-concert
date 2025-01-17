@@ -12,7 +12,7 @@ class TokenScheduler(
     /**
      * 토큰 만료 및 비활성 토큰을 활성 상태로 변경
      */
-    @Scheduled(fixedDelay = 10_000)
+    @Scheduled(cron = "*/10 * * * * *")
     fun expireActiveTokensAndActivateTokens() {
         tokenService.expireActiveTokens(ACTIVE_TOKEN_TTL_SECONDS, LocalDateTime.now())
         tokenService.ActivateTokens(ACTIVE_TOKEN_SIZE_MAX_SIZE)

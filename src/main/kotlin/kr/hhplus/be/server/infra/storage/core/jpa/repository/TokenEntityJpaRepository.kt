@@ -35,4 +35,6 @@ interface TokenEntityJpaRepository : JpaRepository<TokenEntity, String> {
     ): Int
 
     fun deleteByToken(token: UUID)
+
+    fun existsByUserId(userId: String): Boolean
 }

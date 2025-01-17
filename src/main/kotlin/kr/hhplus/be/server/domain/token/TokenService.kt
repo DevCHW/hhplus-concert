@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.token
 
+import kr.hhplus.be.server.domain.support.error.CoreException
+import kr.hhplus.be.server.domain.support.error.ErrorType
 import kr.hhplus.be.server.domain.token.model.CreateToken
 import kr.hhplus.be.server.domain.token.model.Token
 import org.springframework.stereotype.Service
@@ -14,6 +16,9 @@ class TokenService(
      * 토큰 생성
      */
     fun createToken(userId: String): Token {
+        if (repository.isExistByUserId(userId)) {
+            throw CoreException(ErrorType.TOKEN_ALREADY_EXIST)
+        }
         return repository.save(
             CreateToken(
                 userId = userId,

@@ -35,7 +35,7 @@ class ReservationController(
      * 예약 결제 API
      */
     @PostMapping("/api/v1/reservations/pay")
-    fun createPayment(
+    fun payReservation(
         @RequestBody request: CreatePaymentRequest
     ): ApiResponse<CreatePaymentResponse> {
         val result = reservationFacade.createPayment(request.reservationId, request.token)

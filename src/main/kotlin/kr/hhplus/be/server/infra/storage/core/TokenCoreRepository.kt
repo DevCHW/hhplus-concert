@@ -55,4 +55,8 @@ class TokenCoreRepository(
     override fun deleteByToken(token: UUID) {
         tokenJpaRepository.deleteByToken(token)
     }
+
+    override fun isExistByUserId(userId: String): Boolean {
+        return tokenJpaRepository.existsByUserId(userId)
+    }
 }

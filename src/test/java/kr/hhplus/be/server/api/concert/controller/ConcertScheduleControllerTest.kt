@@ -62,7 +62,7 @@ class ConcertScheduleControllerTest : RestDocsTestSupport() {
                             fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                             fieldWithPath("data[]").type(ARRAY).description("결과 데이터"),
                             fieldWithPath("data[].id").type(STRING).description("콘서트 일정 ID"),
-                            fieldWithPath("data[].date").type(STRING).description("날짜"),
+                            fieldWithPath("data[].concertAt").type(STRING).description("콘서트 일정"),
                         ),
                     requestPreprocessor(),
                     responsePreprocessor(),

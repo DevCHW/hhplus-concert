@@ -18,4 +18,6 @@ interface TokenRepository {
     fun updateStatusByIdsIn(status: Token.Status, tokenIds: List<String>): Int
 
     fun deleteByToken(token: UUID)
+
+    fun isExistByUserId(userId: String): Boolean
 }

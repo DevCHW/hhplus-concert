@@ -79,7 +79,7 @@ class ReservationControllerTest : RestDocsTestSupport() {
                         .responseFields(
                             fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                             fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                            fieldWithPath("data.reservationId").type(STRING).description("예약 ID"),
+                            fieldWithPath("data.id").type(STRING).description("예약 ID"),
                         ),
                     requestPreprocessor(),
                     responsePreprocessor(),
