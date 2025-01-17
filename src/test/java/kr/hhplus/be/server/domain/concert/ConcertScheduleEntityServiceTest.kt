@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 @DisplayName("콘서트 스케줄 서비스 단위 테스트")
-class ConcertEntityScheduleEntityServiceTest {
+class ConcertScheduleEntityServiceTest {
     private lateinit var concertScheduleService: ConcertScheduleService
     private lateinit var concertScheduleRepository: ConcertScheduleRepository
 

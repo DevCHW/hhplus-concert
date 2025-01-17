@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @DisplayName("토큰 서비스 단위 테스트")
-class TokenEntityServiceTest {
+class TokenServiceTest {
     private lateinit var tokenService: TokenService
     private lateinit var tokenRepository: TokenRepository
 

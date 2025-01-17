@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 @DisplayName("예약 서비스 단위 테스트")
-class ReservationEntityServiceTest {
+class ReservationServiceTest {
     private lateinit var reservationService: ReservationService
     private lateinit var reservationRepository: ReservationRepository
 

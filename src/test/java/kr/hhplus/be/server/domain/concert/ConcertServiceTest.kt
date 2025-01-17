@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("콘서트 서비스 단위 테스트")
-class ConcertEntityServiceTest {
+class ConcertServiceTest {
     private lateinit var concertService: ConcertService
     private lateinit var concertRepository: ConcertRepository
 
