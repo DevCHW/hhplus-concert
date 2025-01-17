@@ -10,7 +10,6 @@ import java.util.*
 class TokenService(
     private val repository: TokenRepository,
 ) {
-
     /**
      * 토큰 생성
      */
@@ -74,5 +73,13 @@ class TokenService(
      */
     fun deleteToken(token: UUID) {
         repository.deleteByToken(token)
+    }
+
+    /**
+     * 토큰 검증
+     */
+    fun isActive(tokenValue: UUID): Boolean {
+        val token = repository.getByToken(tokenValue)
+        return token.status == Token.Status.ACTIVE
     }
 }
