@@ -15,12 +15,21 @@ class QueueTokenValidInterceptor(
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val token = request.getHeader("QUEUE_TOKEN") ?: throw CoreException(ErrorType.BAD_REQUEST)
-        val isActive = tokenService.isActive(UUID.fromString(token))
+        val tokenStr = request.getHeader("QUEUE_TOKEN") ?: throw CoreException(ErrorType.TOKEN_EMPTY)
+        val uuidToken = queueTokenStringToUUID(tokenStr)
+        val isActive = tokenService.isActive(uuidToken)
         if (!isActive) {
-            throw CoreException(ErrorType.BAD_REQUEST)
+            throw CoreException(ErrorType.INVALID_TOKEN)
         }
         return true
     }
 
+    private fun queueTokenStringToUUID(token: String): UUID {
+        try {
+            return UUID.fromString(token)
+        } catch (e: Exception) {
+            throw CoreException(ErrorType.INVALID_TOKEN)
+        }
+
+    }
 }
