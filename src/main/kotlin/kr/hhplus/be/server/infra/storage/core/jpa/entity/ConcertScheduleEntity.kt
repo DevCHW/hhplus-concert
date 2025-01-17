@@ -4,6 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule
+import kr.hhplus.be.server.domain.concert.model.CreateConcertSchedule
 import java.time.LocalDateTime
 
 @Entity
@@ -27,5 +28,15 @@ class ConcertScheduleEntity (
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
         )
+    }
+
+    companion object {
+        fun create(createConcertSchedule: CreateConcertSchedule): ConcertScheduleEntity {
+            return ConcertScheduleEntity(
+                concertId = createConcertSchedule.concertId,
+                location = createConcertSchedule.location,
+                concertAt = createConcertSchedule.concertAt,
+            )
+        }
     }
 }
