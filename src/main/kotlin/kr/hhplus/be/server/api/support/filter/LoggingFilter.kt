@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.support.filter
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -38,7 +39,7 @@ class LoggingFilter : OncePerRequestFilter() {
         MDC.put("requestId", UUID.randomUUID().toString())
         try {
             val requestWrapper = CachingRequestWrapper(request)
-            logRequest(request)
+            logRequest(requestWrapper)
             filterChain.doFilter(requestWrapper, responseWrapper)
         } finally {
             logResponse(responseWrapper, startTime)
@@ -51,7 +52,6 @@ class LoggingFilter : OncePerRequestFilter() {
     private fun logRequest(request: HttpServletRequest) {
         val queryString = request.queryString
         val body = getBody(request.inputStream)
-
         log.info(
             ">>> Request : {} URI=[{}], Content-Type=[{}], Body=[{}], Request ID=[{}]",
             request.method,
@@ -76,12 +76,21 @@ class LoggingFilter : OncePerRequestFilter() {
     }
 
     @Throws(IOException::class)
-    fun getBody(`is`: InputStream?): String? {
-        val content: ByteArray = StreamUtils.copyToByteArray(`is`)
+    fun getBody(inputStream: InputStream): String? {
+        val content = StreamUtils.copyToByteArray(inputStream)
         if (content.isEmpty()) {
             return null
         }
-        return String(content, StandardCharsets.UTF_8)
+        val rawBody = String(content, StandardCharsets.UTF_8)
+
+        // JSON 데이터 압축
+        return try {
+            val objectMapper = ObjectMapper()
+            val jsonNode = objectMapper.readTree(rawBody)
+            objectMapper.writeValueAsString(jsonNode) // Minified JSON
+        } catch (e: Exception) {
+            rawBody // JSON이 아닌 경우 원본 반환
+        }
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
