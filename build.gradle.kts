@@ -54,15 +54,19 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+	// Redisson
+	implementation("org.redisson:redisson-spring-boot-starter:${property("redissonVersion")}")
 
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
 	// TSID
-	implementation("com.github.f4b6a3:tsid-creator:5.2.6")
+	implementation("com.github.f4b6a3:tsid-creator:${property("tsidCreatorVersion")}")
 
 	// Swagger UI
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springdocOpenApiVersion")}")
 }
 
 // Test Dependencies

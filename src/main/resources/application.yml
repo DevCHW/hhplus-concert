@@ -46,3 +46,7 @@ spring:
         jdbc.time_zone: UTC
         format_sql: true
         show_sql: true
+
+  data:
+    redis.host: localhost
+    redis.port: 6379
