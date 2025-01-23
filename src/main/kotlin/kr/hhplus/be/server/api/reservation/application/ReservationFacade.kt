@@ -2,8 +2,10 @@ package kr.hhplus.be.server.api.reservation.application
 
 import kr.hhplus.be.server.api.reservation.application.dto.CreateReservationResult
 import kr.hhplus.be.server.api.reservation.application.dto.PayReservationResult
+import kr.hhplus.be.server.api.support.lock.DistributedLock
 import kr.hhplus.be.server.domain.balance.BalanceService
 import kr.hhplus.be.server.domain.concert.ConcertService
+import kr.hhplus.be.server.domain.lock.DistributedLockStrategy
 import kr.hhplus.be.server.domain.payment.PaymentService
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
@@ -27,6 +29,7 @@ class ReservationFacade(
     /**
      * 예약 생성
      */
+    @DistributedLock(lockName = "#seatId", strategy = DistributedLockStrategy.REDISSON)
     fun createReservation(
         concertId: String,
         userId: String,
@@ -34,6 +37,12 @@ class ReservationFacade(
     ): CreateReservationResult {
         // 콘서트 조회
         val concert = concertService.getConcert(concertId)
+
+        // 좌석 예약 존재 여부 조회
+        val exist = reservationService.isExistBySeatId(seatId)
+        if (exist) {
+            throw CoreException(ErrorType.ALREADY_RESERVED_SEAT)
+        }
 
         // 예약 생성
         val reservation = reservationService.createReservation(
@@ -48,9 +57,10 @@ class ReservationFacade(
     }
 
     /**
-     * 결제 생성
+     * 예약 결제
      */
     @Transactional
+    @DistributedLock(lockName = "#reservationId", strategy = DistributedLockStrategy.REDISSON)
     fun payReservation(reservationId: String, token: UUID): PayReservationResult {
         // 예약 조회
         val reservation = reservationService.getReservationWithLock(reservationId)
@@ -69,7 +79,7 @@ class ReservationFacade(
         // 토큰 삭제
         tokenService.deleteToken(token)
 
-        // 결제 기록
+        // 결제 생성
         val payment = paymentService.createPayment(reservation.userId, reservation.id, reservation.payAmount)
 
         return PayReservationResult.from(payment)

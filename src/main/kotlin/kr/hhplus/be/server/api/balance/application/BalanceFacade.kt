@@ -2,7 +2,9 @@ package kr.hhplus.be.server.api.balance.application
 
 import kr.hhplus.be.server.api.balance.application.dto.ChargeBalanceResult
 import kr.hhplus.be.server.api.balance.application.dto.GetBalanceResult
+import kr.hhplus.be.server.api.support.lock.DistributedLock
 import kr.hhplus.be.server.domain.balance.BalanceService
+import kr.hhplus.be.server.domain.lock.DistributedLockStrategy
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -10,17 +12,14 @@ import java.math.BigDecimal
 class BalanceFacade(
     private val balanceService: BalanceService,
 ) {
+
     /**
      * 충전
      */
+    @DistributedLock(lockName = "#userId", strategy = DistributedLockStrategy.REDISSON, waitTime = 0)
     fun charge(userId: String, amount: BigDecimal): ChargeBalanceResult {
-        val lock = balanceService.chargeLock(userId)
-        try {
-            val balance = balanceService.charge(userId, amount)
-            return ChargeBalanceResult.from(balance)
-        } finally {
-            balanceService.chargeUnLock(lock.id)
-        }
+        val balance = balanceService.charge(userId, amount)
+        return ChargeBalanceResult.from(balance)
     }
 
     /**
