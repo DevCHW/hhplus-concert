@@ -22,7 +22,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import java.math.BigDecimal
 
-
 class BalanceControllerTest : RestDocsTestSupport() {
     private lateinit var balanceController: BalanceController
     private lateinit var balanceFacade: BalanceFacade
@@ -41,7 +40,8 @@ class BalanceControllerTest : RestDocsTestSupport() {
             amount = BigDecimal.valueOf(100),
         )
 
-        val chargeResult = ChargeBalanceResult.from(BalanceFixture.createBalance(userId = request.userId, balance = request.amount))
+        val chargeResult =
+            ChargeBalanceResult.from(BalanceFixture.createBalance(userId = request.userId, balance = request.amount))
         every { balanceFacade.charge(any(), any()) }
             .returns(chargeResult)
 
@@ -69,8 +69,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
                         ),
                     requestPreprocessor(),
                     responsePreprocessor(),
-
-                    ),
+                ),
             )
     }
 

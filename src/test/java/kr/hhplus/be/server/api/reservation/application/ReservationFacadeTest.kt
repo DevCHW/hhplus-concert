@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.reservation.application
 
+import com.github.f4b6a3.tsid.TsidCreator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -72,6 +73,23 @@ class ReservationFacadeTest {
             assertThat(result.id).isEqualTo(reservation.id)
             assertThat(result.status).isEqualTo(reservation.status.name)
             assertThat(result.seatId).isEqualTo(reservation.seatId)
+        }
+
+        @Test
+        fun `좌석에 해당하는 예약이 이미 존재하는 경우 CoreException 예외가 발생한다`() {
+            // given
+            val concertId = TsidCreator.getTsid().toString()
+            val seatId = TsidCreator.getTsid().toString()
+            val userId = TsidCreator.getTsid().toString()
+
+            every { reservationService.isExistBySeatId(seatId) } returns true
+
+            // when & then
+            assertThatThrownBy {
+                reservationFacade.createReservation(concertId, userId, seatId)
+            }
+                .isInstanceOf(CoreException::class.java)
+                .hasMessage("이미 예약된 좌석입니다.")
         }
     }
 

@@ -22,6 +22,9 @@ enum class ErrorType(
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다.", LogLevel.WARN),
     INACTIVE_TOKEN(HttpStatus.BAD_REQUEST, "토큰이 활성상태가 아닙니다.", LogLevel.WARN),
 
+    // Lock
+    GET_LOCK_FAIL(HttpStatus.BAD_REQUEST, "락 획득에 실패하였습니다.", LogLevel.ERROR),
+
     // Core
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.", LogLevel.ERROR),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", LogLevel.WARN),

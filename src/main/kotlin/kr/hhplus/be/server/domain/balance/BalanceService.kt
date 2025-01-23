@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.domain.balance
 
 import kr.hhplus.be.server.domain.balance.model.Balance
-import kr.hhplus.be.server.domain.balance.model.BalanceChargeLock
 import kr.hhplus.be.server.domain.balance.model.ModifyBalance
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,29 +20,11 @@ class BalanceService(
         return balanceRepository.modify(modifyBalance)
     }
 
-    fun create(userId: String, amount: BigDecimal = BigDecimal.ZERO): Balance {
-        return balanceRepository.create(userId, amount)
-    }
-
     /**
      * 잔고 조회
      */
     fun getBalance(userId: String): Balance {
         return balanceRepository.getNullableByUserId(userId) ?: Balance.default(userId)
-    }
-
-    /**
-     * 잔고 충전 잠금
-     */
-    fun chargeLock(userId: String): BalanceChargeLock {
-        return balanceRepository.createChargeLock(userId)
-    }
-
-    /**
-     * 잔고 충전 잠금 해제
-     */
-    fun chargeUnLock(chargeLockId: String) {
-        balanceRepository.deleteChargeLock(chargeLockId)
     }
 
     /**
