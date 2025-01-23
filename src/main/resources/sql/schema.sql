@@ -29,7 +29,7 @@ create table balance_charge_lock
     user_id    varchar(13)  not null comment '유저 ID',
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점',
-    constraint balance_unique
+    constraint balance_charge_lock_unique
         unique (user_id)
 )
     comment '잔고 충전 잠금';
