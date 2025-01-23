@@ -1,4 +1,4 @@
-package io.hhplus.cleanarchitecture.support.database
+package kr.hhplus.be.server.support.database
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.TestContext
@@ -14,7 +14,11 @@ class AfterDatabaseCleanUpTestExecutionListener : AbstractTestExecutionListener(
 
     private fun getTruncateQueries(jdbcTemplate: JdbcTemplate): List<String> {
         return jdbcTemplate.queryForList(
-            "SELECT Concat('TRUNCATE TABLE ', TABLE_NAME, ';') AS q FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${TARGET_TABLE_SCHEMA_NAME}'",
+            """
+                SELECT Concat('TRUNCATE TABLE ', TABLE_NAME, ';') AS q 
+                FROM INFORMATION_SCHEMA.TABLES 
+                WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = DATABASE();
+            """.trimIndent(),
             String::class.java
         )
     }
@@ -29,9 +33,5 @@ class AfterDatabaseCleanUpTestExecutionListener : AbstractTestExecutionListener(
 
     private fun execute(jdbcTemplate: JdbcTemplate, query: String) {
         jdbcTemplate.execute(query)
-    }
-
-    companion object {
-        private const val TARGET_TABLE_SCHEMA_NAME = "hhplus"
     }
 }

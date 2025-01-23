@@ -7,7 +7,7 @@ import org.testcontainers.utility.DockerImageName
 class MySQLContainer {
     companion object {
         val mySqlContainer: MySQLContainer<*> = MySQLContainer(DockerImageName.parse("mysql:8.0"))
-            .withDatabaseName("hhplus")
+            .withDatabaseName("test")
             .withUsername("test")
             .withPassword("test")
             .withInitScript("sql/schema.sql")

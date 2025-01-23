@@ -1,4 +1,4 @@
-package io.hhplus.cleanarchitecture.support.database
+package kr.hhplus.be.server.support.database
 
 import org.springframework.test.context.TestExecutionListeners
 
