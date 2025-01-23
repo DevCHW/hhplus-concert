@@ -10,12 +10,6 @@ data class Balance(
     val updatedAt: LocalDateTime,
 ) {
 
-    init {
-        require(balance >= BigDecimal.ZERO) {
-            throw IllegalArgumentException("유효하지 않은 잔액입니다. userId = $userId, balance = $balance")
-        }
-    }
-
     companion object {
         fun default(userId: String): Balance {
             return Balance(

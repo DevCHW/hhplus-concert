@@ -2,12 +2,14 @@ package kr.hhplus.be.server.domain.lock
 
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
+import kr.hhplus.be.server.infra.lock.NamedLockClient
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
 class LockTemplateService(
-    private val distributedLockClients: Map<String, DistributedLockClient>,
+    private val distributedLockClients: MutableMap<String, out DistributedLockClient>,
+    private val namedLockClient: NamedLockClient,
 ) {
     private val DEFAULT_WAIT_TIME = 5L // 기본 락 획득 대기시간
     private val DEFAULT_LEASE_TIME = 3L // 기본 락 해제 시간
@@ -43,9 +45,9 @@ class LockTemplateService(
         val validTypes = DistributedLockStrategy.entries.map { it.clientName }.toSet()
 
         // distributedLocks에 존재하는 키가 validTypes에 포함되지 않은 경우 예외 발생
-        distributedLockClients.keys.forEach { key ->
-            if (!validTypes.contains(key)) {
-                throw IllegalStateException("유효하지 않은 DistributedLockStrategy [$key]가 distributedLocks에 포함되어 있습니다.")
+        distributedLockClients.keys.forEach { lockClientName ->
+            if (!validTypes.contains(lockClientName)) {
+                throw IllegalStateException("유효하지 않은 분산락 전략입니다. lockClientName=[$lockClientName]")
             }
         }
     }

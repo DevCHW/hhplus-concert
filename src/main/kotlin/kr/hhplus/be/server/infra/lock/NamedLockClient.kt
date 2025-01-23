@@ -16,7 +16,7 @@ class NamedLockClient(
         val isLockAcquired = connection.prepareStatement(NamedLockQueryType.GET_LOCK.query).use {
             it.setString(1, key)
             it.setInt(2, waitTime.toInt())
-            executeLock(key, it, NamedLockQueryType.GET_LOCK)
+            executeNamedLock(key, it, NamedLockQueryType.GET_LOCK)
         }
 
         if (!isLockAcquired) {
@@ -35,12 +35,12 @@ class NamedLockClient(
         connection.use { conn ->
             conn.prepareStatement(NamedLockQueryType.RELEASE_LOCK.query).use { prepareStatement ->
                 prepareStatement.setString(1, lockName)
-                executeLock(lockName, prepareStatement, NamedLockQueryType.RELEASE_LOCK)
+                executeNamedLock(lockName, prepareStatement, NamedLockQueryType.RELEASE_LOCK)
             }
         }
     }
 
-    private fun executeLock(
+    private fun executeNamedLock(
         lockName: String,
         preparedStatement: PreparedStatement,
         queryType: NamedLockQueryType,
@@ -49,7 +49,7 @@ class NamedLockClient(
         preparedStatement.executeQuery().use { resultSet ->
             if (!resultSet.next()) {
                 connection?.close()
-                throw IllegalStateException("NamedLock 수행 실패. type = [${queryType.name}], lockName [$lockName], connection=[${preparedStatement.connection}]")
+                throw IllegalStateException("NamedLock 수행 실패. queryType=[${queryType.name}], lockName=[$lockName], connection=[${preparedStatement.connection}]")
             }
 
             val result = resultSet.getInt(1)

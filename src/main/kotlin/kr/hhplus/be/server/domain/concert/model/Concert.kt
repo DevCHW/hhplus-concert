@@ -9,4 +9,10 @@ data class Concert(
     val price: BigDecimal,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-)
+) {
+    init {
+        require(price >= BigDecimal.ZERO) {
+            throw IllegalStateException("콘서트 가격은 0원 이상이어야 합니다.")
+        }
+    }
+}

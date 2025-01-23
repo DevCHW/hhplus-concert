@@ -91,6 +91,8 @@ class ReservationFacadeTest {
             }
                 .isInstanceOf(CoreException::class.java)
                 .hasMessage("이미 예약된 좌석입니다.")
+                .extracting("errorType")
+                .isEqualTo(ErrorType.ALREADY_RESERVED_SEAT)
         }
     }
 
@@ -148,7 +150,7 @@ class ReservationFacadeTest {
         }
 
         @Test
-        fun `예약이 결제가 가능한 상태가 아니라면 CoreException이 발생한다`() {
+        fun `예약이 결제가 가능한 상태가 아니라면 CoreException 예외가 발생한다`() {
             // given
             val cancelReservation = ReservationFixture.get(status = Reservation.Status.CANCEL)
             val token = UUID.randomUUID()

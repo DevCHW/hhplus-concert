@@ -32,7 +32,6 @@ class BalanceEntityTest {
             // then
             assertThat(result.balance).isEqualTo(BigDecimal(100))
         }
-
     }
 
 }
