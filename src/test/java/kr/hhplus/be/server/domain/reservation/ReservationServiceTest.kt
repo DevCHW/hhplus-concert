@@ -3,6 +3,7 @@ package kr.hhplus.be.server.domain.reservation
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kr.hhplus.be.server.domain.reservation.fixture.CreateReservationFixture
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import org.assertj.core.api.Assertions.assertThat
@@ -28,8 +29,8 @@ class ReservationServiceTest {
         @Test
         fun `좌석에 해당하는 예약이 존재하지 않는 경우 예약을 생성하고 반환한다`() {
             // given
-            val createReservation = ReservationFixture.createCreateReservation()
-            val reservation = ReservationFixture.createReservation(
+            val createReservation = CreateReservationFixture.get()
+            val reservation = ReservationFixture.get(
                 seatId = createReservation.seatId,
                 userId = createReservation.userId,
                 status = createReservation.status,
@@ -55,11 +56,11 @@ class ReservationServiceTest {
             // given
             val timeoutDuration = 60L
             val now = LocalDateTime.now()
-            val reservation1 = ReservationFixture.createReservation(
+            val reservation1 = ReservationFixture.get(
                 status = Reservation.Status.PENDING,
                 updatedAt = now.minusSeconds(timeoutDuration + 1)
             )
-            val reservation2 = ReservationFixture.createReservation(
+            val reservation2 = ReservationFixture.get(
                 status = Reservation.Status.PENDING,
                 updatedAt = now.minusSeconds(timeoutDuration + 1)
             )

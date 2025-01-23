@@ -12,12 +12,14 @@ import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.concert.application.SeatFacade
 import kr.hhplus.be.server.api.concert.application.dto.GetAvailableSeatResult
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.*
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
+@DisplayName("좌석 API 문서 테스트")
 class SeatControllerTest : RestDocsTestSupport() {
     private lateinit var seatController: SeatController
     private lateinit var seatFacade: SeatFacade

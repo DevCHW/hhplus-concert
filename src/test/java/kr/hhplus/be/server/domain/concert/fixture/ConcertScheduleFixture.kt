@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 class ConcertScheduleFixture {
 
     companion object {
-        fun createConcertSchedule(
+        fun get(
             id: String = TsidCreator.getTsid().toString(),
             concertId: String = TsidCreator.getTsid().toString(),
             concertAt: LocalDateTime = LocalDateTime.now(),

@@ -25,7 +25,7 @@ class ConcertServiceTest {
         @Test
         fun `콘서트 ID를 통해 콘서트를 조회하고 반환한다`() {
             // given
-            val concert = ConcertFixture.createConcert()
+            val concert = ConcertFixture.get()
 
             every { concertRepository.getById(concert.id) } returns concert
 

@@ -15,6 +15,7 @@ import kr.hhplus.be.server.api.token.controller.dto.response.GetTokenResponse
 import kr.hhplus.be.server.domain.token.TokenService
 import kr.hhplus.be.server.domain.token.fixture.TokenFixture
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
@@ -22,6 +23,7 @@ import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
+@DisplayName("대기열 API 문서 테스트")
 class TokenControllerTest : RestDocsTestSupport() {
 
     private lateinit var tokenController: TokenController
@@ -40,7 +42,7 @@ class TokenControllerTest : RestDocsTestSupport() {
             userId = TsidCreator.getTsid().toString(),
         )
 
-        val token = TokenFixture.createToken(userId = request.userId)
+        val token = TokenFixture.get(userId = request.userId)
         every { tokenService.createToken(any()) }
             .returns(token)
 
@@ -79,7 +81,7 @@ class TokenControllerTest : RestDocsTestSupport() {
 
     @Test
     fun `토큰 조회 API`() {
-        val token = TokenFixture.createToken()
+        val token = TokenFixture.get()
 
         val request = GetTokenResponse(
             id = token.id,

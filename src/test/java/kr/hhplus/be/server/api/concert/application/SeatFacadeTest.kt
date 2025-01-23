@@ -36,15 +36,15 @@ class SeatFacadeTest {
         fun `아직 예약이 되지 않은 좌석 목록을 반환한다`() {
             // given
             val concertScheduleId = TsidCreator.getTsid().toString()
-            val seat1 = SeatFixture.createSeat(
+            val seat1 = SeatFixture.get(
                 concertScheduleId = concertScheduleId,
             )
-            val seat2 = SeatFixture.createSeat(
+            val seat2 = SeatFixture.get(
                 concertScheduleId = concertScheduleId,
             )
 
             // 좌석1 예약
-            val reservation = ReservationFixture.createReservation(
+            val reservation = ReservationFixture.get(
                 seatId = seat1.id,
             )
 

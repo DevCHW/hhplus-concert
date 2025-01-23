@@ -15,6 +15,7 @@ import kr.hhplus.be.server.api.reservation.application.dto.PayReservationResult
 import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservationRequest
 import kr.hhplus.be.server.api.reservation.controller.dto.request.PayReservationRequest
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
@@ -24,6 +25,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
+@DisplayName("예약 API 문서 테스트")
 class ReservationControllerTest : RestDocsTestSupport() {
     private lateinit var reservationFacade: ReservationFacade
     private lateinit var reservationController: ReservationController

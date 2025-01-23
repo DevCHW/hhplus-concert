@@ -27,12 +27,12 @@ class BalanceServiceTest {
         @Test
         fun `잔액을 충전 금액만큼 증가시키고 반환한다`() {
             // given
-            val balance = BalanceFixture.createBalance(balance = BigDecimal.ZERO)
+            val balance = BalanceFixture.get(balance = BigDecimal.ZERO)
             val userId = balance.userId
             val amount = BigDecimal.valueOf(100)
 
             every { balanceRepository.getNullableByUserId(any()) } returns balance
-            every { balanceRepository.modify(any()) } returns BalanceFixture.createBalance(balance = balance.balance.plus(amount))
+            every { balanceRepository.modify(any()) } returns BalanceFixture.get(balance = balance.balance.plus(amount))
 
             // when
             val result = balanceService.charge(userId, amount)
@@ -48,7 +48,7 @@ class BalanceServiceTest {
         @Test
         fun `유저 ID를 통해 잔고를 조회할 수 있다`() {
             // given
-            val balance = BalanceFixture.createBalance()
+            val balance = BalanceFixture.get()
 
             every { balanceRepository.getNullableByUserId(balance.userId) } returns balance
 
@@ -82,10 +82,10 @@ class BalanceServiceTest {
             val amount = BigDecimal.valueOf(100)
 
             every { balanceRepository.getNullableByUserIdWithLock(userId) }
-                .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(200)))
+                .returns(BalanceFixture.get(userId = userId, balance = BigDecimal.valueOf(200)))
 
             every { balanceRepository.modify(any()) }
-                .returns(BalanceFixture.createBalance(userId = userId, balance = BigDecimal.valueOf(100)))
+                .returns(BalanceFixture.get(userId = userId, balance = BigDecimal.valueOf(100)))
 
             // when
             val result = balanceService.decreaseBalance(userId, amount)

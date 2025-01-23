@@ -7,7 +7,7 @@ import java.util.*
 
 class TokenFixture {
     companion object {
-        fun createToken(
+        fun get(
             id: String = TsidCreator.getTsid().toString(),
             userId: String = TsidCreator.getTsid().toString(),
             token: UUID = UUID.randomUUID(),

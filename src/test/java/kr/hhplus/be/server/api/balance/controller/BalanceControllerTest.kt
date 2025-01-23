@@ -15,6 +15,7 @@ import kr.hhplus.be.server.api.balance.application.dto.GetBalanceResult
 import kr.hhplus.be.server.api.balance.controller.dto.request.ChargeRequest
 import kr.hhplus.be.server.domain.balance.fixture.BalanceFixture
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.*
@@ -22,6 +23,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import java.math.BigDecimal
 
+@DisplayName("잔고 API 문서 테스트")
 class BalanceControllerTest : RestDocsTestSupport() {
     private lateinit var balanceController: BalanceController
     private lateinit var balanceFacade: BalanceFacade
@@ -41,7 +43,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
         )
 
         val chargeResult =
-            ChargeBalanceResult.from(BalanceFixture.createBalance(userId = request.userId, balance = request.amount))
+            ChargeBalanceResult.from(BalanceFixture.get(userId = request.userId, balance = request.amount))
         every { balanceFacade.charge(any(), any()) }
             .returns(chargeResult)
 
@@ -76,7 +78,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
     @Test
     fun `잔고 조회 API`() {
         val userId = TsidCreator.getTsid().toString()
-        val balance = BalanceFixture.createBalance(userId = userId)
+        val balance = BalanceFixture.get(userId = userId)
         val getBalanceResult = GetBalanceResult.from(balance)
         every { balanceFacade.getBalance(any()) }
             .returns(getBalanceResult)

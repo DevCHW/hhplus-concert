@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 class ConcertFixture {
 
     companion object {
-        fun createConcert(
+        fun get(
             id: String = TsidCreator.getTsid().toString(),
             title: String = "title",
             price: BigDecimal = BigDecimal.valueOf(100),

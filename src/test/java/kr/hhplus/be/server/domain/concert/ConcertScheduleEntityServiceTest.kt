@@ -29,8 +29,8 @@ class ConcertScheduleEntityServiceTest {
             // given
             val concertId = TsidCreator.getTsid().toString()
             LocalDateTime.now()
-            val concertSchedule1 = ConcertScheduleFixture.createConcertSchedule(concertId = concertId,)
-            val concertSchedule2 = ConcertScheduleFixture.createConcertSchedule(concertId = concertId)
+            val concertSchedule1 = ConcertScheduleFixture.get(concertId = concertId,)
+            val concertSchedule2 = ConcertScheduleFixture.get(concertId = concertId)
 
             every { concertScheduleRepository.getAvailableConcertSchedules(concertId) }
                 .returns(listOf(concertSchedule1, concertSchedule2))
