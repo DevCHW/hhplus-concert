@@ -30,11 +30,11 @@ class LockTemplateService(
     ): T {
         val lockClient = distributedLockClients[strategy.clientName] ?: throw IllegalStateException("분산 락 전략에 해당하는 구현체가 없습니다. strategyName=$strategy.strategyName")
 
-        val lock = lockClient.getLock(lockName, waitTime, releaseTime, timeUnit) ?: throw CoreException(ErrorType.GET_LOCK_FAIL)
+        val lockResourceManager = lockClient.getLock(lockName, waitTime, releaseTime, timeUnit) ?: throw CoreException(ErrorType.GET_LOCK_FAIL)
         try {
             return block()
         } finally {
-            lockClient.releaseLock(lock)
+            lockResourceManager.unlock()
         }
     }
 

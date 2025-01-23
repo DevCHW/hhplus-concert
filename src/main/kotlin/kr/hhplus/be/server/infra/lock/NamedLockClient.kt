@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.lock
 
 import kr.hhplus.be.server.domain.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.lock.ReleaseLock
+import kr.hhplus.be.server.domain.lock.LockResourceManager
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.util.concurrent.TimeUnit
@@ -11,7 +11,7 @@ class NamedLockClient(
     private val dataSource: DataSource,
 ) : DistributedLockClient {
 
-    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): ReleaseLock? {
+    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockResourceManager? {
         val connection = dataSource.connection
         val isLockAcquired = connection.prepareStatement(NamedLockQueryType.GET_LOCK.query).use {
             it.setString(1, key)
@@ -24,20 +24,20 @@ class NamedLockClient(
             return null
         }
 
-        return object : ReleaseLock {
-            override fun release() {
-                connection.use { connection ->
-                    connection.prepareStatement(NamedLockQueryType.RELEASE_LOCK.query).use {
-                        it.setString(1, key)
-                        executeLock(key, it, NamedLockQueryType.RELEASE_LOCK)
-                    }
-                }
+        return object : LockResourceManager {
+            override fun unlock() {
+                releaseLock(connection, key)
             }
         }
     }
 
-    override fun releaseLock(lock: ReleaseLock) {
-        lock.release()
+    private fun releaseLock(connection: Connection, lockName: String) {
+        connection.use { conn ->
+            conn.prepareStatement(NamedLockQueryType.RELEASE_LOCK.query).use { prepareStatement ->
+                prepareStatement.setString(1, lockName)
+                executeLock(lockName, prepareStatement, NamedLockQueryType.RELEASE_LOCK)
+            }
+        }
     }
 
     private fun executeLock(
