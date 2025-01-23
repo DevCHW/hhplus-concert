@@ -4,7 +4,6 @@ spring:
   profiles:
     active: local
   datasource:
-    name: HangHaePlusDataSource
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
       pool-name: core-db-pool

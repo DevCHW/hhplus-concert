@@ -1,4 +1,11 @@
 spring:
+  datasource:
+    hikari:
+      pool-name: core-db-pool
+      maximum-pool-size: 3
+      connection-timeout: 10000
+      max-lifetime: 60000
+
   jpa:
     show-sql: true
     hibernate:
