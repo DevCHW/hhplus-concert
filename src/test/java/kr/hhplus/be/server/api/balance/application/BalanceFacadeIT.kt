@@ -33,6 +33,7 @@ class BalanceFacadeIT(
                     balanceFacade.charge(balance.userId, amount)
                     successCount.incrementAndGet()
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     failCount.incrementAndGet()
                 }
             }

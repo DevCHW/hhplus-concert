@@ -63,7 +63,7 @@ class ReservationFacade(
     @DistributedLock(lockName = "#reservationId", strategy = DistributedLockStrategy.REDIS_PUB_SUB)
     fun payReservation(reservationId: String, token: UUID): PayReservationResult {
         // 예약 조회
-        val reservation = reservationService.getReservationWithLock(reservationId)
+        val reservation = reservationService.getReservation(reservationId)
 
         // 결제 대기 상태가 아니라면 예외 발생
         if (reservation.status != Reservation.Status.PENDING) {

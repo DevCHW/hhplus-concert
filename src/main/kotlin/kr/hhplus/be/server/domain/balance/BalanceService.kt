@@ -2,8 +2,9 @@ package kr.hhplus.be.server.domain.balance
 
 import kr.hhplus.be.server.domain.balance.model.Balance
 import kr.hhplus.be.server.domain.balance.model.ModifyBalance
+import kr.hhplus.be.server.domain.support.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 
 @Service
@@ -28,9 +29,9 @@ class BalanceService(
     /**
      * 잔액 차감
      */
-    @Transactional
+    @DistributedLock(lockName = "#userId", strategy = DistributedLockStrategy.REDIS_PUB_SUB)
     fun decreaseBalance(userId: String, amount: BigDecimal): Balance {
-        val balance = balanceRepository.getNullableByUserIdWithLock(userId) ?: balanceRepository.create(userId)
+        val balance = balanceRepository.getNullableByUserId(userId) ?: balanceRepository.create(userId)
 
         return balanceRepository.modify(
             ModifyBalance(

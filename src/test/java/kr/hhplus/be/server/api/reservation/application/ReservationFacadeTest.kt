@@ -105,7 +105,7 @@ class ReservationFacadeTest {
             val reservation = ReservationFixture.get(status = Reservation.Status.PENDING)
             val payment = PaymentFixture.get()
 
-            every { reservationService.getReservationWithLock(any()) } returns reservation
+            every { reservationService.getReservation(any()) } returns reservation
             every { paymentService.createPayment(any(), any(), any()) } returns payment
 
             // when
@@ -122,7 +122,7 @@ class ReservationFacadeTest {
             val reservation = ReservationFixture.get()
 
             // mock
-            every { reservationService.getReservationWithLock(any()) } returns reservation
+            every { reservationService.getReservation(any()) } returns reservation
 
             // when
             reservationFacade.payReservation(reservation.id, token)
@@ -154,7 +154,7 @@ class ReservationFacadeTest {
             // given
             val cancelReservation = ReservationFixture.get(status = Reservation.Status.CANCEL)
             val token = UUID.randomUUID()
-            every { reservationService.getReservationWithLock(any()) } returns cancelReservation
+            every { reservationService.getReservation(any()) } returns cancelReservation
 
             // when & then
             assertThatThrownBy {

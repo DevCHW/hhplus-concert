@@ -81,7 +81,7 @@ class BalanceServiceTest {
             val userId = TsidCreator.getTsid().toString()
             val amount = BigDecimal.valueOf(100)
 
-            every { balanceRepository.getNullableByUserIdWithLock(userId) }
+            every { balanceRepository.getNullableByUserId(userId) }
                 .returns(BalanceFixture.get(userId = userId, balance = BigDecimal.valueOf(200)))
 
             every { balanceRepository.modify(any()) }
