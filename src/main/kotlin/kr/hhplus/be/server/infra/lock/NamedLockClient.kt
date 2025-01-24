@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.lock
 
-import kr.hhplus.be.server.domain.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.lock.LockResourceManager
+import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
+import kr.hhplus.be.server.domain.support.lock.LockResourceManager
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.util.concurrent.TimeUnit

@@ -2,9 +2,9 @@ package kr.hhplus.be.server.api.balance.application
 
 import kr.hhplus.be.server.api.balance.application.dto.ChargeBalanceResult
 import kr.hhplus.be.server.api.balance.application.dto.GetBalanceResult
-import kr.hhplus.be.server.api.support.lock.DistributedLock
 import kr.hhplus.be.server.domain.balance.BalanceService
-import kr.hhplus.be.server.domain.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 

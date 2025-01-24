@@ -2,16 +2,16 @@ package kr.hhplus.be.server.api.reservation.application
 
 import kr.hhplus.be.server.api.reservation.application.dto.CreateReservationResult
 import kr.hhplus.be.server.api.reservation.application.dto.PayReservationResult
-import kr.hhplus.be.server.api.support.lock.DistributedLock
 import kr.hhplus.be.server.domain.balance.BalanceService
 import kr.hhplus.be.server.domain.concert.ConcertService
-import kr.hhplus.be.server.domain.lock.DistributedLockStrategy
 import kr.hhplus.be.server.domain.payment.PaymentService
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
+import kr.hhplus.be.server.domain.support.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
 import kr.hhplus.be.server.domain.token.TokenService
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

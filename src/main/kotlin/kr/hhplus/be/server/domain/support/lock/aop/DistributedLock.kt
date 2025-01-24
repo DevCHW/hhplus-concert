@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.api.support.lock
+package kr.hhplus.be.server.domain.support.lock.aop
 
-import kr.hhplus.be.server.domain.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.DistributedLockStrategy
 import java.util.concurrent.TimeUnit
 
 @Target(AnnotationTarget.FUNCTION)

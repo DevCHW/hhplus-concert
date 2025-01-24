@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.lock
+package kr.hhplus.be.server.domain.support.lock
 
 enum class DistributedLockStrategy(
     val clientName: String,

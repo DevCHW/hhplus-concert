@@ -1,15 +1,15 @@
-package kr.hhplus.be.server.domain.lock
+package kr.hhplus.be.server.domain.support.lock
 
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
-import kr.hhplus.be.server.infra.lock.NamedLockClient
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
-class LockTemplateService(
+class LockTemplate(
     private val distributedLockClients: MutableMap<String, out DistributedLockClient>,
-    private val namedLockClient: NamedLockClient,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     private val DEFAULT_WAIT_TIME = 5L // 기본 락 획득 대기시간
     private val DEFAULT_LEASE_TIME = 3L // 기본 락 해제 시간
@@ -36,7 +36,7 @@ class LockTemplateService(
         try {
             return block()
         } finally {
-            lockResourceManager.unlock()
+            eventPublisher.publishEvent(lockResourceManager)
         }
     }
 

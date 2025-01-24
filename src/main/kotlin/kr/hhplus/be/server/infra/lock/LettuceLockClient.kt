@@ -1,13 +1,18 @@
 package kr.hhplus.be.server.infra.lock
 
-import kr.hhplus.be.server.domain.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.lock.LockResourceManager
+import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
+import kr.hhplus.be.server.domain.support.lock.LockResourceManager
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import java.util.concurrent.TimeUnit
 
 class LettuceLockClient(
     private val redisTemplate: RedisTemplate<String, String>,
 ) : DistributedLockClient {
+
+    private val log: Logger = LoggerFactory.getLogger(javaClass)
+
     override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockResourceManager? {
         val maxWaitTimeMillis = timeUnit.toMillis(waitTime)
         val startTime = System.currentTimeMillis()
@@ -21,7 +26,7 @@ class LettuceLockClient(
                 }
             }
 
-            // 더 이상 재시도할 시간이 없다면 종료
+            // 재시도 조건에 부합하지 않는 경우 null 반환
             if (!isRetry(maxWaitTimeMillis, startTime)) {
                 return null
             }
