@@ -1,6 +1,5 @@
-package kr.hhplus.be.server.domain.support.lock.aop
+package kr.hhplus.be.server.domain.support.lock
 
-import kr.hhplus.be.server.domain.support.lock.LockResourceManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
