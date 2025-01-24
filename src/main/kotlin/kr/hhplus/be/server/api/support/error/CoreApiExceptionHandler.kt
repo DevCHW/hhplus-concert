@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.boot.logging.LogLevel
 import org.springframework.core.annotation.Order
 import org.springframework.http.ResponseEntity
@@ -26,14 +27,14 @@ class CoreApiExceptionHandler {
             LogLevel.INFO -> log.info("{} : {}", e.errorType, e.errorMessage)
             LogLevel.DEBUG -> log.debug("{} : {}", e.errorType, e.errorMessage)
             LogLevel.TRACE -> log.trace("{} : {}", e.errorType, e.errorMessage)
-            else -> log.error("CoreException : {}", e.message)
+            else -> log.error("CoreException : {}", e.message, )
         }
         return ResponseEntity(ApiResponse.error(e.errorType), e.errorType.status)
     }
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<ApiResponse<Any>> {
-        log.error("Unexpected error occurred. message:{}", e.message, e)
+        log.error("Unexpected error occurred. message:[{}], RequestId:[{}]", e.message, MDC.get("requestId"), e)
         return ResponseEntity(ApiResponse.error(ErrorType.SERVER_ERROR), ErrorType.SERVER_ERROR.status)
     }
 

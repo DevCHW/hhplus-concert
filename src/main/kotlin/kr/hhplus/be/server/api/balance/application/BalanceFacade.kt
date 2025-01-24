@@ -16,7 +16,7 @@ class BalanceFacade(
     /**
      * 충전
      */
-    @DistributedLock(lockName = "#userId", strategy = DistributedLockStrategy.REDISSON, waitTime = 0)
+    @DistributedLock(lockName = "#userId", strategy = DistributedLockStrategy.REDIS_SPIN_LOCK, waitTime = 0)
     fun charge(userId: String, amount: BigDecimal): ChargeBalanceResult {
         val balance = balanceService.charge(userId, amount)
         return ChargeBalanceResult.from(balance)
