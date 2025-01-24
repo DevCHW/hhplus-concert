@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 class BalanceFixture {
 
     companion object {
-        fun createBalance(
+        fun get(
             userId: String = TsidCreator.getTsid().toString(),
             balance: BigDecimal = BigDecimal.ZERO,
             createdAt: LocalDateTime = LocalDateTime.now(),

@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.api.reservation.application
 
+import com.github.f4b6a3.tsid.TsidCreator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,6 +11,7 @@ import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
 import kr.hhplus.be.server.domain.payment.PaymentService
 import kr.hhplus.be.server.domain.payment.fixture.PaymentFixture
 import kr.hhplus.be.server.domain.reservation.ReservationService
+import kr.hhplus.be.server.domain.reservation.fixture.CreateReservationFixture
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
@@ -53,9 +55,9 @@ class ReservationFacadeTest {
         @Test
         fun `필요한 정보를 받아 예약을 생성하고 예약 생성 결과를 반환한다`() {
             // given
-            val concert = ConcertFixture.createConcert()
-            val createReservation = ReservationFixture.createCreateReservation(payAmount = concert.price)
-            val reservation = ReservationFixture.createReservation(
+            val concert = ConcertFixture.get()
+            val createReservation = CreateReservationFixture.get(payAmount = concert.price)
+            val reservation = ReservationFixture.get(
                 seatId = createReservation.seatId,
                 userId = createReservation.userId,
                 payAmount = createReservation.payAmount,
@@ -73,6 +75,25 @@ class ReservationFacadeTest {
             assertThat(result.status).isEqualTo(reservation.status.name)
             assertThat(result.seatId).isEqualTo(reservation.seatId)
         }
+
+        @Test
+        fun `좌석에 해당하는 예약이 이미 존재하는 경우 CoreException 예외가 발생한다`() {
+            // given
+            val concertId = TsidCreator.getTsid().toString()
+            val seatId = TsidCreator.getTsid().toString()
+            val userId = TsidCreator.getTsid().toString()
+
+            every { reservationService.isExistBySeatId(seatId) } returns true
+
+            // when & then
+            assertThatThrownBy {
+                reservationFacade.createReservation(concertId, userId, seatId)
+            }
+                .isInstanceOf(CoreException::class.java)
+                .hasMessage("이미 예약된 좌석입니다.")
+                .extracting("errorType")
+                .isEqualTo(ErrorType.ALREADY_RESERVED_SEAT)
+        }
     }
 
     @Nested
@@ -81,10 +102,10 @@ class ReservationFacadeTest {
         fun `결제 성공 시 결제 성공 결과를 반환한다`() {
             // given
             val token = UUID.randomUUID()
-            val reservation = ReservationFixture.createReservation(status = Reservation.Status.PENDING)
-            val payment = PaymentFixture.createPayment()
+            val reservation = ReservationFixture.get(status = Reservation.Status.PENDING)
+            val payment = PaymentFixture.get()
 
-            every { reservationService.getReservationWithLock(any()) } returns reservation
+            every { reservationService.getReservation(any()) } returns reservation
             every { paymentService.createPayment(any(), any(), any()) } returns payment
 
             // when
@@ -98,10 +119,10 @@ class ReservationFacadeTest {
         fun `관련 서비스들이 올바르게 호출되는지 검증한다`() {
             // given
             val token = UUID.randomUUID()
-            val reservation = ReservationFixture.createReservation()
+            val reservation = ReservationFixture.get()
 
             // mock
-            every { reservationService.getReservationWithLock(any()) } returns reservation
+            every { reservationService.getReservation(any()) } returns reservation
 
             // when
             reservationFacade.payReservation(reservation.id, token)
@@ -129,11 +150,11 @@ class ReservationFacadeTest {
         }
 
         @Test
-        fun `예약이 결제가 가능한 상태가 아니라면 CoreException이 발생한다`() {
+        fun `예약이 결제가 가능한 상태가 아니라면 CoreException 예외가 발생한다`() {
             // given
-            val cancelReservation = ReservationFixture.createReservation(status = Reservation.Status.CANCEL)
+            val cancelReservation = ReservationFixture.get(status = Reservation.Status.CANCEL)
             val token = UUID.randomUUID()
-            every { reservationService.getReservationWithLock(any()) } returns cancelReservation
+            every { reservationService.getReservation(any()) } returns cancelReservation
 
             // when & then
             assertThatThrownBy {

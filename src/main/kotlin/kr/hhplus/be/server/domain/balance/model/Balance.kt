@@ -9,6 +9,7 @@ data class Balance(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 ) {
+
     companion object {
         fun default(userId: String): Balance {
             return Balance(

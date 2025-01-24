@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 class PaymentFixture {
     companion object {
-        fun createPayment(
+        fun get(
             id: String = TsidCreator.getTsid().toString(),
             userId: String = TsidCreator.getTsid().toString(),
             reservationId: String = TsidCreator.getTsid().toString(),

@@ -38,7 +38,7 @@ class LoggingFilter : OncePerRequestFilter() {
         val startTime = System.currentTimeMillis()
         MDC.put("requestId", UUID.randomUUID().toString())
         try {
-            val requestWrapper = CachingRequestWrapper(request)
+            val requestWrapper = CachingBodyRequestWrapper(request)
             logRequest(requestWrapper)
             filterChain.doFilter(requestWrapper, responseWrapper)
         } finally {

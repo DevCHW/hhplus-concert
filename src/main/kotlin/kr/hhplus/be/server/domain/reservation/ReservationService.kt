@@ -1,9 +1,10 @@
 package kr.hhplus.be.server.domain.reservation
 
-import kr.hhplus.be.server.domain.reservation.error.SeatAlreadyReservedException
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.ModifyReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
+import kr.hhplus.be.server.domain.support.error.CoreException
+import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -18,11 +19,19 @@ class ReservationService(
     fun createReservation(
         createReservation: CreateReservation
     ): Reservation {
+        // 이미 예약된 좌석일 경우 예외 발생
         val exist = reservationRepository.isExistBySeatId(createReservation.seatId)
         if (exist) {
-            throw SeatAlreadyReservedException("이미 예약된 좌석입니다.")
+            throw CoreException(ErrorType.ALREADY_RESERVED_SEAT)
         }
         return reservationRepository.save(createReservation)
+    }
+
+    /**
+     * 좌석 예약 존재 여부 조회
+     */
+    fun isExistBySeatId(seatId: String): Boolean {
+        return reservationRepository.isExistBySeatId(seatId)
     }
 
     /**

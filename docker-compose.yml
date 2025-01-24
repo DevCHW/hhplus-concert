@@ -12,6 +12,15 @@ services:
     volumes:
       - ./data/mysql/:/var/lib/mysql
 
+  redis:
+    image: redis:6.2.6-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
 networks:
   default:
     driver: bridge

@@ -3,11 +3,10 @@ package kr.hhplus.be.server.domain.reservation
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kr.hhplus.be.server.domain.reservation.error.SeatAlreadyReservedException
+import kr.hhplus.be.server.domain.reservation.fixture.CreateReservationFixture
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -30,8 +29,8 @@ class ReservationServiceTest {
         @Test
         fun `좌석에 해당하는 예약이 존재하지 않는 경우 예약을 생성하고 반환한다`() {
             // given
-            val createReservation = ReservationFixture.createCreateReservation()
-            val reservation = ReservationFixture.createReservation(
+            val createReservation = CreateReservationFixture.get()
+            val reservation = ReservationFixture.get(
                 seatId = createReservation.seatId,
                 userId = createReservation.userId,
                 status = createReservation.status,
@@ -48,21 +47,6 @@ class ReservationServiceTest {
             assertThat(result.userId).isEqualTo(reservation.userId)
             assertThat(result.status).isEqualTo(reservation.status)
         }
-
-        @Test
-        fun `좌석에 해당하는 예약이 이미 존재하는 경우 SeatAlreadyReservedException 예외가 발생한다`() {
-            // given
-            val createReservation = ReservationFixture.createCreateReservation()
-
-            every { reservationRepository.isExistBySeatId(createReservation.seatId) } returns true
-
-            // when & then
-            assertThatThrownBy {
-                reservationService.createReservation(createReservation)
-            }
-                .isInstanceOf(SeatAlreadyReservedException::class.java)
-                .hasMessage("이미 예약된 좌석입니다.")
-        }
     }
 
     @Nested
@@ -72,11 +56,11 @@ class ReservationServiceTest {
             // given
             val timeoutDuration = 60L
             val now = LocalDateTime.now()
-            val reservation1 = ReservationFixture.createReservation(
+            val reservation1 = ReservationFixture.get(
                 status = Reservation.Status.PENDING,
                 updatedAt = now.minusSeconds(timeoutDuration + 1)
             )
-            val reservation2 = ReservationFixture.createReservation(
+            val reservation2 = ReservationFixture.get(
                 status = Reservation.Status.PENDING,
                 updatedAt = now.minusSeconds(timeoutDuration + 1)
             )

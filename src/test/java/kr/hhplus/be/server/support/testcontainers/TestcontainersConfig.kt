@@ -1,34 +1,31 @@
 package kr.hhplus.be.server.support.testcontainers
 
 import jakarta.annotation.PreDestroy
+import kr.hhplus.be.server.support.testcontainers.MySQLContainer.Companion.mySqlContainer
 import org.springframework.context.annotation.Configuration
-import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.containers.wait.strategy.Wait
-import org.testcontainers.utility.DockerImageName
 
 @Configuration
 class TestcontainersConfig {
+
     @PreDestroy
     fun preDestroy() {
-        if (mySqlContainer.isRunning) mySqlContainer.stop()
+        if (mySQLContainer.isRunning) mySQLContainer.stop()
+        if (redisContainer.isRunning) redisContainer.stop()
     }
 
     companion object {
-        val mySqlContainer: MySQLContainer<*> = MySQLContainer(DockerImageName.parse("mysql:8.0"))
-            .withDatabaseName("hhplus")
-            .withUsername("test")
-            .withPassword("test")
-            .withInitScript("sql/schema.sql")
-            .waitingFor(Wait.forHttp("/"))
-            .withReuse(true)
-            .apply {
-                start()
-            }
+        val mySQLContainer = MySQLContainer.mySqlContainer
+        val redisContainer = RedisContainer.redisContainer
 
         init {
-            System.setProperty("spring.datasource.url", mySqlContainer.getJdbcUrl() + "?characterEncoding=UTF-8&serverTimezone=UTC")
-            System.setProperty("spring.datasource.username", mySqlContainer.username)
-            System.setProperty("spring.datasource.password", mySqlContainer.password)
+            // mysql
+            System.setProperty("spring.datasource.hikari.jdbc-url", mySqlContainer.jdbcUrl + "?characterEncoding=UTF-8&serverTimezone=UTC")
+            System.setProperty("spring.datasource.hikari.username", mySqlContainer.username)
+            System.setProperty("spring.datasource.hikari.password", mySqlContainer.password)
+
+            // redis
+            System.setProperty("spring.data.redis.host", redisContainer.host)
+            System.setProperty("spring.data.redis.port", redisContainer.firstMappedPort.toString())
         }
     }
 }

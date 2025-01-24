@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 class SeatFixture {
     companion object {
-        fun createSeat(
+        fun get(
             id: String = TsidCreator.getTsid().toString(),
             concertScheduleId: String = TsidCreator.getTsid().toString(),
             number: Int = 1,

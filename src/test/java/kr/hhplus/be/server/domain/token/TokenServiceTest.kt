@@ -29,7 +29,7 @@ class TokenServiceTest {
         fun `유저 ID를 통해 토큰 생성을 하고 반환한다`() {
             // given
             val userId = TsidCreator.getTsid().toString()
-            val token = TokenFixture.createToken(userId = userId, status = Token.Status.CREATED)
+            val token = TokenFixture.get(userId = userId, status = Token.Status.CREATED)
 
             every { tokenRepository.save(any()) }
                 .returns(token)
@@ -50,7 +50,7 @@ class TokenServiceTest {
         fun `토큰을 조회할 수 있다`() {
             // given
             val tokenUUID = UUID.randomUUID()
-            val token = TokenFixture.createToken(
+            val token = TokenFixture.get(
                 token = tokenUUID,
             )
 
@@ -73,13 +73,13 @@ class TokenServiceTest {
             val activeTokenLifeTime = 60L // 60초
 
             // 만료된 활성 토큰
-            val expiredToken1 = TokenFixture.createToken(
+            val expiredToken1 = TokenFixture.get(
                 status = Token.Status.ACTIVE,
                 updatedAt = now.minusSeconds(activeTokenLifeTime + 1),
             )
 
             // 만료되지 않은 활성 토큰
-            val expiredToken2 = TokenFixture.createToken(
+            val expiredToken2 = TokenFixture.get(
                 status = Token.Status.ACTIVE,
                 updatedAt = now.minusSeconds(activeTokenLifeTime + 1),
             )
@@ -103,13 +103,13 @@ class TokenServiceTest {
             val activeTokenLifeTime = 60L // 60초
 
             // 만료된 활성 토큰
-            val expiredToken = TokenFixture.createToken(
+            val expiredToken = TokenFixture.get(
                 status = Token.Status.ACTIVE,
                 updatedAt = now.minusSeconds(activeTokenLifeTime + 1),
             )
 
             // 만료되지 않은 활성 토큰
-            val nonExpiredToken = TokenFixture.createToken(
+            val nonExpiredToken = TokenFixture.get(
                 status = Token.Status.ACTIVE,
                 updatedAt = now,
             )
@@ -133,9 +133,9 @@ class TokenServiceTest {
         fun `활성 토큰의 최대 갯수를 받아 비활성 토큰을 활성 상태로 변경한다`() {
             // given
             val activeTokenMaxSize = 2 // 활성 토큰의 최대 갯수
-            val token1 = TokenFixture.createToken(status = Token.Status.CREATED)
-            val token2 = TokenFixture.createToken(status = Token.Status.CREATED)
-            val token3 = TokenFixture.createToken(status = Token.Status.CREATED)
+            val token1 = TokenFixture.get(status = Token.Status.CREATED)
+            val token2 = TokenFixture.get(status = Token.Status.CREATED)
+            val token3 = TokenFixture.get(status = Token.Status.CREATED)
 
             val inactiveTokens = listOf(token1, token2, token3)
 
@@ -156,7 +156,7 @@ class TokenServiceTest {
         fun `이미 최대 활성 토큰 갯수만큼 토큰이 활성되어있는 경우 아무 작업도 하지 않는다`() {
             // given
             val activeTokenMaxSize = 5
-            val activeTokens = List(5) { TokenFixture.createToken(status = Token.Status.ACTIVE) }
+            val activeTokens = List(5) { TokenFixture.get(status = Token.Status.ACTIVE) }
 
             every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
             every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, any()) } returns emptyList()
@@ -172,7 +172,7 @@ class TokenServiceTest {
         fun `상태를 변경할 비활성 토큰이 없는 경우 아무 작업도 하지 않는다`() {
             // given
             val activeTokenMaxSize = 5
-            val activeTokens = List(4) { TokenFixture.createToken(status = Token.Status.ACTIVE) }
+            val activeTokens = List(4) { TokenFixture.get(status = Token.Status.ACTIVE) }
 
             every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
             every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, any()) } returns emptyList()

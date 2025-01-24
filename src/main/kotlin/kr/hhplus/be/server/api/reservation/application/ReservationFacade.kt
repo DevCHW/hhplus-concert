@@ -10,6 +10,8 @@ import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
+import kr.hhplus.be.server.domain.support.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
 import kr.hhplus.be.server.domain.token.TokenService
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +29,7 @@ class ReservationFacade(
     /**
      * 예약 생성
      */
+    @DistributedLock(lockName = "#seatId", strategy = DistributedLockStrategy.REDIS_PUB_SUB)
     fun createReservation(
         concertId: String,
         userId: String,
@@ -34,6 +37,12 @@ class ReservationFacade(
     ): CreateReservationResult {
         // 콘서트 조회
         val concert = concertService.getConcert(concertId)
+
+        // 좌석 예약 존재 여부 조회
+        val exist = reservationService.isExistBySeatId(seatId)
+        if (exist) {
+            throw CoreException(ErrorType.ALREADY_RESERVED_SEAT)
+        }
 
         // 예약 생성
         val reservation = reservationService.createReservation(
@@ -48,12 +57,13 @@ class ReservationFacade(
     }
 
     /**
-     * 결제 생성
+     * 예약 결제
      */
     @Transactional
+    @DistributedLock(lockName = "#reservationId", strategy = DistributedLockStrategy.REDIS_PUB_SUB)
     fun payReservation(reservationId: String, token: UUID): PayReservationResult {
         // 예약 조회
-        val reservation = reservationService.getReservationWithLock(reservationId)
+        val reservation = reservationService.getReservation(reservationId)
 
         // 결제 대기 상태가 아니라면 예외 발생
         if (reservation.status != Reservation.Status.PENDING) {
@@ -69,7 +79,7 @@ class ReservationFacade(
         // 토큰 삭제
         tokenService.deleteToken(token)
 
-        // 결제 기록
+        // 결제 생성
         val payment = paymentService.createPayment(reservation.userId, reservation.id, reservation.payAmount)
 
         return PayReservationResult.from(payment)

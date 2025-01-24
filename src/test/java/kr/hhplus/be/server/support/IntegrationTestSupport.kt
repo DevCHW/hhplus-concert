@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.support
 
-import io.hhplus.cleanarchitecture.support.database.AfterDatabaseCleanUp
+import kr.hhplus.be.server.support.database.AfterDatabaseCleanUp
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
