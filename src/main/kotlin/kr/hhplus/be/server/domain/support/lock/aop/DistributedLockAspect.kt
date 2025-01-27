@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.support.lock.aop
 
+import kr.hhplus.be.server.domain.support.lock.LockResource
 import kr.hhplus.be.server.domain.support.lock.LockTemplate
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -28,7 +29,8 @@ class DistributedLockAspect(
         val lockName = getLockName(
             signature.parameterNames,
             joinPoint.args,
-            lockAnnotation.lockName,
+            lockAnnotation.key,
+            lockAnnotation.resource,
         )
 
         return lockTemplate.withDistributedLock(
@@ -42,8 +44,8 @@ class DistributedLockAspect(
         }
     }
 
-    private fun getLockName(parameterNames: Array<String>, args: Array<Any?>, key: String): String {
-        val lockPrefix = "LOCK:"
+    private fun getLockName(parameterNames: Array<String>, args: Array<Any?>, key: String, prefix: LockResource): String {
+        val lockPrefix = "LOCK:${prefix.name.lowercase()}:"
         val parser: ExpressionParser = SpelExpressionParser()
         val context = StandardEvaluationContext()
 

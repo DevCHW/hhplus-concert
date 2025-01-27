@@ -33,7 +33,6 @@ class BalanceFacadeIT(
                     balanceFacade.charge(balance.userId, amount)
                     successCount.incrementAndGet()
                 } catch (e: Exception) {
-                    e.printStackTrace()
                     failCount.incrementAndGet()
                 }
             }
@@ -44,6 +43,21 @@ class BalanceFacadeIT(
             // then
             assertThat(successCount.get()).isEqualTo(1)
             assertThat(failCount.get()).isEqualTo(9)
+        }
+
+        @Test
+        fun `잔고 충전 이후 조회 시 충전 금액만큼 충전되어있어야 한다`() {
+            // given
+            val userId = TsidCreator.getTsid().toString()
+            val balance = balanceRepository.create(userId)
+            val amount = BigDecimal.valueOf(100)
+
+            // when
+            balanceFacade.charge(balance.userId, amount)
+            val result = balanceRepository.getByUserId(userId)
+
+            // then
+            assertThat(result.balance).isEqualTo(amount)
         }
     }
 }

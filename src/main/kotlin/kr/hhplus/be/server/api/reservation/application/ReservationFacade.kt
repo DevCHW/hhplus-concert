@@ -10,7 +10,8 @@ import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
-import kr.hhplus.be.server.domain.support.lock.DistributedLockStrategy
+import kr.hhplus.be.server.domain.support.lock.LockStrategy
+import kr.hhplus.be.server.domain.support.lock.LockResource
 import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
 import kr.hhplus.be.server.domain.token.TokenService
 import org.springframework.stereotype.Component
@@ -29,7 +30,7 @@ class ReservationFacade(
     /**
      * 예약 생성
      */
-    @DistributedLock(lockName = "#seatId", strategy = DistributedLockStrategy.REDIS_PUB_SUB)
+    @DistributedLock(resource = LockResource.SEAT, key = "#seatId", strategy = LockStrategy.REDIS_PUB_SUB)
     fun createReservation(
         concertId: String,
         userId: String,
@@ -60,7 +61,7 @@ class ReservationFacade(
      * 예약 결제
      */
     @Transactional
-    @DistributedLock(lockName = "#reservationId", strategy = DistributedLockStrategy.REDIS_PUB_SUB)
+    @DistributedLock(resource = LockResource.RESERVATION, key = "#reservationId", strategy = LockStrategy.REDIS_PUB_SUB)
     fun payReservation(reservationId: String, token: UUID): PayReservationResult {
         // 예약 조회
         val reservation = reservationService.getReservation(reservationId)
@@ -81,7 +82,6 @@ class ReservationFacade(
 
         // 결제 생성
         val payment = paymentService.createPayment(reservation.userId, reservation.id, reservation.payAmount)
-
         return PayReservationResult.from(payment)
     }
 }

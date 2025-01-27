@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.scheduler.token
 
 import kr.hhplus.be.server.domain.token.TokenService
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -12,7 +11,7 @@ class TokenScheduler(
     /**
      * 토큰 만료 및 비활성 토큰을 활성 상태로 변경
      */
-    @Scheduled(cron = "*/10 * * * * *")
+//    @Scheduled(cron = "*/10 * * * * *")
     fun expireActiveTokensAndActivateTokens() {
         tokenService.expireActiveTokens(ACTIVE_TOKEN_TTL_SECONDS, LocalDateTime.now())
         tokenService.ActivateTokens(ACTIVE_TOKEN_SIZE_MAX_SIZE)

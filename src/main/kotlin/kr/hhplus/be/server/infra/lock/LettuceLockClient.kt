@@ -11,8 +11,6 @@ class LettuceLockClient(
     private val redisTemplate: RedisTemplate<String, String>,
 ) : DistributedLockClient {
 
-    private val log: Logger = LoggerFactory.getLogger(javaClass)
-
     override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockResourceManager? {
         val maxWaitTimeMillis = timeUnit.toMillis(waitTime)
         val startTime = System.currentTimeMillis()

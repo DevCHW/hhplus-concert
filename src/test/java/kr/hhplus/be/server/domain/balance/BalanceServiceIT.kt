@@ -80,4 +80,35 @@ class BalanceServiceIT(
             assertThat(result.balance).isEqualTo(BigDecimal.ZERO)
         }
     }
+
+    @Nested
+    inner class `잔고 충전 및 사용 동시 수행` {
+        @Test
+        fun `잔고 충전과 사용이 동시에 수행될 경우 오차 없이 처리되어야 한다`() {
+            val userId = TsidCreator.getTsid().toString()
+            val balance = balanceRepository.create(userId, BigDecimal(100))
+
+            val amount = BigDecimal(100)
+
+            // 충전
+            val action1 = Runnable {
+                balanceService.charge(balance.userId, amount)
+            }
+
+            // 사용
+            val action2 = Runnable {
+                balanceService.decreaseBalance(balance.userId, amount)
+            }
+
+            val actions = listOf(action1, action2)
+
+            // when
+            ConcurrencyTestUtils.executeConcurrently(actions)
+            val result = balanceRepository.getByUserId(balance.userId)
+
+            // then
+            assertThat(result.balance).isEqualTo(BigDecimal(100))
+        }
+    }
+
 }

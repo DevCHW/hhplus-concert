@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.support.lock
 
-enum class DistributedLockStrategy(
+enum class LockStrategy(
     val clientName: String,
 ) {
     REDIS_PUB_SUB("redissonLockClient"),

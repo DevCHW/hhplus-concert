@@ -139,7 +139,7 @@ class ReservationFacadeIT(
         )
 
         @Test
-        fun `성공 시 결제 내역이 남는다`() {
+        fun `성공 시 결제 내역이 남아야 한다`() {
             // when
             val result = reservationFacade.payReservation(reservation.id, token.token)
             val payment = paymentRepository.getById(result.paymentId)
