@@ -12,6 +12,8 @@ class LockTemplate(
     private val distributedLockClients: MutableMap<String, out DistributedLockClient>,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
+
+    private val lockNamesHolder: ThreadLocal<MutableList<String>> = ThreadLocal.withInitial { mutableListOf() }
     private val DEFAULT_WAIT_TIME = 5L // 기본 락 획득 대기시간
     private val DEFAULT_LEASE_TIME = 3L // 기본 락 해제 시간
     private val DEFAULT_TIME_UNIT = TimeUnit.SECONDS // 기본 시간 기준
@@ -31,8 +33,19 @@ class LockTemplate(
         timeUnit: TimeUnit = DEFAULT_TIME_UNIT,
         block: () -> T
     ): T {
+        // 분산락 전략 선택
         val lockClient = distributedLockClients[strategy.clientName] ?: throw IllegalStateException("분산 락 전략에 해당하는 구현체가 없습니다. strategyName=$strategy.strategyName")
 
+        val lockNames = lockNamesHolder.get()
+
+        // 데드락 방지를 위하여 이미 락이 걸려있는 Key인 경우 락 스킵
+        if (lockNames.contains(lockName)) {
+            return block()
+        }
+
+        lockNames.add(lockName)
+
+        // 락 획득
         val lockResourceManager = lockClient.getLock(lockName, waitTime, releaseTime, timeUnit) ?: throw CoreException(ErrorType.GET_LOCK_FAIL)
         // 트랜잭션이 진행중이지 않은 경우
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {
