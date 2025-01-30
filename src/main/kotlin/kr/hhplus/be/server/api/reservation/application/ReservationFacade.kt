@@ -30,7 +30,7 @@ class ReservationFacade(
     /**
      * 예약 생성
      */
-    @DistributedLock(resource = LockResource.SEAT, id = "#seatId", strategy = LockStrategy.REDIS_PUB_SUB)
+    @DistributedLock(resource = LockResource.SEAT, key = "#seatId", strategy = LockStrategy.REDIS_PUB_SUB)
     fun createReservation(
         concertId: String,
         userId: String,
@@ -61,7 +61,7 @@ class ReservationFacade(
      * 예약 결제
      */
     @Transactional
-    @DistributedLock(resource = LockResource.RESERVATION, id = "#reservationId", strategy = LockStrategy.REDIS_PUB_SUB)
+    @DistributedLock(resource = LockResource.RESERVATION, key = "#reservationId", strategy = LockStrategy.REDIS_PUB_SUB)
     fun payReservation(reservationId: String, token: UUID): PayReservationResult {
         // 예약 조회
         val reservation = reservationService.getReservation(reservationId)

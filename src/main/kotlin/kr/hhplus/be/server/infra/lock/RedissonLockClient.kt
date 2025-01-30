@@ -21,7 +21,6 @@ class RedissonLockClient(
         if (!isLockAcquired) {
             return null
         }
-
         return object : LockHandler {
             override fun unlock() {
                 releaseLock(rLock)

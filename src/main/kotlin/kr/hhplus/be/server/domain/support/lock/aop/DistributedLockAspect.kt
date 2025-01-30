@@ -28,14 +28,14 @@ class DistributedLockAspect(
         val key = getKey(
             signature.parameterNames,
             joinPoint.args,
-            lockAnnotation.id,
+            lockAnnotation.key,
         )
 
         return lockTemplate.withDistributedLock(
             resource = lockAnnotation.resource,
             key = key,
             waitTime = lockAnnotation.waitTime,
-            releaseTime = lockAnnotation.releaseTime,
+            leaseTime = lockAnnotation.leaseTime,
             strategy = lockAnnotation.strategy,
             timeUnit = lockAnnotation.timeUnit,
         ) {

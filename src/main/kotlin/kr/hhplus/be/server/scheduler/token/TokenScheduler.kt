@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.scheduler.token
 
 import kr.hhplus.be.server.domain.token.TokenService
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 

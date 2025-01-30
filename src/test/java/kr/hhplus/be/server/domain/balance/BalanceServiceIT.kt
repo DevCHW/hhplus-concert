@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -58,7 +59,6 @@ class BalanceServiceIT(
             val balance = balanceRepository.create(userId, BigDecimal(100))
 
             val amount = BigDecimal(10)
-
             val successCount = AtomicInteger()
             val failCount = AtomicInteger()
             val action = Runnable {

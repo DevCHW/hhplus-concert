@@ -12,9 +12,7 @@ class LockTemplate(
     private val distributedLockClients: Map<String, DistributedLockClient>,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
-
-    private val lockedNamesHolder: ThreadLocal<MutableList<String>> = ThreadLocal.withInitial { mutableListOf() }
-    private val lockNamePrefix: String  = "LOCK:"
+    private val lockNamePrefix: String  = "LOCK"
     private val defaultWaitTime: Long = 5L // 기본 락 획득 대기시간
     private val defaultLeaseTime: Long = 3L // 기본 락 해제 시간
     private val defaultTimeUnit: TimeUnit = TimeUnit.SECONDS // 기본 시간 기준
@@ -31,7 +29,7 @@ class LockTemplate(
         key: String,
         strategy: LockStrategy,
         waitTime: Long = defaultWaitTime,
-        releaseTime: Long = defaultLeaseTime,
+        leaseTime: Long = defaultLeaseTime,
         timeUnit: TimeUnit = defaultTimeUnit,
         action: () -> T
     ): T {
@@ -40,32 +38,28 @@ class LockTemplate(
 
         // 데드락 방지를 위하여 스레드에서 이미 락을 획득한 적이 있다면 스킵
         val lockName = generateLockName(resource, key)
-        val lockedNames = lockedNamesHolder.get()
+        val lockedNames = LockedNamesHolder.get()
         if (lockedNames.contains(lockName)) {
             return action()
         }
 
         // 락 획득
-        val lockHandler = lockClient.tryLock(key, waitTime, releaseTime, timeUnit) ?: throw CoreException(ErrorType.GET_LOCK_FAIL)
+        val lockHandler = lockClient.tryLock(key, waitTime, leaseTime, timeUnit) ?: throw CoreException(ErrorType.GET_LOCK_FAIL)
 
         // 획득 락 이름 추가
-        lockedNames.add(lockName)
+        LockedNamesHolder.add(lockName)
 
-        // 트랜잭션이 진행중인 경우
-        if (TransactionSynchronizationManager.isActualTransactionActive()) {
-            return try {
-                action()
-            } finally {
-                lockedNamesHolder.remove()
+        return try {
+            action()
+        } finally {
+            // 획득 락 이름 제거
+            LockedNamesHolder.remove(lockName)
+            // 트랜잭션이 진행중인 경우 이벤트 발행 / 트랜잭션 진행중이 아닌 경우 바로 락 해제
+            if (TransactionSynchronizationManager.isActualTransactionActive()) {
                 eventPublisher.publishEvent(lockHandler)
+            } else {
+                lockHandler.unlock()
             }
-        }
-
-        // 트랜잭션이 진행중이지 않은 경우
-        lockHandler.use {
-            val result = action()
-            lockedNamesHolder.remove()
-            return result
         }
     }
 
@@ -81,10 +75,10 @@ class LockTemplate(
         }
     }
 
-    // Lock 이름 생성
-    private fun generateLockName(resource: LockResource, suffix: String): String {
-        val prefix = "${lockNamePrefix}${resource.name.lowercase()}:"
-        return prefix + suffix
+    // 락 이름 생성
+    private fun generateLockName(resource: LockResource, key: String): String {
+        return "${lockNamePrefix}:${resource.name.lowercase()}:${key}"
+
     }
 
 }
