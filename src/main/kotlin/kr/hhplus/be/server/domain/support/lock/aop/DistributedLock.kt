@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 @Retention(AnnotationRetention.RUNTIME)
 annotation class DistributedLock(
     val resource: LockResource,
-    val key: String,
+    val id: String,
     val strategy: LockStrategy,
     val waitTime: Long = 5L,
     val releaseTime: Long = 3L,

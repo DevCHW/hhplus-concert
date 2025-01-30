@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.support.lock.aop
 
-import kr.hhplus.be.server.domain.support.lock.LockResource
 import kr.hhplus.be.server.domain.support.lock.LockTemplate
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -26,15 +25,15 @@ class DistributedLockAspect(
         val signature = joinPoint.signature as MethodSignature
         val method: Method = signature.method
         val lockAnnotation = method.getAnnotation(DistributedLock::class.java)
-        val lockName = getLockName(
+        val id = getKey(
             signature.parameterNames,
             joinPoint.args,
-            lockAnnotation.key,
-            lockAnnotation.resource,
+            lockAnnotation.id,
         )
 
         return lockTemplate.withDistributedLock(
-            lockName = lockName,
+            resource = lockAnnotation.resource,
+            id = id,
             waitTime = lockAnnotation.waitTime,
             releaseTime = lockAnnotation.releaseTime,
             strategy = lockAnnotation.strategy,
@@ -44,14 +43,14 @@ class DistributedLockAspect(
         }
     }
 
-    private fun getLockName(parameterNames: Array<String>, args: Array<Any?>, key: String, prefix: LockResource): String {
-        val lockPrefix = "LOCK:${prefix.name.lowercase()}:"
+    private fun getKey(parameterNames: Array<String>, args: Array<Any?>, key: String): String {
         val parser: ExpressionParser = SpelExpressionParser()
         val context = StandardEvaluationContext()
 
         for (i in parameterNames.indices) {
             context.setVariable(parameterNames[i], args[i])
         }
-        return lockPrefix + parser.parseExpression(key).getValue(context, Any::class.java)
+        return parser.parseExpression(key).getValue(context, Any::class.java).toString()
     }
+
 }
