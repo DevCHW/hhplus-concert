@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.infra.lock
 
 import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.support.lock.LockResourceManager
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import kr.hhplus.be.server.domain.support.lock.LockHandler
 import org.springframework.data.redis.core.RedisTemplate
 import java.util.concurrent.TimeUnit
 
@@ -11,13 +9,13 @@ class LettuceLockClient(
     private val redisTemplate: RedisTemplate<String, String>,
 ) : DistributedLockClient {
 
-    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockResourceManager? {
+    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val maxWaitTimeMillis = timeUnit.toMillis(waitTime)
         val startTime = System.currentTimeMillis()
         while (true) {
             // 락 획득 시 return
             if (acquireLock(key, leaseTime, timeUnit)) {
-                return object : LockResourceManager {
+                return object : LockHandler {
                     override fun unlock() {
                         releaseLock(key)
                     }

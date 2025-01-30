@@ -40,7 +40,6 @@ class BalanceServiceTest {
             // then
             assertThat(result.balance).isEqualTo(amount)
         }
-
     }
 
     @Nested

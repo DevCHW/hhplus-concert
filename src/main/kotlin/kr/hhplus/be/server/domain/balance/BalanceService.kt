@@ -17,7 +17,7 @@ class BalanceService(
     /**
      * 잔고 충전
      */
-    @DistributedLock(resource = LockResource.BALANCE, key = "#userId", strategy = LockStrategy.REDIS_SPIN_LOCK)
+    @DistributedLock(resource = LockResource.BALANCE, id = "#userId", strategy = LockStrategy.REDIS_SPIN_LOCK)
     fun charge(userId: String, amount: BigDecimal): Balance {
         val balance = balanceRepository.getNullableByUserId(userId) ?: balanceRepository.create(userId)
 
@@ -33,7 +33,7 @@ class BalanceService(
      * 잔액 차감
      */
     @Transactional
-    @DistributedLock(resource = LockResource.BALANCE, key = "#userId", strategy = LockStrategy.REDIS_PUB_SUB)
+    @DistributedLock(resource = LockResource.BALANCE, id = "#userId", strategy = LockStrategy.REDIS_PUB_SUB)
     fun decreaseBalance(userId: String, amount: BigDecimal): Balance {
         val balance = balanceRepository.getNullableByUserId(userId) ?: balanceRepository.create(userId)
 

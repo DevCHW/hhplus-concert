@@ -12,9 +12,9 @@ class ReleaseLockEventListener {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
-    fun releaseLock(lockResourceManager: LockResourceManager) {
+    fun releaseLock(lockHandler: LockHandler) {
         try {
-            lockResourceManager.unlock()
+            lockHandler.unlock()
         } catch (e: Exception) {
             log.error("[FATAL ERROR] 락 해제에 실패하였습니다.")
         }

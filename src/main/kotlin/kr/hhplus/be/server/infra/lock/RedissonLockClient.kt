@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.lock
 
 import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.support.lock.LockResourceManager
+import kr.hhplus.be.server.domain.support.lock.LockHandler
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 import java.util.concurrent.TimeUnit
@@ -15,14 +15,14 @@ class RedissonLockClient(
         waitTime: Long,
         leaseTime: Long,
         timeUnit: TimeUnit
-    ): LockResourceManager? {
+    ): LockHandler? {
         val rLock: RLock = redissonClient.getLock(key)
         val isLockAcquired = rLock.tryLock(waitTime, leaseTime, timeUnit)
         if (!isLockAcquired) {
             return null
         }
 
-        return object : LockResourceManager {
+        return object : LockHandler {
             override fun unlock() {
                 releaseLock(rLock)
             }

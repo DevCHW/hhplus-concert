@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.lock
 
 import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.support.lock.LockResourceManager
+import kr.hhplus.be.server.domain.support.lock.LockHandler
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.util.concurrent.TimeUnit
@@ -11,7 +11,7 @@ class NamedLockClient(
     private val dataSource: DataSource,
 ) : DistributedLockClient {
 
-    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockResourceManager? {
+    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val connection = dataSource.connection
         val isLockAcquired = connection.prepareStatement(NamedLockQueryType.GET_LOCK.query).use {
             it.setString(1, key)
@@ -24,7 +24,7 @@ class NamedLockClient(
             return null
         }
 
-        return object : LockResourceManager {
+        return object : LockHandler {
             override fun unlock() {
                 releaseLock(connection, key)
             }

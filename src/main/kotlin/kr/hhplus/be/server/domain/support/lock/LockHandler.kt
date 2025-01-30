@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.support.lock
 
-interface LockResourceManager : AutoCloseable {
+interface LockHandler : AutoCloseable {
     fun unlock()
 
     override fun close() {
