@@ -11,7 +11,7 @@ class NamedLockClient(
     private val dataSource: DataSource,
 ) : DistributedLockClient {
 
-    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
+    override fun tryLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val connection = dataSource.connection
         val isLockAcquired = connection.prepareStatement(NamedLockQueryType.GET_LOCK.query).use {
             it.setString(1, key)

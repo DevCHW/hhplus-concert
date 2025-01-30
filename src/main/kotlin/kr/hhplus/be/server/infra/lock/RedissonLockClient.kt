@@ -10,7 +10,7 @@ class RedissonLockClient(
     private val redissonClient: RedissonClient,
 ) : DistributedLockClient {
 
-    override fun getLock(
+    override fun tryLock(
         key: String,
         waitTime: Long,
         leaseTime: Long,

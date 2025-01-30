@@ -25,7 +25,7 @@ class DistributedLockAspect(
         val signature = joinPoint.signature as MethodSignature
         val method: Method = signature.method
         val lockAnnotation = method.getAnnotation(DistributedLock::class.java)
-        val id = getKey(
+        val key = getKey(
             signature.parameterNames,
             joinPoint.args,
             lockAnnotation.id,
@@ -33,7 +33,7 @@ class DistributedLockAspect(
 
         return lockTemplate.withDistributedLock(
             resource = lockAnnotation.resource,
-            id = id,
+            key = key,
             waitTime = lockAnnotation.waitTime,
             releaseTime = lockAnnotation.releaseTime,
             strategy = lockAnnotation.strategy,
