@@ -9,7 +9,7 @@ class LettuceLockClient(
     private val redisTemplate: RedisTemplate<String, String>,
 ) : DistributedLockClient {
 
-    override fun getLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
+    override fun tryLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val maxWaitTimeMillis = timeUnit.toMillis(waitTime)
         val startTime = System.currentTimeMillis()
         while (true) {

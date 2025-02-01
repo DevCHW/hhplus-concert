@@ -34,6 +34,7 @@ interface TokenEntityJpaRepository : JpaRepository<TokenEntity, String> {
         @Param("now") now: LocalDateTime = LocalDateTime.now()
     ): Int
 
+    @Transactional
     fun deleteByToken(token: UUID)
 
     fun existsByUserId(userId: String): Boolean
