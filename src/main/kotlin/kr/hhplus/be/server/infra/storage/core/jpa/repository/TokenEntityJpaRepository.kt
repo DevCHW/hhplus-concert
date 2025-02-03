@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.infra.storage.core.jpa.repository
 
-import kr.hhplus.be.server.domain.token.model.Token
+import kr.hhplus.be.server.domain.queue.model.Token
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.TokenEntity
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.storage.core.jpa.entity
 
 import jakarta.persistence.*
-import kr.hhplus.be.server.domain.token.model.Token
+import kr.hhplus.be.server.domain.queue.model.Token
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.converter.UUIDToStringConverter
 import java.time.LocalDateTime
 import java.util.*

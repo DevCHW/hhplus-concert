@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.storage.core.jpa.entity
 
-import com.github.f4b6a3.tsid.TsidCreator
 import kr.hhplus.be.server.domain.balance.model.ModifyBalance
+import kr.hhplus.be.server.support.IdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -17,7 +17,7 @@ class BalanceEntityTest {
         fun `잔고 수정 객체를 통해 잔고 엔티티를 수정할 수 있다`() {
             // given
             val balanceEntity = BalanceEntity(
-                userId = TsidCreator.getTsid().toString(),
+                userId = IdGenerator.generate(),
                 balance = BigDecimal(0),
             )
 

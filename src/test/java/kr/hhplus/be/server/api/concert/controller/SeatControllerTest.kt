@@ -2,7 +2,6 @@ package kr.hhplus.be.server.api.concert.controller
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
-import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
@@ -11,6 +10,7 @@ import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.concert.application.SeatFacade
 import kr.hhplus.be.server.api.concert.application.dto.GetAvailableSeatResult
+import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -34,16 +34,16 @@ class SeatControllerTest : RestDocsTestSupport() {
     @Test
     fun `예약 가능 좌석 목록 조회 API`() {
 
-        val concertId = TsidCreator.getTsid().toString()
-        val concertScheduleId = TsidCreator.getTsid().toString()
+        val concertId = IdGenerator.generate()
+        val concertScheduleId = IdGenerator.generate()
 
         val result1 = GetAvailableSeatResult(
-            id = TsidCreator.getTsid().toString(),
+            id = IdGenerator.generate(),
             number = 1,
         )
 
         val result2 = GetAvailableSeatResult(
-            id = TsidCreator.getTsid().toString(),
+            id = IdGenerator.generate(),
             number = 2,
         )
 

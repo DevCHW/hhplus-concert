@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.api.balance.application
 
-import com.github.f4b6a3.tsid.TsidCreator
 import io.hhplus.cleanarchitecture.support.concurrent.ConcurrencyTestUtils
 import kr.hhplus.be.server.domain.balance.BalanceRepository
+import kr.hhplus.be.server.support.IdGenerator
 import kr.hhplus.be.server.support.IntegrationTestSupport
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -22,7 +22,7 @@ class BalanceFacadeIT(
         @Test
         fun `동일한 유저에게 동시에 10번 충전 요청이 들어와도 1번만 성공해야 한다`() {
             // given
-            val userId = TsidCreator.getTsid().toString()
+            val userId = IdGenerator.generate()
             val balance = balanceRepository.create(userId)
             val amount = BigDecimal.valueOf(100)
 
@@ -48,7 +48,7 @@ class BalanceFacadeIT(
         @Test
         fun `잔고 충전 이후 조회 시 충전 금액만큼 충전되어있어야 한다`() {
             // given
-            val userId = TsidCreator.getTsid().toString()
+            val userId = IdGenerator.generate()
             val balance = balanceRepository.create(userId)
             val amount = BigDecimal.valueOf(100)
 

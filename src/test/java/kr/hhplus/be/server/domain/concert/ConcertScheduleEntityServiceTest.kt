@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.domain.concert
 
-import com.github.f4b6a3.tsid.TsidCreator
 import io.mockk.every
 import io.mockk.mockk
 import kr.hhplus.be.server.domain.concert.fixture.ConcertScheduleFixture
+import kr.hhplus.be.server.support.IdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -27,7 +27,7 @@ class ConcertScheduleEntityServiceTest {
         @Test
         fun `콘서트 ID에 해당하는 예약 가능한 콘서트 일정 목록을 조회하여 반환한다`() {
             // given
-            val concertId = TsidCreator.getTsid().toString()
+            val concertId = IdGenerator.generate()
             LocalDateTime.now()
             val concertSchedule1 = ConcertScheduleFixture.get(concertId = concertId,)
             val concertSchedule2 = ConcertScheduleFixture.get(concertId = concertId)

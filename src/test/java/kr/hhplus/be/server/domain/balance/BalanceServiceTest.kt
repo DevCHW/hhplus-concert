@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.domain.balance
 
-import com.github.f4b6a3.tsid.TsidCreator
 import io.mockk.every
 import io.mockk.mockk
 import kr.hhplus.be.server.domain.balance.fixture.BalanceFixture
+import kr.hhplus.be.server.support.IdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -61,7 +61,7 @@ class BalanceServiceTest {
         @Test
         fun `조회된 잔고가 없으면 0원인 잔고를 반환한다`() {
             // given
-            val userId = TsidCreator.getTsid().toString()
+            val userId = IdGenerator.generate()
             every { balanceRepository.getNullableByUserId(any()) } returns null
 
             // when
@@ -77,7 +77,7 @@ class BalanceServiceTest {
         @Test
         fun `잔액을 차감 금액만큼 차감하고 반환한다`() {
             // given
-            val userId = TsidCreator.getTsid().toString()
+            val userId = IdGenerator.generate()
             val amount = BigDecimal.valueOf(100)
 
             every { balanceRepository.getNullableByUserId(userId) }

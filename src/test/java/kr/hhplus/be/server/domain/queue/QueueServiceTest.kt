@@ -1,0 +1,204 @@
+package kr.hhplus.be.server.domain.queue
+
+import io.mockk.*
+import kr.hhplus.be.server.domain.queue.fixture.TokenFixture
+import kr.hhplus.be.server.domain.queue.model.Token
+import kr.hhplus.be.server.support.IdGenerator
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.util.*
+
+@DisplayName("토큰 서비스 단위 테스트")
+class QueueServiceTest {
+    private lateinit var tokenService: QueueService
+    private lateinit var tokenRepository: QueueRepository
+
+    @BeforeEach
+    fun setUp() {
+        tokenRepository = mockk(relaxed = true)
+        tokenService = QueueService(tokenRepository)
+    }
+
+    @Nested
+    inner class `토큰 생성` {
+        @Test
+        fun `유저 ID를 통해 토큰 생성을 하고 반환한다`() {
+            // given
+            val userId = IdGenerator.generate()
+            val token = TokenFixture.get(userId = userId, status = Token.Status.CREATED)
+
+            every { tokenRepository.save(any()) }
+                .returns(token)
+
+            // when
+            val result = tokenService.createQueueToken(userId)
+
+            // then
+            assertThat(result.id).isEqualTo(token.id)
+            assertThat(result.userId).isEqualTo(token.userId)
+            assertThat(result.status).isEqualTo(token.status)
+        }
+    }
+
+    @Nested
+    inner class `토큰 조회` {
+        @Test
+        fun `토큰을 조회할 수 있다`() {
+            // given
+            val tokenUUID = UUID.randomUUID()
+            val token = TokenFixture.get(
+                token = tokenUUID,
+            )
+
+            every { tokenRepository.getByToken(tokenUUID) } returns token
+
+            // when
+            val result = tokenService.getToken(tokenUUID)
+
+            // then
+            assertThat(result).isEqualTo(token)
+        }
+    }
+
+    @Nested
+    inner class `만료된 활성 상태 토큰 삭제` {
+        @Test
+        fun `활성 토큰 생존 시간을 통해 만료된 활성 상태 토큰 목록을 삭제한다`() {
+            // given
+            val now = LocalDateTime.now()
+            val activeTokenLifeTime = 60L // 60초
+
+            // 만료된 활성 토큰
+            val expiredToken1 = TokenFixture.get(
+                status = Token.Status.ACTIVE,
+                updatedAt = now.minusSeconds(activeTokenLifeTime + 1),
+            )
+
+            // 만료되지 않은 활성 토큰
+            val expiredToken2 = TokenFixture.get(
+                status = Token.Status.ACTIVE,
+                updatedAt = now.minusSeconds(activeTokenLifeTime + 1),
+            )
+
+            val activeTokens = listOf(expiredToken1, expiredToken2)
+
+            every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
+            every { tokenRepository.deleteByIds(any()) } just Runs
+
+            // when
+            tokenService.expireActiveTokens(activeTokenLifeTime, now)
+
+            // then
+            verify(exactly = 1) { tokenRepository.deleteByIds(listOf(expiredToken1.id, expiredToken2.id)) }
+        }
+
+        @Test
+        fun `활성 상태 토큰 목록이 여러개 있을 경우 만료된 토큰만 삭제되어야 한다`() {
+            // given
+            val now = LocalDateTime.now()
+            val activeTokenLifeTime = 60L // 60초
+
+            // 만료된 활성 토큰
+            val expiredToken = TokenFixture.get(
+                status = Token.Status.ACTIVE,
+                updatedAt = now.minusSeconds(activeTokenLifeTime + 1),
+            )
+
+            // 만료되지 않은 활성 토큰
+            val nonExpiredToken = TokenFixture.get(
+                status = Token.Status.ACTIVE,
+                updatedAt = now,
+            )
+
+            val activeTokens = listOf(expiredToken, nonExpiredToken)
+
+            every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
+            every { tokenRepository.deleteByIds(any()) } just Runs
+
+            // when
+            tokenService.expireActiveTokens(activeTokenLifeTime, now)
+
+            // then
+            verify(exactly = 1) { tokenRepository.deleteByIds(listOf(expiredToken.id)) } // 만료된 토큰만 삭제가 호출되어야 한다.
+        }
+    }
+
+    @Nested
+    inner class `비활성 토큰 목록 활성 상태 변경` {
+        @Test
+        fun `활성 토큰의 최대 갯수를 받아 비활성 토큰을 활성 상태로 변경한다`() {
+            // given
+            val activeTokenMaxSize = 2 // 활성 토큰의 최대 갯수
+            val token1 = TokenFixture.get(status = Token.Status.CREATED)
+            val token2 = TokenFixture.get(status = Token.Status.CREATED)
+            val token3 = TokenFixture.get(status = Token.Status.CREATED)
+
+            val inactiveTokens = listOf(token1, token2, token3)
+
+            every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns emptyList()  // 활성 토큰이 없음
+            every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, activeTokenMaxSize) } returns inactiveTokens // 비활성 토큰 3개
+            every { tokenRepository.updateStatusByIdsIn(Token.Status.ACTIVE, any()) } returns 2
+
+            // when
+            tokenService.activateTokens(activeTokenMaxSize)
+
+            // then
+            verify(exactly = 1) {
+                tokenRepository.updateStatusByIdsIn(Token.Status.ACTIVE, any())
+            }
+        }
+
+        @Test
+        fun `이미 최대 활성 토큰 갯수만큼 토큰이 활성되어있는 경우 아무 작업도 하지 않는다`() {
+            // given
+            val activeTokenMaxSize = 5
+            val activeTokens = List(5) { TokenFixture.get(status = Token.Status.ACTIVE) }
+
+            every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
+            every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, any()) } returns emptyList()
+
+            // when
+            tokenService.activateTokens(activeTokenMaxSize)
+
+            // then
+            verify(exactly = 0) { tokenRepository.updateStatusByIdsIn(any(), any()) } // 아무 작업도 하지 않아야 한다
+        }
+
+        @Test
+        fun `상태를 변경할 비활성 토큰이 없는 경우 아무 작업도 하지 않는다`() {
+            // given
+            val activeTokenMaxSize = 5
+            val activeTokens = List(4) { TokenFixture.get(status = Token.Status.ACTIVE) }
+
+            every { tokenRepository.getTokenByStatus(Token.Status.ACTIVE) } returns activeTokens
+            every { tokenRepository.getTokenByStatusNotSortByIdAsc(Token.Status.ACTIVE, any()) } returns emptyList()
+
+            // when
+            tokenService.activateTokens(activeTokenMaxSize)
+
+            // then
+            verify(exactly = 0) { tokenRepository.updateStatusByIdsIn(any(), any()) } // 아무 작업도 하지 않아야 한다
+        }
+    }
+
+    @Nested
+    inner class `토큰 삭제` {
+        @Test
+        fun `TokenRepository의 deleteByToken 함수가 호출된다`() {
+            // given
+            val token = UUID.randomUUID()
+
+            // when
+            tokenService.deleteToken(token)
+
+            // then
+            verify(exactly = 1) {
+                tokenRepository.deleteByToken(token)
+            }
+        }
+    }
+}

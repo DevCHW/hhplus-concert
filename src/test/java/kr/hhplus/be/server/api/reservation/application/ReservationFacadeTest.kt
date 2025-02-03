@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.api.reservation.application
 
-import com.github.f4b6a3.tsid.TsidCreator
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,13 +9,14 @@ import kr.hhplus.be.server.domain.concert.ConcertService
 import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
 import kr.hhplus.be.server.domain.payment.PaymentService
 import kr.hhplus.be.server.domain.payment.fixture.PaymentFixture
+import kr.hhplus.be.server.domain.queue.QueueService
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import kr.hhplus.be.server.domain.reservation.fixture.CreateReservationFixture
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
-import kr.hhplus.be.server.domain.token.TokenService
+import kr.hhplus.be.server.support.IdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -32,7 +32,7 @@ class ReservationFacadeTest {
     private lateinit var concertService: ConcertService
     private lateinit var paymentService: PaymentService
     private lateinit var balanceService: BalanceService
-    private lateinit var tokenService: TokenService
+    private lateinit var tokenService: QueueService
 
     @BeforeEach
     fun setUp() {
@@ -79,9 +79,9 @@ class ReservationFacadeTest {
         @Test
         fun `좌석에 해당하는 예약이 이미 존재하는 경우 CoreException 예외가 발생한다`() {
             // given
-            val concertId = TsidCreator.getTsid().toString()
-            val seatId = TsidCreator.getTsid().toString()
-            val userId = TsidCreator.getTsid().toString()
+            val concertId = IdGenerator.generate()
+            val seatId = IdGenerator.generate()
+            val userId = IdGenerator.generate()
 
             every { reservationService.isExistBySeatId(seatId) } returns true
 

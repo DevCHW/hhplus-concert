@@ -14,5 +14,6 @@ Content-Type: application/json
 %}
 
 ### 대기열 토큰 조회
-GET {{host}}/api/v1/token?token={{queueToken}}
+GET {{host}}/api/v1/token
+Queue-Token: {{queueToken}}
 Content-Type: application/json

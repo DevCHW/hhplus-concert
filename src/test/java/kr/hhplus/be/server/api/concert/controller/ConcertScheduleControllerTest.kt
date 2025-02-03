@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.domain.concert.ConcertScheduleService
 import kr.hhplus.be.server.domain.concert.fixture.ConcertScheduleFixture
+import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -18,7 +19,6 @@ import org.springframework.restdocs.payload.JsonFieldType.ARRAY
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import java.util.*
 
 @DisplayName("콘서트 스케줄 API 문서 테스트")
 class ConcertScheduleControllerTest : RestDocsTestSupport() {
@@ -44,7 +44,7 @@ class ConcertScheduleControllerTest : RestDocsTestSupport() {
 
         given()
             .contentType(ContentType.JSON)
-            .get("/api/v1/concerts/{concertId}/schedules/available", UUID.randomUUID().toString())
+            .get("/api/v1/concerts/{concertId}/schedules/available", IdGenerator.generate())
             .then()
             .status(HttpStatus.OK)
             .apply(

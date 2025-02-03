@@ -23,7 +23,7 @@ class CoreApiExceptionHandler {
         when (e.errorType.logLevel) {
             LogLevel.ERROR -> log.error("{} : {}", e.errorType, e.errorMessage, e)
             LogLevel.FATAL -> log.error("{} : {}", e.errorType, e.errorMessage, e)
-            LogLevel.WARN -> log.warn("{} : {}", e.message, e.errorMessage)
+            LogLevel.WARN -> log.warn("{} : {}", e.errorType, e.errorMessage)
             LogLevel.INFO -> log.info("{} : {}", e.errorType, e.errorMessage)
             LogLevel.DEBUG -> log.debug("{} : {}", e.errorType, e.errorMessage)
             LogLevel.TRACE -> log.trace("{} : {}", e.errorType, e.errorMessage)

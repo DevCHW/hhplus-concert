@@ -1,14 +1,14 @@
 package kr.hhplus.be.server.domain.concert.fixture
 
-import com.github.f4b6a3.tsid.TsidCreator
 import kr.hhplus.be.server.domain.concert.model.Seat
+import kr.hhplus.be.server.support.IdGenerator
 import java.time.LocalDateTime
 
 class SeatFixture {
     companion object {
         fun get(
-            id: String = TsidCreator.getTsid().toString(),
-            concertScheduleId: String = TsidCreator.getTsid().toString(),
+            id: String = IdGenerator.generate(),
+            concertScheduleId: String = IdGenerator.generate(),
             number: Int = 1,
             createdAt: LocalDateTime = LocalDateTime.now(),
             updatedAt: LocalDateTime = LocalDateTime.now(),

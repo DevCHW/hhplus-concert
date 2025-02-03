@@ -2,7 +2,6 @@ package kr.hhplus.be.server.api.balance.controller
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
-import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
@@ -14,6 +13,7 @@ import kr.hhplus.be.server.api.balance.application.dto.ChargeBalanceResult
 import kr.hhplus.be.server.api.balance.application.dto.GetBalanceResult
 import kr.hhplus.be.server.api.balance.controller.dto.request.ChargeRequest
 import kr.hhplus.be.server.domain.balance.fixture.BalanceFixture
+import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
     @Test
     fun `잔고 충전 API`() {
         val request = ChargeRequest(
-            userId = TsidCreator.getTsid().toString(),
+            userId = IdGenerator.generate(),
             amount = BigDecimal.valueOf(100),
         )
 
@@ -77,7 +77,7 @@ class BalanceControllerTest : RestDocsTestSupport() {
 
     @Test
     fun `잔고 조회 API`() {
-        val userId = TsidCreator.getTsid().toString()
+        val userId = IdGenerator.generate()
         val balance = BalanceFixture.get(userId = userId)
         val getBalanceResult = GetBalanceResult.from(balance)
         every { balanceFacade.getBalance(any()) }
