@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.api.concert.application.dto.result
 
-import kr.hhplus.be.server.api.concert.controller.dto.response.GetPopularConcertsResponse
 import kr.hhplus.be.server.domain.concert.model.Concert
 import java.math.BigDecimal
 import java.time.LocalDateTime

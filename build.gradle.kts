@@ -107,3 +107,7 @@ tasks.withType<Test> {
 tasks.bootJar {
 	dependsOn(":openapi3")
 }
+
+tasks.withType<JavaCompile> {
+	options.compilerArgs.add("-parameters")
+}

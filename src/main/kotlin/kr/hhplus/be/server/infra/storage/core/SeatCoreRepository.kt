@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.infra.storage.core
 
-import kr.hhplus.be.server.domain.concert.repository.SeatRepository
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
 import kr.hhplus.be.server.domain.concert.model.Seat
+import kr.hhplus.be.server.domain.concert.repository.SeatRepository
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.SeatEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.SeatEntityJpaRepository
 import org.springframework.stereotype.Repository
