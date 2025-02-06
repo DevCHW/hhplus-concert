@@ -2,6 +2,7 @@ package kr.hhplus.be.server.api.concert.controller
 
 import com.hhplus.board.support.response.ApiResponse
 import kr.hhplus.be.server.api.concert.controller.dto.response.GetConcertsResponse
+import kr.hhplus.be.server.api.concert.controller.dto.response.GetPopularConcertsResponse
 import kr.hhplus.be.server.domain.concert.ConcertService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -19,6 +20,17 @@ class ConcertController(
         val data = concertService.getConcerts()
         return ApiResponse.success(
             data.map { GetConcertsResponse.from(it) }
+        )
+    }
+
+    /**
+     * 인기 콘서트 목록 조회
+     */
+    @GetMapping("/concerts/popular")
+    fun getPopularConcerts(): ApiResponse<List<GetPopularConcertsResponse>> {
+        val data = concertService.getConcerts()
+        return ApiResponse.success(
+            data.map { GetPopularConcertsResponse.from(it) }
         )
     }
 }

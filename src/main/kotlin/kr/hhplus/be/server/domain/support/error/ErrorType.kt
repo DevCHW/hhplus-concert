@@ -28,4 +28,5 @@ enum class ErrorType(
     // Core
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.", LogLevel.ERROR),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", LogLevel.WARN),
+    NOT_FOUND(HttpStatus.BAD_REQUEST, "요청 리소스를 찾을 수 없습니다.", LogLevel.WARN),
 }

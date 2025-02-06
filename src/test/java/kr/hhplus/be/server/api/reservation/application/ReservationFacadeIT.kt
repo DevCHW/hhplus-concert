@@ -7,8 +7,8 @@ import kr.hhplus.be.server.domain.concert.SeatRepository
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
 import kr.hhplus.be.server.domain.payment.PaymentRepository
-import kr.hhplus.be.server.domain.queue.QueueRepository
-import kr.hhplus.be.server.domain.queue.model.CreateToken
+import kr.hhplus.be.server.domain.queue.component.ActiveQueueRedisRepository
+import kr.hhplus.be.server.domain.queue.component.TokenRedisRepository
 import kr.hhplus.be.server.domain.reservation.ReservationRepository
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
@@ -30,7 +30,8 @@ class ReservationFacadeIT(
     private val seatRepository: SeatRepository,
     private val paymentRepository: PaymentRepository,
     private val balanceRepository: BalanceRepository,
-    private val tokenRepository: QueueRepository,
+    private val tokenRedisRepository: TokenRedisRepository,
+    private val activeQueueRepository: ActiveQueueRedisRepository,
 ) : IntegrationTestSupport() {
 
     @Nested
@@ -131,17 +132,13 @@ class ReservationFacadeIT(
             )
         )
 
-        val token = tokenRepository.save(
-            CreateToken(
-                userId = balance.userId,
-                token = UUID.randomUUID(),
-            )
-        )
+        val token = tokenRedisRepository.createToken(userId) ?: throw RuntimeException("토큰 저장 실패")
+        val success = activeQueueRepository.addTokens(mutableSetOf(token))
 
         @Test
         fun `성공 시 결제 내역이 남아야 한다`() {
             // when
-            val result = reservationFacade.payReservation(reservation.id, token.token)
+            val result = reservationFacade.payReservation(reservation.id, UUID.randomUUID())
             val payment = paymentRepository.getById(result.paymentId)
 
             // then
@@ -151,7 +148,7 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 예약의 결제 금액만큼 잔고가 차감된다`() {
             // when
-            reservationFacade.payReservation(reservation.id, token.token)
+            reservationFacade.payReservation(reservation.id, token)
             val result = balanceRepository.getByUserId(balance.userId)
 
             // then
@@ -161,8 +158,8 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 대기열 토큰은 삭제된다`() {
             // when
-            reservationFacade.payReservation(reservation.id, token.token)
-            val result = tokenRepository.getNullableByToken(token.token)
+            reservationFacade.payReservation(reservation.id, token)
+            val result = tokenRedisRepository.getNullableToken(reservation.userId)
 
             // then
             assertThat(result).isNull()
@@ -171,7 +168,7 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 예약 상태는 COMPLETED 상태가 된다`() {
             // when
-            reservationFacade.payReservation(reservation.id, token.token)
+            reservationFacade.payReservation(reservation.id, token)
             val reservation = reservationRepository.getById(reservation.id)
 
             // then
@@ -185,7 +182,7 @@ class ReservationFacadeIT(
             val failCount = AtomicInteger()
             val action = Runnable {
                 try {
-                    reservationFacade.payReservation(reservation.id, token.token)
+                    reservationFacade.payReservation(reservation.id, token)
                     successCount.incrementAndGet()
                 } catch (e: Exception) {
                     failCount.incrementAndGet()

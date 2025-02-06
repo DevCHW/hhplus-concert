@@ -33,6 +33,7 @@ Content-Type: application/json
 ### 대기열 토큰 조회
 GET {{host}}/api/v1/queue/token
 Content-Type: application/json
+Authorization: {{userId}}
 Queue-Token: {{queueToken}}
 
 ### 콘서트 목록 조회

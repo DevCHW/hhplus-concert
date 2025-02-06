@@ -3,12 +3,16 @@ package kr.hhplus.be.server.infra.storage.core.support
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
 import kr.hhplus.be.server.domain.concert.model.CreateConcertSchedule
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
+import kr.hhplus.be.server.domain.reservation.model.CreateReservation
+import kr.hhplus.be.server.domain.user.model.CreateUser
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.ConcertEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.ConcertScheduleEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.SeatEntity
+import kr.hhplus.be.server.infra.storage.core.jpa.entity.UserEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.ConcertEntityJpaRepository
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.ConcertScheduleEntityJpaRepository
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.SeatEntityJpaRepository
+import kr.hhplus.be.server.infra.storage.core.jpa.repository.UserEntityJpaRepository
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
@@ -23,11 +27,23 @@ class LocalDBInit(
     private val concertEntityJpaRepository: ConcertEntityJpaRepository,
     private val concertScheduleEntityJpaRepository: ConcertScheduleEntityJpaRepository,
     private val seatEntityJpaRepository: SeatEntityJpaRepository,
+    private val userEntityJpaRepository: UserEntityJpaRepository,
 ) {
 
     @EventListener(ApplicationReadyEvent::class)
     @Transactional
     fun init() {
+        // 유저 100명 생성
+        val createUsers = mutableListOf<CreateUser>()
+        for (i in 1..100) {
+            createUsers.add(
+                CreateUser(
+                    username = "테스트유저$i"
+                )
+            )
+        }
+        userEntityJpaRepository.saveAll(createUsers.map { UserEntity(username = it.username) })
+
         // 콘서트 5개 생성
         val createConcerts = mutableListOf<CreateConcert>()
         for (i in 1..5) {
@@ -68,10 +84,18 @@ class LocalDBInit(
                 )
             }
         }
-        val seatEntities = seatEntityJpaRepository.saveAll(createSeats.map { SeatEntity.create(it) })
+
+         val seatEntities = seatEntityJpaRepository.saveAll(createSeats.map { SeatEntity.create(it) })
+
+        // 좌석 예약 생성
+        val createReservations = mutableListOf<CreateReservation>()
+        for (i in 1..50) {
+
+        }
     }
 
     companion object {
+        // 콘서트 제목 목록
         private val concertTitles = arrayOf(
             "",
             "아이유 - Palette Live",
@@ -81,6 +105,7 @@ class LocalDBInit(
             "뉴진스 - Bunnies in Harmony",
         )
 
+        // 콘서트 장소 목록
         private val locations = arrayOf(
             "",
             "올림픽공원 KSPO 돔 (체조경기장)",
@@ -91,6 +116,7 @@ class LocalDBInit(
         )
         private val now = LocalDateTime.now()
 
+        // 콘서트 시점 목록
         private val concertAts = arrayOf(
             now,
 

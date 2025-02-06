@@ -8,11 +8,11 @@ import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.http.ContentType
-import kr.hhplus.be.server.api.queue.controller.dto.enums.TokenStatus
+import kr.hhplus.be.server.api.queue.application.QueueFacade
+import kr.hhplus.be.server.api.queue.application.dto.enums.TokenStatus
+import kr.hhplus.be.server.api.queue.application.dto.result.CreateWaitingQueueTokenResult
+import kr.hhplus.be.server.api.queue.application.dto.result.GetTokenResult
 import kr.hhplus.be.server.api.queue.controller.dto.request.CreateTokenRequest
-import kr.hhplus.be.server.api.queue.controller.dto.response.GetTokenResponse
-import kr.hhplus.be.server.domain.queue.QueueService
-import kr.hhplus.be.server.domain.queue.fixture.TokenFixture
 import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,17 +21,18 @@ import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.OBJECT
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import java.util.*
 
 @DisplayName("대기열 API 문서 테스트")
 class QueueControllerTest : RestDocsTestSupport() {
 
     private lateinit var queueController: QueueController
-    private lateinit var queueService: QueueService
+    private lateinit var queueFacade: QueueFacade
 
     @BeforeEach
     fun setup() {
-        queueService = mockk()
-        queueController = QueueController(queueService)
+        queueFacade = mockk()
+        queueController = QueueController(queueFacade)
         mockMvc = mockController(queueController)
     }
 
@@ -41,9 +42,13 @@ class QueueControllerTest : RestDocsTestSupport() {
             userId = IdGenerator.generate()
         )
 
-        val token = TokenFixture.get(userId = request.userId)
-        every { queueService.createQueueToken(any()) }
-            .returns(token)
+        val result = CreateWaitingQueueTokenResult(
+            token = UUID.randomUUID(),
+            status = TokenStatus.INACTIVE,
+            rank = 1
+        )
+        every { queueFacade.createWaitingQueueToken(any()) }
+            .returns(result)
 
         given()
             .contentType(ContentType.JSON)
@@ -68,7 +73,6 @@ class QueueControllerTest : RestDocsTestSupport() {
                         .responseFields(
                             fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                             fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                            fieldWithPath("data.id").type(STRING).description("토큰 ID"),
                             fieldWithPath("data.token").type(STRING).description("토큰 값"),
                             fieldWithPath("data.status").type(STRING).description("토큰 상태"),
                         ),
@@ -80,21 +84,23 @@ class QueueControllerTest : RestDocsTestSupport() {
 
     @Test
     fun `토큰 조회 API`() {
-        val token = TokenFixture.get()
+        val token = UUID.randomUUID()
+        val userId = IdGenerator.generate()
 
-        val request = GetTokenResponse(
-            id = token.id,
-            token = token.token,
+        val result = GetTokenResult(
+            userId = userId,
+            token = token,
             status = TokenStatus.INACTIVE,
+            rank = 1,
         )
 
-        every { queueService.getToken(any()) }
-            .returns(token)
+        every { queueFacade.getToken(any(), any()) }
+            .returns(result)
 
         given()
             .contentType(ContentType.JSON)
-            .body(request)
-            .header("Queue-Token", token.token.toString())
+            .header("Authorization", userId)
+            .header("Queue-Token", token.toString())
             .get("/api/v1/queue/token")
             .then()
             .status(HttpStatus.OK)
@@ -112,7 +118,6 @@ class QueueControllerTest : RestDocsTestSupport() {
                         .responseFields(
                             fieldWithPath("result").type(STRING).description("요청 결과(SUCCESS / ERROR)"),
                             fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                            fieldWithPath("data.id").type(STRING).description("토큰 ID"),
                             fieldWithPath("data.token").type(STRING).description("토큰 값"),
                             fieldWithPath("data.status").type(STRING).description("토큰 상태"),
                         ),

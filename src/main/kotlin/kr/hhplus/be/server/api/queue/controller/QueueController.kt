@@ -1,16 +1,17 @@
 package kr.hhplus.be.server.api.queue.controller
 
 import com.hhplus.board.support.response.ApiResponse
+import kr.hhplus.be.server.api.queue.application.QueueFacade
 import kr.hhplus.be.server.api.queue.controller.dto.request.CreateTokenRequest
 import kr.hhplus.be.server.api.queue.controller.dto.response.CreateTokenResponse
 import kr.hhplus.be.server.api.queue.controller.dto.response.GetTokenResponse
-import kr.hhplus.be.server.domain.queue.QueueService
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
 class QueueController(
-    private val queueService: QueueService,
+    private val queueFacade: QueueFacade,
 ) {
 
     /**
@@ -20,7 +21,7 @@ class QueueController(
     fun createQueueToken(
         @RequestBody request: CreateTokenRequest,
     ): ApiResponse<CreateTokenResponse> {
-        val data = queueService.createQueueToken(request.userId)
+        val data = queueFacade.createWaitingQueueToken(request.userId)
         return ApiResponse.success(CreateTokenResponse.from(data))
     }
 
@@ -30,8 +31,9 @@ class QueueController(
     @GetMapping("/api/v1/queue/token")
     fun getToken(
         @RequestHeader("Queue-Token") token: UUID,
+        @RequestHeader(AUTHORIZATION) userId: String,
     ): ApiResponse<GetTokenResponse> {
-        val data = queueService.getToken(token)
+        val data = queueFacade.getToken(token, userId)
         return ApiResponse.success(GetTokenResponse.from(data))
     }
 

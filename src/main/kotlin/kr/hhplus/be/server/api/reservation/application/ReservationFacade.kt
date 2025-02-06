@@ -5,7 +5,8 @@ import kr.hhplus.be.server.api.reservation.application.dto.PayReservationResult
 import kr.hhplus.be.server.domain.balance.BalanceService
 import kr.hhplus.be.server.domain.concert.ConcertService
 import kr.hhplus.be.server.domain.payment.PaymentService
-import kr.hhplus.be.server.domain.queue.QueueService
+import kr.hhplus.be.server.domain.queue.ActiveQueueService
+import kr.hhplus.be.server.domain.queue.TokenService
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
@@ -24,7 +25,8 @@ class ReservationFacade(
     private val concertService: ConcertService,
     private val paymentService: PaymentService,
     private val balanceService: BalanceService,
-    private val tokenService: QueueService,
+    private val activeQueueService: ActiveQueueService,
+    private val tokenService: TokenService,
 ) {
 
     /**
@@ -77,8 +79,11 @@ class ReservationFacade(
         // 예약 상태 변경
         reservationService.modifyReservation(reservationId, Reservation.Status.COMPLETED)
 
-        // 토큰 삭제
-        tokenService.deleteToken(token)
+        // 활성 큐에서 토큰 삭제
+        activeQueueService.delete(token)
+
+        // 발급 토큰 삭제
+        tokenService.remove(reservation.userId)
 
         // 결제 생성
         val payment = paymentService.createPayment(reservation.userId, reservation.id, reservation.payAmount)

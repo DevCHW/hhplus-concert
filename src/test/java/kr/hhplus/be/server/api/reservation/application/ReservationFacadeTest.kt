@@ -9,7 +9,8 @@ import kr.hhplus.be.server.domain.concert.ConcertService
 import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
 import kr.hhplus.be.server.domain.payment.PaymentService
 import kr.hhplus.be.server.domain.payment.fixture.PaymentFixture
-import kr.hhplus.be.server.domain.queue.QueueService
+import kr.hhplus.be.server.domain.queue.ActiveQueueService
+import kr.hhplus.be.server.domain.queue.TokenService
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import kr.hhplus.be.server.domain.reservation.fixture.CreateReservationFixture
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
@@ -32,7 +33,8 @@ class ReservationFacadeTest {
     private lateinit var concertService: ConcertService
     private lateinit var paymentService: PaymentService
     private lateinit var balanceService: BalanceService
-    private lateinit var tokenService: QueueService
+    private lateinit var activeQueueService: ActiveQueueService
+    private lateinit var tokenService: TokenService
 
     @BeforeEach
     fun setUp() {
@@ -41,12 +43,15 @@ class ReservationFacadeTest {
         paymentService = mockk(relaxed = true)
         balanceService = mockk(relaxed = true)
         tokenService = mockk(relaxed = true)
+        activeQueueService = mockk(relaxed = true)
+
         reservationFacade = ReservationFacade(
             reservationService = reservationService,
             concertService = concertService,
             paymentService = paymentService,
             balanceService = balanceService,
             tokenService = tokenService,
+            activeQueueService = activeQueueService,
         )
     }
 
@@ -145,7 +150,12 @@ class ReservationFacadeTest {
 
             // 토큰 삭제 호출
             verify(exactly = 1) {
-                tokenService.deleteToken(token)
+                tokenService.remove(reservation.userId)
+            }
+
+            // 활성 큐 토큰 제거 호출
+            verify(exactly = 1) {
+                activeQueueService.delete(token)
             }
         }
 

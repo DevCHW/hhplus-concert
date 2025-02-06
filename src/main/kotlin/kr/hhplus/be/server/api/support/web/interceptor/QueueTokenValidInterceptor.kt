@@ -2,7 +2,7 @@ package kr.hhplus.be.server.api.support.web.interceptor
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import kr.hhplus.be.server.domain.queue.QueueService
+import kr.hhplus.be.server.domain.queue.ActiveQueueService
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.springframework.stereotype.Component
@@ -11,7 +11,7 @@ import java.util.*
 
 @Component
 class QueueTokenValidInterceptor(
-    private val queueService: QueueService
+    private val activeQueueService: ActiveQueueService,
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
@@ -22,8 +22,9 @@ class QueueTokenValidInterceptor(
 
     private fun validToken(tokenStr: String) {
         try {
-            val token = queueService.getToken(UUID.fromString(tokenStr))
-            if (!token.isActive()) {
+            val uuidToken = UUID.fromString(tokenStr)
+            val exist = activeQueueService.isExistToken(uuidToken)
+            if (!exist) {
                 throw CoreException(ErrorType.TOKEN_INACTIVE)
             }
         } catch (e: Exception) {
