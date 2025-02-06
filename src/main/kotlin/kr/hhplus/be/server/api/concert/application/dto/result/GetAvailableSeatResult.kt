@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.api.concert.application.dto
+package kr.hhplus.be.server.api.concert.application.dto.result
 
 import kr.hhplus.be.server.domain.concert.model.Seat
 

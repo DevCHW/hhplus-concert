@@ -1,16 +1,16 @@
 package kr.hhplus.be.server.api.concert.controller.dto.response
 
-import kr.hhplus.be.server.domain.concert.model.Concert
+import kr.hhplus.be.server.api.concert.application.dto.result.GetPopularConcertsResult
 
 data class GetPopularConcertsResponse(
     val id: String,
     val title: String,
 ) {
     companion object {
-        fun from(concert: Concert): GetPopularConcertsResponse {
+        fun from(result: GetPopularConcertsResult): GetPopularConcertsResponse {
             return GetPopularConcertsResponse(
-                id = concert.id,
-                title = concert.title,
+                id = result.id,
+                title = result.title,
             )
         }
     }

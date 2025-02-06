@@ -7,8 +7,8 @@ import kr.hhplus.be.server.domain.concert.SeatRepository
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
 import kr.hhplus.be.server.domain.payment.PaymentRepository
-import kr.hhplus.be.server.domain.queue.component.ActiveQueueRedisRepository
-import kr.hhplus.be.server.domain.queue.component.TokenRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.ActiveQueueRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.TokenRedisRepository
 import kr.hhplus.be.server.domain.reservation.ReservationRepository
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation

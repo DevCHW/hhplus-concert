@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.infra.storage.redis
 
-import kr.hhplus.be.server.domain.queue.component.TokenRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.TokenRedisRepository
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ScanOptions
 import org.springframework.stereotype.Repository

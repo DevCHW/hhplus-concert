@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.queue.component
+package kr.hhplus.be.server.domain.queue.repository
 
 import java.util.*
 

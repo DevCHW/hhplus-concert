@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.concert.application.SeatFacade
-import kr.hhplus.be.server.api.concert.application.dto.GetAvailableSeatResult
+import kr.hhplus.be.server.api.concert.application.dto.result.GetAvailableSeatResult
 import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

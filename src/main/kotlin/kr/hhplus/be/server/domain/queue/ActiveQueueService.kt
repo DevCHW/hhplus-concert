@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.queue
 
-import kr.hhplus.be.server.domain.queue.component.ActiveQueueRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.ActiveQueueRedisRepository
 import org.springframework.stereotype.Service
 import java.util.*
 

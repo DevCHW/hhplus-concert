@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.queue
 
-import kr.hhplus.be.server.domain.queue.component.TokenRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.TokenRedisRepository
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.springframework.stereotype.Service

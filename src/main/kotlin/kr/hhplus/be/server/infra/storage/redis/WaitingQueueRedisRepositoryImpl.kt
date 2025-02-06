@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.infra.storage.redis
 
-import kr.hhplus.be.server.domain.queue.component.WaitingQueueRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.WaitingQueueRedisRepository
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 import java.util.*
