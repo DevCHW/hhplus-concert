@@ -3,6 +3,7 @@ package kr.hhplus.be.server.domain.concert
 import io.mockk.every
 import io.mockk.mockk
 import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
+import kr.hhplus.be.server.domain.concert.repository.ConcertRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

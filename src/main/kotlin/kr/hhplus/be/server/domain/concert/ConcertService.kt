@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain.concert
 
 import kr.hhplus.be.server.domain.concert.model.Concert
+import kr.hhplus.be.server.domain.concert.repository.ConcertRepository
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class ConcertService(
@@ -21,5 +21,9 @@ class ConcertService(
      */
     fun getConcerts(): List<Concert> {
         return concertRepository.getAll()
+    }
+
+    fun getConcertsByIds(concertIds: Set<String>): List<Concert> {
+        return concertRepository.getByIds(concertIds)
     }
 }

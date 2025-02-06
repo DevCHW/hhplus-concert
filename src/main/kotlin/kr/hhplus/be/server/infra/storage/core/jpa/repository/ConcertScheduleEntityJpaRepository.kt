@@ -5,5 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
 
 interface ConcertScheduleEntityJpaRepository : JpaRepository<ConcertScheduleEntity, String> {
+
     fun findByConcertIdAndConcertAtAfter(concertId: String, now: LocalDateTime): List<ConcertScheduleEntity>
+
+    fun findByIdIn(ids: Set<String>): List<ConcertScheduleEntity>
 }

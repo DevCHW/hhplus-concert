@@ -13,5 +13,6 @@ class WebConfig(
         registry.addInterceptor(queueTokenValidInterceptor)
             .excludePathPatterns("/api/v1/queue/token")
             .excludePathPatterns("/api/v1/balance/**")
+            .excludePathPatterns("/api/v1/concerts/popular")
     }
 }

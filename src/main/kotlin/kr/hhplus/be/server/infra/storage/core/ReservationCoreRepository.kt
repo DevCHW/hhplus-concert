@@ -8,6 +8,8 @@ import kr.hhplus.be.server.infra.storage.core.jpa.entity.ReservationEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.ReservationEntityJpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Repository
 class ReservationCoreRepository(
@@ -51,5 +53,13 @@ class ReservationCoreRepository(
         return reservationJpaRepository.findForUpdateById(reservationId)
     }
 
-
+    override fun getByDateAndStatus(date: LocalDate, status: Reservation.Status): List<Reservation> {
+        val reservationEntities =
+            reservationJpaRepository.findByStatusAndCreatedAtBetween(
+                status = status,
+                start = date.atStartOfDay(),
+                end = date.atTime(LocalTime.MAX).withNano(999999000),
+            )
+        return reservationEntities.map { it.toDomain() }
+    }
 }
