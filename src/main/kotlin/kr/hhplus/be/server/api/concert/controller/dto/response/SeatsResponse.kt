@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.api.concert.controller.dto.response
 
-import kr.hhplus.be.server.api.concert.application.dto.GetAvailableSeatResult
+import kr.hhplus.be.server.api.concert.application.dto.result.GetAvailableSeatResult
 
 data class SeatsResponse(
     val id: String,

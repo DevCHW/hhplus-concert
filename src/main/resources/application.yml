@@ -20,6 +20,7 @@ spring:
     properties:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
+      hibernate.default_batch_fetch_size: 100
 
 ---
 spring.config.activate.on-profile: local
@@ -27,7 +28,7 @@ spring.config.activate.on-profile: local
 spring:
   datasource:
     hikari:
-      jdbc-url: jdbc:mysql://localhost:3307/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+      jdbc-url: jdbc:mysql://localhost:3307/hhplus?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
       username: application
       password: application
   sql:

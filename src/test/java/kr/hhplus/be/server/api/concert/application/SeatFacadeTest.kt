@@ -1,12 +1,12 @@
 package kr.hhplus.be.server.api.concert.application
 
-import com.github.f4b6a3.tsid.TsidCreator
 import io.mockk.every
 import io.mockk.mockk
 import kr.hhplus.be.server.domain.concert.SeatService
 import kr.hhplus.be.server.domain.concert.fixture.SeatFixture
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import kr.hhplus.be.server.domain.reservation.fixture.ReservationFixture
+import kr.hhplus.be.server.support.IdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.BeforeEach
@@ -35,7 +35,7 @@ class SeatFacadeTest {
         @Test
         fun `아직 예약이 되지 않은 좌석 목록을 반환한다`() {
             // given
-            val concertScheduleId = TsidCreator.getTsid().toString()
+            val concertScheduleId = IdGenerator.generate()
             val seat1 = SeatFixture.get(
                 concertScheduleId = concertScheduleId,
             )

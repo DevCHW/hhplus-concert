@@ -2,7 +2,6 @@ package kr.hhplus.be.server.api.reservation.controller
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
-import com.github.f4b6a3.tsid.TsidCreator
 import com.hhplus.board.support.restdocs.RestDocsTestSupport
 import com.hhplus.board.support.restdocs.RestDocsUtils.requestPreprocessor
 import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
@@ -14,6 +13,7 @@ import kr.hhplus.be.server.api.reservation.application.dto.CreateReservationResu
 import kr.hhplus.be.server.api.reservation.application.dto.PayReservationResult
 import kr.hhplus.be.server.api.reservation.controller.dto.request.CreateReservationRequest
 import kr.hhplus.be.server.api.reservation.controller.dto.request.PayReservationRequest
+import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -40,13 +40,13 @@ class ReservationControllerTest : RestDocsTestSupport() {
     @Test
     fun `예약 API`() {
         val request = CreateReservationRequest(
-            concertId = TsidCreator.getTsid().toString(),
-            seatId = TsidCreator.getTsid().toString(),
-            userId = TsidCreator.getTsid().toString(),
+            concertId = IdGenerator.generate(),
+            seatId = IdGenerator.generate(),
+            userId = IdGenerator.generate(),
         )
 
         val result = CreateReservationResult(
-            id = TsidCreator.getTsid().toString(),
+            id = IdGenerator.generate(),
             userId = request.userId,
             seatId = request.seatId,
             status = "PENDING",
@@ -92,12 +92,12 @@ class ReservationControllerTest : RestDocsTestSupport() {
     @Test
     fun `결제 API`() {
         val request = PayReservationRequest(
-            reservationId = TsidCreator.getTsid().toString(),
+            reservationId = IdGenerator.generate(),
             token = UUID.randomUUID(),
         )
 
         val result = PayReservationResult(
-            paymentId = TsidCreator.getTsid().toString(),
+            paymentId = IdGenerator.generate(),
             reservationId = request.reservationId,
             amount = BigDecimal.ZERO,
         )

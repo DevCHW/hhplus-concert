@@ -34,4 +34,10 @@ interface ReservationEntityJpaRepository : JpaRepository<ReservationEntity, Stri
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     fun findForUpdateById(reservationId: String): Reservation
+
+    fun findByStatusAndCreatedAtBetween(
+        status: Reservation.Status,
+        start: LocalDateTime,
+        end: LocalDateTime,
+    ): List<ReservationEntity>
 }

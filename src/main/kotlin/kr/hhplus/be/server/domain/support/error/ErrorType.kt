@@ -19,8 +19,8 @@ enum class ErrorType(
     // Token
     TOKEN_EMPTY(HttpStatus.BAD_REQUEST, "토큰 값이 존재하지 않습니다.", LogLevel.WARN),
     TOKEN_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 발급받은 토큰이 존재합니다.", LogLevel.WARN),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다.", LogLevel.WARN),
-    INACTIVE_TOKEN(HttpStatus.BAD_REQUEST, "토큰이 활성상태가 아닙니다.", LogLevel.WARN),
+    TOKEN_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다.", LogLevel.WARN),
+    TOKEN_INACTIVE(HttpStatus.BAD_REQUEST, "토큰이 활성상태가 아닙니다.", LogLevel.WARN),
 
     // Lock
     GET_LOCK_FAIL(HttpStatus.BAD_REQUEST, "락 획득에 실패하였습니다.", LogLevel.ERROR),
@@ -28,4 +28,5 @@ enum class ErrorType(
     // Core
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.", LogLevel.ERROR),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", LogLevel.WARN),
+    NOT_FOUND(HttpStatus.BAD_REQUEST, "요청 리소스를 찾을 수 없습니다.", LogLevel.WARN),
 }

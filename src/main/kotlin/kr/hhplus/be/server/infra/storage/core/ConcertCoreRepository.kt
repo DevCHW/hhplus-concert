@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.infra.storage.core
 
-import kr.hhplus.be.server.domain.concert.ConcertRepository
 import kr.hhplus.be.server.domain.concert.model.Concert
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
+import kr.hhplus.be.server.domain.concert.repository.ConcertRepository
 import kr.hhplus.be.server.infra.storage.core.jpa.entity.ConcertEntity
 import kr.hhplus.be.server.infra.storage.core.jpa.repository.ConcertEntityJpaRepository
 import org.springframework.stereotype.Repository
@@ -24,6 +24,11 @@ class ConcertCoreRepository(
     override fun getAll(): List<Concert> {
         return concertJpaRepository.findAll()
             .map { it.toDomain() }
+    }
+
+    override fun getByIds(concertIds: Set<String>): List<Concert> {
+        val concertEntities = concertJpaRepository.findByIdIn(concertIds)
+        return concertEntities.map { it.toDomain() }
     }
 
 }

@@ -1,18 +1,18 @@
 package kr.hhplus.be.server.api.reservation.application
 
-import com.github.f4b6a3.tsid.TsidCreator
 import io.hhplus.cleanarchitecture.support.concurrent.ConcurrencyTestUtils
 import kr.hhplus.be.server.domain.balance.BalanceRepository
-import kr.hhplus.be.server.domain.concert.ConcertRepository
-import kr.hhplus.be.server.domain.concert.SeatRepository
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
+import kr.hhplus.be.server.domain.concert.repository.ConcertRepository
+import kr.hhplus.be.server.domain.concert.repository.SeatRepository
 import kr.hhplus.be.server.domain.payment.PaymentRepository
+import kr.hhplus.be.server.domain.queue.repository.ActiveQueueRedisRepository
+import kr.hhplus.be.server.domain.queue.repository.TokenRedisRepository
 import kr.hhplus.be.server.domain.reservation.ReservationRepository
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
-import kr.hhplus.be.server.domain.token.TokenRepository
-import kr.hhplus.be.server.domain.token.model.CreateToken
+import kr.hhplus.be.server.support.IdGenerator
 import kr.hhplus.be.server.support.IntegrationTestSupport
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -30,13 +30,14 @@ class ReservationFacadeIT(
     private val seatRepository: SeatRepository,
     private val paymentRepository: PaymentRepository,
     private val balanceRepository: BalanceRepository,
-    private val tokenRepository: TokenRepository,
+    private val tokenRedisRepository: TokenRedisRepository,
+    private val activeQueueRepository: ActiveQueueRedisRepository,
 ) : IntegrationTestSupport() {
 
     @Nested
     inner class `좌석 예약` {
         // given
-        val userId = TsidCreator.getTsid().toString()
+        val userId = IdGenerator.generate()
         val concert = concertRepository.save(
             CreateConcert(
                 title = "title",
@@ -46,7 +47,7 @@ class ReservationFacadeIT(
 
         val seat = seatRepository.save(
             CreateSeat(
-                concertScheduleId = TsidCreator.getTsid().toString(),
+                concertScheduleId = IdGenerator.generate(),
                 number = 1
             )
         )
@@ -78,7 +79,7 @@ class ReservationFacadeIT(
         @Test
         fun `동일한 좌석에 10번 요청이 동시에 들어오더라도 1번만 성공해야 한다`() {
             // given
-            val userId = TsidCreator.getTsid().toString()
+            val userId = IdGenerator.generate()
             val concert = concertRepository.save(
                 CreateConcert(
                     title = "title",
@@ -88,7 +89,7 @@ class ReservationFacadeIT(
 
             val seat = seatRepository.save(
                 CreateSeat(
-                    concertScheduleId = TsidCreator.getTsid().toString(),
+                    concertScheduleId = IdGenerator.generate(),
                     number = 1,
                 )
             )
@@ -117,8 +118,8 @@ class ReservationFacadeIT(
     @Nested
     inner class `예약 결제` {
         // given
-        val userId = TsidCreator.getTsid().toString()
-        val seatId = TsidCreator.getTsid().toString()
+        val userId = IdGenerator.generate()
+        val seatId = IdGenerator.generate()
         val payAmount = BigDecimal.valueOf(100)
 
         val balance = balanceRepository.create(userId, BigDecimal(100))
@@ -131,17 +132,13 @@ class ReservationFacadeIT(
             )
         )
 
-        val token = tokenRepository.save(
-            CreateToken(
-                userId = balance.userId,
-                token = UUID.randomUUID(),
-            )
-        )
+        val token = tokenRedisRepository.createToken(userId) ?: throw RuntimeException("토큰 저장 실패")
+        val success = activeQueueRepository.addTokens(mutableSetOf(token))
 
         @Test
         fun `성공 시 결제 내역이 남아야 한다`() {
             // when
-            val result = reservationFacade.payReservation(reservation.id, token.token)
+            val result = reservationFacade.payReservation(reservation.id, UUID.randomUUID())
             val payment = paymentRepository.getById(result.paymentId)
 
             // then
@@ -151,7 +148,7 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 예약의 결제 금액만큼 잔고가 차감된다`() {
             // when
-            reservationFacade.payReservation(reservation.id, token.token)
+            reservationFacade.payReservation(reservation.id, token)
             val result = balanceRepository.getByUserId(balance.userId)
 
             // then
@@ -161,8 +158,8 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 대기열 토큰은 삭제된다`() {
             // when
-            reservationFacade.payReservation(reservation.id, token.token)
-            val result = tokenRepository.getNullableByToken(token.token)
+            reservationFacade.payReservation(reservation.id, token)
+            val result = tokenRedisRepository.getNullableToken(reservation.userId)
 
             // then
             assertThat(result).isNull()
@@ -171,7 +168,7 @@ class ReservationFacadeIT(
         @Test
         fun `성공 시 예약 상태는 COMPLETED 상태가 된다`() {
             // when
-            reservationFacade.payReservation(reservation.id, token.token)
+            reservationFacade.payReservation(reservation.id, token)
             val reservation = reservationRepository.getById(reservation.id)
 
             // then
@@ -185,7 +182,7 @@ class ReservationFacadeIT(
             val failCount = AtomicInteger()
             val action = Runnable {
                 try {
-                    reservationFacade.payReservation(reservation.id, token.token)
+                    reservationFacade.payReservation(reservation.id, token)
                     successCount.incrementAndGet()
                 } catch (e: Exception) {
                     failCount.incrementAndGet()

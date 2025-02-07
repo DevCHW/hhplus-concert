@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.api.concert.application
 
-import kr.hhplus.be.server.api.concert.application.dto.GetAvailableSeatResult
+import kr.hhplus.be.server.api.concert.application.dto.result.GetAvailableSeatResult
 import kr.hhplus.be.server.domain.concert.SeatService
 import kr.hhplus.be.server.domain.reservation.ReservationService
 import org.springframework.stereotype.Component

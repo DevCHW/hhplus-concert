@@ -6,6 +6,7 @@ import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -63,13 +64,6 @@ class ReservationService(
     }
 
     /**
-     * 예약 조회 락 걸고 조회
-     */
-    fun getReservationWithLock(reservationId: String): Reservation {
-        return reservationRepository.getByIdWithLock(reservationId)
-    }
-
-    /**
      * 예약 상태 변경
      */
     fun modifyReservation(
@@ -89,5 +83,9 @@ class ReservationService(
      */
     fun getBySeatIds(seatIds: List<String>): List<Reservation> {
         return reservationRepository.getBySeatIds(seatIds)
+    }
+
+    fun getCompletedReservationsByDate(date: LocalDate): List<Reservation> {
+        return reservationRepository.getByDateAndStatus(date, Reservation.Status.COMPLETED)
     }
 }

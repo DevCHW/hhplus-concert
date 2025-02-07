@@ -7,4 +7,5 @@ interface SeatEntityJpaRepository : JpaRepository<SeatEntity, String> {
 
     fun findByConcertScheduleId(concertScheduleId: String): List<SeatEntity>
 
+    fun findByIdIn(seatIds: Set<String>): List<SeatEntity>
 }

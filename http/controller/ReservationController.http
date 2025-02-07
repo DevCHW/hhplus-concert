@@ -6,7 +6,7 @@
 ### 예약
 POST {{host}}/api/v1/reservations
 Content-Type: application/json
-QUEUE_TOKEN: {{queueToken}}
+Queue-Token: {{queueToken}}
 
 {
   "concertId": "{{concertId}}",
@@ -21,7 +21,7 @@ QUEUE_TOKEN: {{queueToken}}
 ### 예약 결제
 POST {{host}}/api/v1/reservations/pay
 Content-Type: application/json
-QUEUE_TOKEN: {{queueToken}}
+Queue-Token: {{queueToken}}
 
 {
   "reservationId": "{{reservationId}}",
