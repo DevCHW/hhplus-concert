@@ -9,7 +9,7 @@ class ConcertCacheEvictScheduler {
 
     @CacheEvict(value = ["popular-concerts"], allEntries = true)
     @Scheduled(cron = "0 0 0 * * ?")
-    fun popularConcertEvict() {
+    fun evictPopularConcerts() {
     }
 
 }

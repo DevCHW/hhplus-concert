@@ -39,12 +39,12 @@ class ConcertFacade(
      */
     @Cacheable(value = ["popular-concerts"], key = "'date:' + #date + ':size:' + #size")
     fun getPopularConcerts(date: LocalDate, size: Int): List<GetPopularConcertsResult> {
-        // 현재 날짜 이상인 경우
+        // 조회 날짜가 현재 날짜 이상인 경우 빈 배열 반환
         if (date.isAfter(LocalDate.now()) || date.isEqual(LocalDate.now())) {
             return emptyList()
         }
 
-        // 날짜에 해당하는 모든 예약 건 조회
+        // 조회 날짜에 해당하는 모든 예약 건 조회
         val reservations = reservationService.getCompletedReservationsByDate(date)
         val seatIds = reservations.map { it.seatId }.toSet()
 
@@ -67,15 +67,14 @@ class ConcertFacade(
             .groupingBy { concertMap[concertScheduleMap[seatMap[it.seatId]?.concertScheduleId]?.concertId]?.id }
             .eachCount()
 
-        // 가공해서 반환
+        // 가공 및 반환
         return concertReservationCountMap.entries
                 .sortedByDescending { it.value } // 예약 건수 내림차순 정렬
-                .take(size.toInt()) // 상위 20개
+                .take(size)
                 .mapNotNull { (concertId, reservationCount) ->
                     concertMap[concertId]?.let { concert ->
                         GetPopularConcertsResult.of(concert, reservationCount)
                     }
                 }
-
     }
 }
