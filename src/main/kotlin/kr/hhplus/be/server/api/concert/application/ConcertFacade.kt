@@ -39,10 +39,10 @@ class ConcertFacade(
      */
     @Cacheable(value = ["popular-concerts"], key = "'date:' + #date + ':size:' + #size")
     fun getPopularConcerts(date: LocalDate, size: Int): List<GetPopularConcertsResult> {
-//        // 현재 날짜 이상인 경우
-//        if (date.isAfter(LocalDate.now()) || date.isEqual(LocalDate.now())) {
-//            return emptyList()
-//        }
+        // 현재 날짜 이상인 경우
+        if (date.isAfter(LocalDate.now()) || date.isEqual(LocalDate.now())) {
+            return emptyList()
+        }
 
         // 날짜에 해당하는 모든 예약 건 조회
         val reservations = reservationService.getCompletedReservationsByDate(date)

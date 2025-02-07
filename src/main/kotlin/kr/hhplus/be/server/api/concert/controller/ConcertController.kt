@@ -27,8 +27,6 @@ class ConcertController(
 
     /**
      * 인기 콘서트 목록 조회
-     * TODO : 1. 구현, 일간 예약 많은 인기 콘서트 조회
-     * TODO : 2. 캐싱 처리
      */
     @GetMapping("/api/v1/concerts/popular")
     fun getPopularConcerts(

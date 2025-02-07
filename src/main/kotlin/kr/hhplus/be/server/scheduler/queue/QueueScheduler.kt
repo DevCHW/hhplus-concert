@@ -14,9 +14,7 @@ class QueueScheduler(
 ) {
 
     /**
-     * 활성 큐 토큰 추가
-     * M 시간마다 N개씩 대기큐에서 활성큐로 옮긴다.
-     * TODO : M, N 개략적 규모 측정
+     * 활성 큐 토큰 추가 및 만료 토큰 삭제
      */
     @Scheduled(fixedRate = ADD_ACTIVE_SCHEDULE_MILLIS)
     fun addTokenActiveQueueSchedule() {
