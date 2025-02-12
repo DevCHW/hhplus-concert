@@ -5,14 +5,14 @@ import kr.hhplus.be.server.domain.concert.model.CreateConcertSchedule
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
 import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.user.model.CreateUser
-import kr.hhplus.be.server.infra.storage.core.jpa.entity.ConcertEntity
-import kr.hhplus.be.server.infra.storage.core.jpa.entity.ConcertScheduleEntity
-import kr.hhplus.be.server.infra.storage.core.jpa.entity.SeatEntity
-import kr.hhplus.be.server.infra.storage.core.jpa.entity.UserEntity
-import kr.hhplus.be.server.infra.storage.core.jpa.repository.ConcertEntityJpaRepository
-import kr.hhplus.be.server.infra.storage.core.jpa.repository.ConcertScheduleEntityJpaRepository
-import kr.hhplus.be.server.infra.storage.core.jpa.repository.SeatEntityJpaRepository
-import kr.hhplus.be.server.infra.storage.core.jpa.repository.UserEntityJpaRepository
+import kr.hhplus.be.server.infra.storage.core.concert.jpa.entity.ConcertEntity
+import kr.hhplus.be.server.infra.storage.core.concert.jpa.entity.ConcertScheduleEntity
+import kr.hhplus.be.server.infra.storage.core.concert.jpa.entity.SeatEntity
+import kr.hhplus.be.server.infra.storage.core.concert.jpa.repository.ConcertEntityJpaRepository
+import kr.hhplus.be.server.infra.storage.core.concert.jpa.repository.ConcertScheduleEntityJpaRepository
+import kr.hhplus.be.server.infra.storage.core.payment.jpa.repository.SeatEntityJpaRepository
+import kr.hhplus.be.server.infra.storage.core.user.jpa.entity.UserEntity
+import kr.hhplus.be.server.infra.storage.core.user.jpa.repository.UserEntityJpaRepository
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
@@ -42,7 +42,11 @@ class LocalDBInit(
                 )
             )
         }
-        userEntityJpaRepository.saveAll(createUsers.map { UserEntity(username = it.username) })
+        userEntityJpaRepository.saveAll(createUsers.map {
+            UserEntity(
+                username = it.username
+            )
+        })
 
         // 콘서트 5개 생성
         val createConcerts = mutableListOf<CreateConcert>()

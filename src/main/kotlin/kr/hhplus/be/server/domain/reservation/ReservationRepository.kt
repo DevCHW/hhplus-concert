@@ -6,9 +6,9 @@ import kr.hhplus.be.server.domain.reservation.model.Reservation
 import java.time.LocalDate
 
 interface ReservationRepository {
-    fun isExistBySeatId(seatId: String): Boolean
-
     fun save(createReservation: CreateReservation): Reservation
+
+    fun isExistBySeatId(seatId: String): Boolean
 
     fun getByStatus(status: Reservation.Status): List<Reservation>
 

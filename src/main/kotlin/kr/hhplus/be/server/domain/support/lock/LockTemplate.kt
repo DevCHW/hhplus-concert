@@ -69,11 +69,11 @@ class LockTemplate(
                 lockHandler.unlock()
             }
 
-//            if (TransactionSynchronizationManager.isActualTransactionActive()) {
-//                eventPublisher.publishEvent(lockHandler)
-//            } else {
-//                lockHandler.unlock()
-//            }
+            if (TransactionSynchronizationManager.isActualTransactionActive()) {
+                eventPublisher.publishEvent(lockHandler)
+            } else {
+                lockHandler.unlock()
+            }
         }
     }
 
