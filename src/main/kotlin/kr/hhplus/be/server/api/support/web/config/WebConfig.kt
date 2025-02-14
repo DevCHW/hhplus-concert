@@ -14,5 +14,6 @@ class WebConfig(
             .excludePathPatterns("/api/v1/queue/token")
             .excludePathPatterns("/api/v1/balance/**")
             .excludePathPatterns("/api/v1/concerts/popular")
+            .excludePathPatterns("/api/v1/data-platform/reservations/pay")
     }
 }

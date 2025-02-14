@@ -15,6 +15,8 @@ import kr.hhplus.be.server.domain.support.error.ErrorType
 import kr.hhplus.be.server.domain.support.lock.LockResource
 import kr.hhplus.be.server.domain.support.lock.LockStrategy
 import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
+import kr.hhplus.be.server.listner.event.ReservationCompleteEvent
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -27,6 +29,7 @@ class ReservationFacade(
     private val balanceService: BalanceService,
     private val activeQueueService: ActiveQueueService,
     private val tokenService: TokenService,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
 
     /**
@@ -87,6 +90,17 @@ class ReservationFacade(
 
         // 결제 생성
         val payment = paymentService.createPayment(reservation.userId, reservation.id, reservation.payAmount)
+
+        // 이벤트 발행
+        eventPublisher.publishEvent(
+            ReservationCompleteEvent(
+                id = reservation.id,
+                userId = reservation.userId,
+                status = reservation.status.name,
+                createdAt = reservation.createdAt,
+                updatedAt = reservation.updatedAt,
+            )
+        )
         return PayReservationResult.from(payment)
     }
 }
