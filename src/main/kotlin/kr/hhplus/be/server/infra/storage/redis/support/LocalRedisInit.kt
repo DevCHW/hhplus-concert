@@ -2,7 +2,7 @@ package kr.hhplus.be.server.infra.storage.redis.support
 
 import com.github.f4b6a3.tsid.TsidCreator
 import kr.hhplus.be.server.domain.queue.repository.TokenRedisRepository
-import kr.hhplus.be.server.infra.storage.redis.WaitingQueueRedisRepositoryImpl
+import kr.hhplus.be.server.infra.storage.redis.queue.WaitingQueueRedisRepositoryImpl
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener

@@ -65,6 +65,9 @@ dependencies {
 	// TSID
 	implementation("com.github.f4b6a3:tsid-creator:${property("tsidCreatorVersion")}")
 
+	// Feign
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
 	// Swagger UI
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springdocOpenApiVersion")}")
 }

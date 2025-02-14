@@ -16,7 +16,7 @@ class BalanceEntityTest {
         @Test
         fun `잔고 수정 객체를 통해 잔고 엔티티를 수정할 수 있다`() {
             // given
-            val balanceEntity = BalanceEntity(
+            val balanceEntity = kr.hhplus.be.server.infra.storage.core.balance.jpa.entity.BalanceEntity(
                 userId = IdGenerator.generate(),
                 balance = BigDecimal(0),
             )
