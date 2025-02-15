@@ -15,7 +15,7 @@ import kr.hhplus.be.server.domain.support.error.ErrorType
 import kr.hhplus.be.server.domain.support.lock.LockResource
 import kr.hhplus.be.server.domain.support.lock.LockStrategy
 import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
-import kr.hhplus.be.server.listner.event.ReservationCompleteEvent
+import kr.hhplus.be.server.listener.event.ReservationCompleteEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
