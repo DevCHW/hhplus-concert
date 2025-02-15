@@ -13,10 +13,11 @@ class AsyncConfig : AsyncConfigurer{
     override fun getAsyncExecutor(): Executor? {
         val executor = ThreadPoolTaskExecutor()
         executor.corePoolSize = 5
-        executor.maxPoolSize = 5
+        executor.maxPoolSize = Integer.MAX_VALUE
         executor.queueCapacity = 5
         executor.keepAliveSeconds = 30
         executor.setThreadNamePrefix("async-executor-")
+        executor.setWaitForTasksToCompleteOnShutdown(true)
         executor.initialize()
         return executor
     }

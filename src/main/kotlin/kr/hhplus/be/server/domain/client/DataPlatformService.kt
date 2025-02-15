@@ -8,8 +8,13 @@ class DataPlatformService(
     private val dataPlatformClient: DataPlatformClient,
 ) {
 
-    fun sendData(data: ReservationCompleteDto) {
-        dataPlatformClient.sendData(data)
+    fun sendData(data: ReservationCompleteDto): Boolean {
+        try {
+            dataPlatformClient.sendData(data)
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 
 }

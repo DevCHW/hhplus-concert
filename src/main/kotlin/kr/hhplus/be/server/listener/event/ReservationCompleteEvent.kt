@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.listner.event
+package kr.hhplus.be.server.listener.event
 
 import kr.hhplus.be.server.domain.client.dto.ReservationCompleteDto
 import java.time.LocalDateTime
