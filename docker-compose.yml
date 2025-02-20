@@ -1,7 +1,10 @@
-version: '3'
+version: '3.8'
+
 services:
   mysql:
     image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
     ports:
       - "3307:3306"
     environment:
@@ -14,12 +17,71 @@ services:
 
   redis:
     image: redis:6.2.6-alpine
+    container_name: redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       retries: 10
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: unless-stopped
+    ports:
+      - "2181:2181"
+    platform: linux/arm64/v8
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: apache/kafka
+    container_name: kafka
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    ports:
+      - "9090:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+  create-topics:
+    image: confluentinc/cp-kafka:latest
+    hostname: create-topics
+    container_name: create-topics
+    depends_on:
+      - kafka
+    command: "
+      bash -c 'cub kafka-ready -b kafka:29092 1 120 && \
+      kafka-topics && \
+        --create && \ 
+        --if-not-exists --bootstrap-server kafka:29092 && \
+        --partitions 3 && \ 
+        --replication-factor 1 && \ 
+        --topic concert-payment-completed'"
+    restart: no
 
 networks:
   default:
