@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.EnableCaching
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableCaching
 class ServerApplication
 
 fun main(args: Array<String>) {
