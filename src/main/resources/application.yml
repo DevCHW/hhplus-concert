@@ -31,6 +31,7 @@ spring:
       jdbc-url: jdbc:mysql://localhost:3307/hhplus?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
       username: application
       password: application
+
   sql:
     init:
       mode: always
@@ -50,6 +51,13 @@ spring:
   data:
     redis.host: localhost
     redis.port: 6379
+
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: consumer-group
 
   cloud.openfeign:
     client:
