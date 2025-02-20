@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.domain.support.lock
+package kr.hhplus.be.server.domain.support.component.lock
 
 import java.util.concurrent.TimeUnit
 
-interface DistributedLockClient {
+interface LockClient {
     fun tryLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler?
 }

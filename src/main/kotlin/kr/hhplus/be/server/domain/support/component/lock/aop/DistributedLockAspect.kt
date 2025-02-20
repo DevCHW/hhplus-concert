@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.domain.support.lock.aop
+package kr.hhplus.be.server.domain.support.component.lock.aop
 
-import kr.hhplus.be.server.domain.support.lock.LockTemplate
+import kr.hhplus.be.server.domain.support.component.lock.LockTemplate
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -20,7 +20,7 @@ class DistributedLockAspect(
     private val lockTemplate: LockTemplate,
 ) {
 
-    @Around("@annotation(kr.hhplus.be.server.domain.support.lock.aop.DistributedLock)")
+    @Around("@annotation(kr.hhplus.be.server.domain.support.component.lock.aop.DistributedLock)")
     fun lock(joinPoint: ProceedingJoinPoint): Any? {
         val signature = joinPoint.signature as MethodSignature
         val method: Method = signature.method

@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.domain.support.lock.aop
+package kr.hhplus.be.server.domain.support.component.lock.aop
 
-import kr.hhplus.be.server.domain.support.lock.LockResource
-import kr.hhplus.be.server.domain.support.lock.LockStrategy
+import kr.hhplus.be.server.domain.support.component.lock.LockResource
+import kr.hhplus.be.server.domain.support.component.lock.LockStrategy
 import java.util.concurrent.TimeUnit
 
 @Target(AnnotationTarget.FUNCTION)

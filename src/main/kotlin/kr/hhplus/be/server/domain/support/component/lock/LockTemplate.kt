@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.support.lock
+package kr.hhplus.be.server.domain.support.component.lock
 
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class LockTemplate(
-    private val distributedLockClients: Map<String, DistributedLockClient>,
+    private val lockClients: Map<String, LockClient>,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
     private val lockNamePrefix: String  = "LOCK"
@@ -34,8 +34,8 @@ class LockTemplate(
         timeUnit: TimeUnit = defaultTimeUnit,
         action: () -> T
     ): T {
-        // 분산락 전략 선택
-        val lockClient = distributedLockClients[strategy.clientName] ?: throw IllegalStateException("분산 락 전략에 해당하는 구현체가 없습니다. strategyName=$strategy.strategyName")
+        // 전략에 해당하는 잠금 수행 구현체 선택
+        val lockClient = lockClients[strategy.clientName] ?: throw IllegalStateException("${strategy}전략에 해당하는 잠금 수행 구현체가 없습니다.")
 
         // 데드락 방지를 위하여 스레드에서 이미 락을 획득한 적이 있다면 스킵
         val lockName = generateLockName(resource, key)
@@ -77,14 +77,14 @@ class LockTemplate(
         }
     }
 
-    // 주입받은 <String, DistributedClient> Map 검증
+    // 주입받은 <String, LockClient> Map 검증
     private fun validateDistributedLockClients() {
         val lockStrategies = LockStrategy.entries.map { it.clientName }.toSet()
 
-        // distributedLockClients에 존재하는 키가 validTypes에 포함되지 않은 경우 예외 발생
-        distributedLockClients.keys.forEach { lockClientName ->
+        // lockClients에 존재하는 키가 validTypes에 포함되지 않은 경우 예외
+        lockClients.keys.forEach { lockClientName ->
             if (!lockStrategies.contains(lockClientName)) {
-                throw IllegalStateException("유효하지 않은 분산락 전략입니다. lockClientName=[$lockClientName]")
+                throw IllegalStateException("유효하지 않은 잠금 전략입니다. lockClientName=[$lockClientName]")
             }
         }
     }

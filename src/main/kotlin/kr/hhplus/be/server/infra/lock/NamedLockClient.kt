@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.lock
 
-import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.support.lock.LockHandler
+import kr.hhplus.be.server.domain.support.component.lock.LockClient
+import kr.hhplus.be.server.domain.support.component.lock.LockHandler
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.util.concurrent.TimeUnit
@@ -9,7 +9,7 @@ import javax.sql.DataSource
 
 class NamedLockClient(
     private val dataSource: DataSource,
-) : DistributedLockClient {
+) : LockClient {
 
     override fun tryLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val connection = dataSource.connection

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.support.lock
+package kr.hhplus.be.server.domain.support.component.lock
 
 class LockedNamesHolder {
     companion object {
