@@ -2,6 +2,7 @@ package kr.hhplus.be.server.api.concert.application
 
 import io.mockk.every
 import io.mockk.mockk
+import kr.hhplus.be.server.api.concert.application.dto.result.GetConcertResult
 import kr.hhplus.be.server.api.concert.application.dto.result.GetConcertsResult
 import kr.hhplus.be.server.domain.concert.ConcertScheduleService
 import kr.hhplus.be.server.domain.concert.ConcertService
@@ -38,7 +39,7 @@ class ConcertFacadeTest {
     @Nested
     inner class `콘서트 단건 조회` {
         @Test
-        fun `GetConcertResult로 변환되어 반환된다`() {
+        fun `조회한 데이터를 통해 적절한 타입으로 변환하여 반환한다`() {
             // given
             val concert = ConcertFixture.get()
             every { concertService.getConcert(any()) } returns concert
@@ -47,14 +48,14 @@ class ConcertFacadeTest {
             val result = concertFacade.getConcert(concert.id)
 
             // then
-            assertThat(result).isInstanceOf(GetConcertsResult::class.java)
+            assertThat(result).isInstanceOf(GetConcertResult::class.java)
         }
     }
 
     @Nested
     inner class `콘서트 목록 조회` {
         @Test
-        fun `GetConcertsResult 목록으로 변환되어 반환된다`() {
+        fun `조회한 데이터를 통해 적절한 타입으로 변환하여 반환한다`() {
             // given
             val concerts = listOf(
                 ConcertFixture.get(),

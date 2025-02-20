@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.context.ApplicationEventPublisher
 import java.util.*
 
 @DisplayName("예약 Facade 단위 테스트")
@@ -35,6 +36,7 @@ class ReservationFacadeTest {
     private lateinit var balanceService: BalanceService
     private lateinit var activeQueueService: ActiveQueueService
     private lateinit var tokenService: TokenService
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @BeforeEach
     fun setUp() {
@@ -44,6 +46,7 @@ class ReservationFacadeTest {
         balanceService = mockk(relaxed = true)
         tokenService = mockk(relaxed = true)
         activeQueueService = mockk(relaxed = true)
+        eventPublisher = mockk(relaxed = true)
 
         reservationFacade = ReservationFacade(
             reservationService = reservationService,
@@ -51,6 +54,7 @@ class ReservationFacadeTest {
             paymentService = paymentService,
             balanceService = balanceService,
             tokenService = tokenService,
+            eventPublisher = eventPublisher,
             activeQueueService = activeQueueService,
         )
     }
