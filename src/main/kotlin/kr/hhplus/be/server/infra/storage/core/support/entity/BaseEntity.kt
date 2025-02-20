@@ -42,6 +42,8 @@ abstract class BaseEntity(
         return id == getIdentifier(other)
     }
 
+    override fun hashCode() = Objects.hashCode(id)
+
     private fun getIdentifier(obj: Any): Any? {
         return if (obj is HibernateProxy) {
             obj.hibernateLazyInitializer.identifier
@@ -49,8 +51,6 @@ abstract class BaseEntity(
             (obj as BaseEntity).id
         }
     }
-
-    override fun hashCode() = Objects.hashCode(id)
 
     @PostPersist
     @PostLoad
