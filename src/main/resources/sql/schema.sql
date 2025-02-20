@@ -1,14 +1,11 @@
 drop table if exists balance cascade;
-drop table if exists balance_charge_lock cascade;
 drop table if exists concert cascade;
 drop table if exists concert_schedule cascade;
 drop table if exists payment cascade;
 drop table if exists reservation cascade;
 drop table if exists seat cascade;
-drop table if exists token cascade;
 drop table if exists users cascade;
 
--- 테이블 생성
 create table balance
 (
     id         varchar(13)  not null comment 'PK'
@@ -17,22 +14,10 @@ create table balance
     balance    decimal      not null comment '잔액',
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점',
-    constraint balance_unique
+    constraint balance_unique_1
         unique (user_id)
 )
     comment '잔고';
-
-create table balance_charge_lock
-(
-    id         varchar(13)  not null comment 'PK'
-        primary key,
-    user_id    varchar(13)  not null comment '유저 ID',
-    created_at timestamp(6) not null comment '생성 시점',
-    updated_at timestamp(6) not null comment '마지막 수정 시점',
-    constraint balance_charge_lock_unique
-        unique (user_id)
-)
-    comment '잔고 충전 잠금';
 
 create table concert
 (
@@ -57,6 +42,9 @@ create table concert_schedule
 )
     comment '콘서트 일정';
 
+create index idx_concert_schedule_concert_id_at
+    on concert_schedule (concert_id, concert_at);
+
 create table payment
 (
     id             varchar(13)  not null comment 'PK'
@@ -79,10 +67,16 @@ create table reservation
     status     varchar(255) not null comment '예약 상태(PENDING: 대기 / COMPLETED: 완료 / CANCEL: 취소)',
     created_at timestamp(6) not null comment '생성 시점',
     updated_at timestamp(6) not null comment '마지막 수정 시점',
-    constraint reservation_unique
+    constraint reservation_unique_1
         unique (seat_id)
 )
     comment '예약';
+
+create index idx_reservation_status
+    on reservation (status);
+
+create index idx_reservation_status_created_at
+    on reservation (status, created_at);
 
 create table seat
 (
@@ -95,21 +89,8 @@ create table seat
 )
     comment '좌석';
 
-create table token
-(
-    id         varchar(13)  not null comment 'PK'
-        primary key,
-    user_id    varchar(13)  not null comment '유저 ID',
-    token      varchar(255) not null comment '토큰 (UUID)',
-    status     varchar(255) not null comment '토큰 상태 (CREATED: 생성 / ACTIVE: 활성)',
-    created_at timestamp(6) not null comment '생성 시점',
-    updated_at timestamp(6) not null comment '마지막 수정 시점',
-    constraint token_unique
-        unique (token),
-    constraint token_unique_2
-        unique (user_id)
-)
-    comment '토큰';
+create index idx_seat_concert_schedule_id
+    on seat (concert_schedule_id);
 
 create table users
 (
@@ -120,3 +101,17 @@ create table users
     updated_at timestamp(6) not null comment '마지막 수정 시점'
 )
     comment '유저';
+
+create table outbox
+(
+    `id`         varchar(13)     not null   comment 'PK'
+        primary key,
+    `idempotency_key` varchar(255)    not null comment '멱등성을 보장하기 위한 키, 중복 처리를 방지',
+    `topic`      varchar(255)              not null comment '메시지가 발행될 토픽명',
+    `key`        varchar(255)              null comment 'Kafka 메시지의 Key (파티셔닝에 사용 가능)',
+    `message`    mediumblob           not null comment '이벤트 메시지 본문 (직렬화된 데이터)',
+    `status`     varchar(255)         not null comment '이벤트 처리 상태 (예: PENDING, SENT, FAILED)',
+    `created_at` timestamp(6)         not null comment '생성 시점',
+    `updated_at` timestamp(6)         not null comment '마지막 수정 시점'
+)
+  comment '아웃박스';
