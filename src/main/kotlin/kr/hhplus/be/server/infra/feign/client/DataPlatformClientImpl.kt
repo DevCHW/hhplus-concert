@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.feign.client
 
 import kr.hhplus.be.server.domain.client.DataPlatformClient
-import kr.hhplus.be.server.domain.client.dto.ReservationCompleteDto
+import kr.hhplus.be.server.domain.client.dto.DataPlatformPaymentCreateRequest
 import kr.hhplus.be.server.infra.feign.client.api.DataPlatformApi
 import org.springframework.stereotype.Component
 
@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component
 class DataPlatformClientImpl(
     private val dataPlatformApi: DataPlatformApi,
 ) : DataPlatformClient {
-
-    override fun sendData(model: ReservationCompleteDto) {
+    override fun collectData(model: DataPlatformPaymentCreateRequest) {
         dataPlatformApi.sendData(model)
     }
-
 }

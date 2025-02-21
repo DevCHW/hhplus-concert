@@ -1,5 +1,6 @@
-package kr.hhplus.be.server.api.support.mock
+package kr.hhplus.be.server.microservice.dataplatform.api.mock
 
+import kr.hhplus.be.server.domain.client.DataPlatformService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.PostMapping
@@ -7,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class DataPlatformMockApiController {
+class DataPlatformMockApiController(
+    private val dataPlatformService: DataPlatformService,
+) {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
