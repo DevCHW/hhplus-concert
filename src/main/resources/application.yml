@@ -57,7 +57,6 @@ spring:
       bootstrap-servers: localhost:9092
     consumer:
       bootstrap-servers: localhost:9092
-      group-id: consumer-group
 
   cloud.openfeign:
     client:
