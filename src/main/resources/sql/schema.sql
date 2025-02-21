@@ -5,6 +5,7 @@ drop table if exists payment cascade;
 drop table if exists reservation cascade;
 drop table if exists seat cascade;
 drop table if exists users cascade;
+drop table if exists outbox cascade;
 
 create table balance
 (
@@ -104,14 +105,14 @@ create table users
 
 create table outbox
 (
-    `id`         varchar(13)     not null   comment 'PK'
+    `id`              varchar(13)  not null comment 'PK'
         primary key,
-    `idempotency_key` varchar(255)    not null comment '멱등성을 보장하기 위한 키, 중복 처리를 방지',
-    `topic`      varchar(255)              not null comment '메시지가 발행될 토픽명',
-    `key`        varchar(255)              null comment 'Kafka 메시지의 Key (파티셔닝에 사용 가능)',
-    `message`    mediumblob           not null comment '이벤트 메시지 본문 (직렬화된 데이터)',
-    `status`     varchar(255)         not null comment '이벤트 처리 상태 (예: PENDING, SENT, FAILED)',
-    `created_at` timestamp(6)         not null comment '생성 시점',
-    `updated_at` timestamp(6)         not null comment '마지막 수정 시점'
+    `idempotency_key` varchar(255) not null comment '멱등성을 보장하기 위한 키, 중복 처리를 방지',
+    `topic`           varchar(255) not null comment '메시지가 발행될 토픽명',
+    `event_key`       varchar(255) null comment 'Kafka 메시지의 Key (파티셔닝에 사용 가능)',
+    `message`         mediumblob   not null comment '이벤트 메시지 본문 (직렬화된 데이터)',
+    `status`          varchar(255) not null comment '이벤트 처리 상태 (예: PENDING, SENT, FAILED)',
+    `created_at`      timestamp(6) not null comment '생성 시점',
+    `updated_at`      timestamp(6) not null comment '마지막 수정 시점'
 )
-  comment '아웃박스';
+    comment '아웃박스';
