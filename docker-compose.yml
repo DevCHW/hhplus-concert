@@ -30,15 +30,13 @@ services:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
     restart: unless-stopped
-    ports:
-      - "2181:2181"
-    platform: linux/arm64/v8
+    platform: linux/arm64
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: apache/kafka
+    image: confluentinc/cp-kafka:latest
     container_name: kafka
     restart: unless-stopped
     ports:
@@ -66,22 +64,6 @@ services:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-
-  create-topics:
-    image: confluentinc/cp-kafka:latest
-    hostname: create-topics
-    container_name: create-topics
-    depends_on:
-      - kafka
-    command: "
-      bash -c 'cub kafka-ready -b kafka:29092 1 120 && \
-      kafka-topics && \
-        --create && \ 
-        --if-not-exists --bootstrap-server kafka:29092 && \
-        --partitions 3 && \ 
-        --replication-factor 1 && \ 
-        --topic concert-payment-completed'"
-    restart: no
 
 networks:
   default:
