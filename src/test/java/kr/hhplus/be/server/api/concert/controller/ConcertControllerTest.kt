@@ -8,8 +8,11 @@ import com.hhplus.board.support.restdocs.RestDocsUtils.responsePreprocessor
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.http.ContentType
+import kr.hhplus.be.server.api.concert.application.ConcertFacade
+import kr.hhplus.be.server.api.concert.application.dto.result.GetConcertsResult
 import kr.hhplus.be.server.domain.concert.ConcertService
 import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
+import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -17,28 +20,42 @@ import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType.ARRAY
 import org.springframework.restdocs.payload.JsonFieldType.STRING
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @DisplayName("콘서트 API 문서 테스트")
 class ConcertControllerTest : RestDocsTestSupport() {
 
-    private lateinit var concertService: ConcertService
+    private lateinit var concertFacade: ConcertFacade
     private lateinit var concertController: ConcertController
 
     @BeforeEach
     fun setup() {
-        concertService = mockk()
-        concertController = ConcertController(concertService)
+        concertFacade = mockk()
+        concertController = ConcertController(concertFacade)
         mockMvc = mockController(concertController)
     }
 
     @Test
     fun `콘서트 목록 조회 API`() {
         val data = listOf(
-            ConcertFixture.get(),
-            ConcertFixture.get()
+            GetConcertsResult(
+                id = IdGenerator.generate(),
+                title = "title1",
+                price = BigDecimal.valueOf(100),
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+            ),
+            GetConcertsResult(
+                id = IdGenerator.generate(),
+                title = "title2",
+                price = BigDecimal.valueOf(100),
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+            ),
         )
 
-        every { concertService.getConcerts() }
+        every { concertFacade.getConcerts() }
             .returns(data)
 
         given()

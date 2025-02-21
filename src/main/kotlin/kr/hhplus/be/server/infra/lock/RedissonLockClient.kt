@@ -1,14 +1,14 @@
 package kr.hhplus.be.server.infra.lock
 
-import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.support.lock.LockHandler
+import kr.hhplus.be.server.domain.support.component.lock.LockClient
+import kr.hhplus.be.server.domain.support.component.lock.LockHandler
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 import java.util.concurrent.TimeUnit
 
 class RedissonLockClient(
     private val redissonClient: RedissonClient,
-) : DistributedLockClient {
+) : LockClient {
 
     override fun tryLock(
         key: String,

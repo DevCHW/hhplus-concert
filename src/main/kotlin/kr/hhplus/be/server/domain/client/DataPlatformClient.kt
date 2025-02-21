@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.domain.client
 
-import kr.hhplus.be.server.domain.client.dto.ReservationCompleteDto
+import kr.hhplus.be.server.domain.client.dto.DataPlatformPaymentCreateRequest
 
 interface DataPlatformClient {
 
-    fun sendData(model: ReservationCompleteDto)
+    fun collectData(model: DataPlatformPaymentCreateRequest)
 
 }

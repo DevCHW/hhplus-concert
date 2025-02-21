@@ -1,13 +1,13 @@
 package kr.hhplus.be.server.infra.lock
 
-import kr.hhplus.be.server.domain.support.lock.DistributedLockClient
-import kr.hhplus.be.server.domain.support.lock.LockHandler
+import kr.hhplus.be.server.domain.support.component.lock.LockClient
+import kr.hhplus.be.server.domain.support.component.lock.LockHandler
 import org.springframework.data.redis.core.RedisTemplate
 import java.util.concurrent.TimeUnit
 
 class LettuceLockClient(
     private val redisTemplate: RedisTemplate<String, String>,
-) : DistributedLockClient {
+) : LockClient {
 
     override fun tryLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val maxWaitTimeMillis = timeUnit.toMillis(waitTime)

@@ -12,10 +12,10 @@ import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.domain.support.error.CoreException
 import kr.hhplus.be.server.domain.support.error.ErrorType
-import kr.hhplus.be.server.domain.support.lock.LockResource
-import kr.hhplus.be.server.domain.support.lock.LockStrategy
-import kr.hhplus.be.server.domain.support.lock.aop.DistributedLock
-import kr.hhplus.be.server.listener.event.ReservationCompleteEvent
+import kr.hhplus.be.server.domain.support.component.lock.LockResource
+import kr.hhplus.be.server.domain.support.component.lock.LockStrategy
+import kr.hhplus.be.server.domain.support.component.lock.aop.DistributedLock
+import kr.hhplus.be.server.domain.payment.model.event.PaymentCreateEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -92,15 +92,7 @@ class ReservationFacade(
         val payment = paymentService.createPayment(reservation.userId, reservation.id, reservation.payAmount)
 
         // 이벤트 발행
-        eventPublisher.publishEvent(
-            ReservationCompleteEvent(
-                id = reservation.id,
-                userId = reservation.userId,
-                status = reservation.status.name,
-                createdAt = reservation.createdAt,
-                updatedAt = reservation.updatedAt,
-            )
-        )
+        eventPublisher.publishEvent(PaymentCreateEvent.from(payment))
         return PayReservationResult.from(payment)
     }
 }
