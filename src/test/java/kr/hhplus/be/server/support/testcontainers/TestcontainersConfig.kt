@@ -10,6 +10,7 @@ class TestcontainersConfig {
     fun preDestroy() {
         if (mysqlContainer.isRunning) mysqlContainer.stop()
         if (redisContainer.isRunning) redisContainer.stop()
+        if (kafkaContainer.isRunning) kafkaContainer.stop()
     }
 
     companion object {
@@ -30,7 +31,6 @@ class TestcontainersConfig {
             // kafka
             System.setProperty("spring.kafka.producer.bootstrap-servers", kafkaContainer.bootstrapServers)
             System.setProperty("spring.kafka.consumer.bootstrap-servers", kafkaContainer.bootstrapServers)
-            System.setProperty("spring.kafka.consumer.group-id", "test")
         }
     }
 }
