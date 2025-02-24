@@ -54,8 +54,8 @@ jobs:
       # ECR Push
       - name: Build, tag, and push image to Amazon ECR
         run: |
-          docker build -t ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}} .
-          docker push ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
+          docker build -t ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}} .
+          docker push ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
 
       # EC2 Run
       - name: executing remote ssh commands
@@ -67,9 +67,9 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }} # EC2 유저
           port: ${{ secrets.EC2_SSH_PORT }} # EC2 SSH Port
           script: | # 실행할 스크립트
-            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}
-            sudo docker pull ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}
+            sudo docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
             sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
             sudo docker system prune -f
-            sudo docker run --name hhplus-concert -d -p 8080:8080 -e spring.profiles.active=loadtest ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
+            sudo docker run --name hhplus-concert -d -p 8080:8080 -e spring.profiles.active=loadtest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
 
