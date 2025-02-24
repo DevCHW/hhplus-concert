@@ -12,19 +12,20 @@ import java.util.*
 @Service
 class OutboxService(
     private val outboxRepository: OutboxRepository,
-    private val messageSendService: MessageManager,
+    private val messageManager: MessageManager,
     private val objectMapper: ObjectMapper,
 ) {
 
     fun create(
         topic: String,
         key: String? = null,
+        idempotencyKey: String,
         message: Any
     ): Outbox {
         val jsonMessage = objectMapper.writeValueAsString(message)
         return outboxRepository.create(
             CreateOutbox(
-                idempotencyKey = UUID.randomUUID().toString(),
+                idempotencyKey = idempotencyKey,
                 topic = topic,
                 key = key,
                 message = jsonMessage,
@@ -38,8 +39,7 @@ class OutboxService(
 
     fun send(outbox: Outbox) {
         val message = objectMapper.readValue<MutableMap<String, Any>>(outbox.message)
-        message["idempotencyKey"] = outbox.idempotencyKey
-        messageSendService.send(MessagePlatform.KAFKA, outbox.topic, outbox.key, message.toMap())
+        messageManager.send(MessagePlatform.KAFKA, outbox.topic, outbox.key, message.toMap())
         outbox.delivered()
         outboxRepository.save(outbox)
     }

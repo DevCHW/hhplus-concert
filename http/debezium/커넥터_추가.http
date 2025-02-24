@@ -1,0 +1,19 @@
+### Debezium 커넥터 추가
+POST http://localhost:8080
+
+{
+  "name": "outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "root",
+    "database.password": "root",
+    "database.server.id": "123456",
+    "topic.prefix": "outbox",
+    "table.include.list": "hhplus.outbox",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:29092",
+    "schema.history.internal.kafka.topic": "outbox-create"
+  }
+}
