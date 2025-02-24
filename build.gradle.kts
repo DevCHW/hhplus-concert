@@ -63,6 +63,9 @@ dependencies {
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
+	// Prometheus
+	implementation("io.micrometer:micrometer-registry-prometheus")
+
 	// TSID
 	implementation("com.github.f4b6a3:tsid-creator:${property("tsidCreatorVersion")}")
 
@@ -114,13 +117,19 @@ tasks.bootJar {
 	archiveFileName = "app.jar"
 }
 
-tasks.withType<JavaCompile> {
-	options.compilerArgs.add("-parameters")
-}
-
 tasks.register<Copy>("copyPrivate") {
 	from("hhplus-concert-config") {
 		include("*.yml")
 	}
 	into("src/main/resources")
 }
+
+tasks.named("processResources") {
+	dependsOn("copyPrivate")
+}
+
+tasks.withType<JavaCompile> {
+	options.compilerArgs.add("-parameters")
+}
+
+
