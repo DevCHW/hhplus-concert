@@ -57,6 +57,7 @@ jobs:
           docker build -t ${{ secrets.ECR_REPO_NAME }} .
           docker tag ${{ secrets.ECR_REPO_NAME }}:latest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
           docker push ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+
       # EC2 Run
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master # SSH 접속하는 오픈소스
@@ -70,7 +71,7 @@ jobs:
             sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
             sudo docker system prune -f
             aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
-            sudo docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+            docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
             cd /home/${{ secrets.EC2_USERNAME }}/sidecar
             docker-compose down
             docker-compose up -d
