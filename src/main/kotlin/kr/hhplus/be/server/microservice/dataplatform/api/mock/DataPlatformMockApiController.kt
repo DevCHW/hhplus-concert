@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 class DataPlatformMockApiController(
     private val dataPlatformService: DataPlatformService,
 ) {
-
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
     @PostMapping("/api/v1/data-platform/reservations/pay")

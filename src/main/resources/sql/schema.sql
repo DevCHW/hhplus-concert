@@ -110,8 +110,8 @@ create table outbox
     `idempotency_key` varchar(255) not null comment '멱등성을 보장하기 위한 키, 중복 처리를 방지',
     `topic`           varchar(255) not null comment '메시지가 발행될 토픽명',
     `event_key`       varchar(255) null comment 'Kafka 메시지의 Key (파티셔닝에 사용 가능)',
-    `message`         mediumblob   not null comment '이벤트 메시지 본문 (직렬화된 데이터)',
-    `status`          varchar(255) not null comment '이벤트 처리 상태 (예: PENDING, SENT, FAILED)',
+    `message`         mediumblob   not null comment '이벤트 메시지 본문',
+    `status`          varchar(255) not null comment '이벤트 처리 상태 (PENDING / DELIVERED)',
     `created_at`      timestamp(6) not null comment '생성 시점',
     `updated_at`      timestamp(6) not null comment '마지막 수정 시점'
 )
