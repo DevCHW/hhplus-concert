@@ -111,8 +111,16 @@ tasks.withType<Test> {
 
 tasks.bootJar {
 	dependsOn(":openapi3")
+	archiveFileName = "app.jar"
 }
 
 tasks.withType<JavaCompile> {
 	options.compilerArgs.add("-parameters")
+}
+
+tasks.register<Copy>("copyPrivate") {
+	from("hhplus-concert-config") {
+		include("*.yml")
+	}
+	into("src/main/resources")
 }
