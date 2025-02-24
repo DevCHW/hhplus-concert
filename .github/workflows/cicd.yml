@@ -67,12 +67,12 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }} # EC2 유저
           port: ${{ secrets.EC2_SSH_PORT }} # EC2 SSH Port
           script: | # 실행할 스크립트
-            cd /home/${{ secrets.EC2_USERNAME }}/sidecar
-            docker-compose up -d
+            sudo docker system prune -f
             aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
             sudo docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
             sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
-            sudo docker system prune -f
+            cd /home/${{ secrets.EC2_USERNAME }}/sidecar
+            docker-compose up -d
             sudo docker run --name hhplus-concert -d -p 8080:8080 -e spring.profiles.active=loadtest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
             rm -f ~/.dockercfg ~/.docker/config.json || true
             
