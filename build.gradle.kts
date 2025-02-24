@@ -118,7 +118,7 @@ tasks.bootJar {
 }
 
 tasks.register<Copy>("copyPrivate") {
-	from("hhplus-concert-config") {
+	from("concert-config") {
 		include("*.yml")
 	}
 	into("src/main/resources")
