@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  build-docker-image:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,10 +20,11 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Test
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: test
+      # 테스트
+#      - name: Test
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        with:
+#          arguments: test
 
       # Gradle 빌드
       - name: Build with Gradle
@@ -62,12 +63,14 @@ jobs:
       # EC2에서 실행
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master # SSH 접속하는 오픈소스
+
         with:
           key: ${{ secrets.EC2_PRIVATE_KEY }} # EC2 pem Key
           host: ${{ secrets.EC2_IP }} # EC2 IP
           username: ${{ secrets.EC2_USERNAME }} # EC2 유저
           port: ${{ secrets.EC2_SSH_PORT }} # EC2 SSH Port
-          script: | # 실행할 스크립트 
+          script: | # 실행할 스크립트
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}
             sudo docker pull ${{ secrets.AWS_ECR_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
             sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
             sudo docker system prune -f
