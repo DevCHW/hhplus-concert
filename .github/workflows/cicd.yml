@@ -55,7 +55,9 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         run: |
           docker build -t ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}} .
+          docker tag ${{ secrets.ECR_REPO_NAME }}:latest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
           docker push ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
+          docker push ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
 
       # EC2 Run
       - name: executing remote ssh commands
@@ -69,10 +71,11 @@ jobs:
           script: | # 실행할 스크립트
             sudo docker system prune -f
             aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
-            sudo docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
+            sudo docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
             sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
             cd /home/${{ secrets.EC2_USERNAME }}/sidecar
+            docker-compose down
             docker-compose up -d
-            sudo docker run --name hhplus-concert -d -p 8080:8080 -e spring.profiles.active=loadtest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{steps.current-time.outputs.formattedTime}}
+            sudo docker run --name hhplus-concert -d -p 8080:8080 -e spring.profiles.active=loadtest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
             rm -f ~/.dockercfg ~/.docker/config.json || true
             
