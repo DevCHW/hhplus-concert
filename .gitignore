@@ -39,4 +39,3 @@ out/
 
 data
 !**/src/main/**/resources/static/*.html
-#**/src/main/resources/application-loadtest.yml

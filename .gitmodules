@@ -1,0 +1,3 @@
+[submodule "concert-config"]
+	path = concert-config
+	url = https://github.com/DevCHW/hhplus-concert-config
