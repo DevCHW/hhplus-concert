@@ -1,3 +1,5 @@
+spring.config.activate.on-profile: test
+
 spring:
   datasource:
     hikari:

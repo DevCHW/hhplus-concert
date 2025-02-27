@@ -2,9 +2,12 @@ package kr.hhplus.be.server.support.testcontainers
 
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 
 class MySQLContainer {
+
     companion object {
         val mySqlContainer: MySQLContainer<*> = MySQLContainer(DockerImageName.parse("mysql:8.0"))
             .withDatabaseName("test")
