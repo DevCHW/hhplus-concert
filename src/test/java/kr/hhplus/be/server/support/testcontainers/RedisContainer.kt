@@ -8,6 +8,5 @@ class RedisContainer {
         val redisContainer: GenericContainer<*> = GenericContainer("redis:6.2.6-alpine")
             .withExposedPorts(6379)
             .withReuse(true)
-            .apply { start() }
     }
 }

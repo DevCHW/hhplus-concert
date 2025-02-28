@@ -23,8 +23,11 @@ class TestcontainersConfig {
 
     companion object {
         private val mysqlContainer = MySQLContainer.mySqlContainer
+            .apply { start() }
         private val redisContainer = RedisContainer.redisContainer
+            .apply { start() }
         private val kafkaContainer = KafkaContainer.kafkaContainer
+            .apply { start() }
 
         init {
             // mysql

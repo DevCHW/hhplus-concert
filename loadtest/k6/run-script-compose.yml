@@ -1,0 +1,13 @@
+version: '3'
+services:
+  k6:
+    image: grafana/k6
+    container_name: k6
+    volumes:
+      - ./scripts:/scripts
+#    command: run --out influxdb=http://host.docker.internal:8086/hhplus /scripts/${실행할 스크립트 파일명}.js
+    command: run --out influxdb=http://host.docker.internal:8086/hhplus /scripts/createQueueToken.js
+
+networks:
+  default:
+    driver: bridge

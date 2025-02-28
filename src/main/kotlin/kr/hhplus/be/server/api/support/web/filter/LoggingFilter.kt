@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.api.support.web.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -19,12 +20,12 @@ import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class LoggingFilter : OncePerRequestFilter() {
 
     private val log: Logger = LoggerFactory.getLogger(javaClass)
+    private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
@@ -85,7 +86,6 @@ class LoggingFilter : OncePerRequestFilter() {
 
         // JSON 데이터 압축
         return try {
-            val objectMapper = ObjectMapper()
             val jsonNode = objectMapper.readTree(rawBody)
             objectMapper.writeValueAsString(jsonNode) // Minified JSON
         } catch (e: Exception) {

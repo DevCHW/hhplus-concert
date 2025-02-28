@@ -11,6 +11,7 @@ class WebConfig(
 ) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(queueTokenValidInterceptor)
+            .excludePathPatterns("/health")
             .excludePathPatterns("/api/v1/queue/token")
             .excludePathPatterns("/api/v1/balance/**")
             .excludePathPatterns("/api/v1/concerts/popular")

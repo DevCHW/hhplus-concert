@@ -1,9 +1,8 @@
-package kr.hhplus.be.server.infra.storage.core.support
+package kr.hhplus.be.server.infra.storage.core.support.init
 
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
 import kr.hhplus.be.server.domain.concert.model.CreateConcertSchedule
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
-import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.user.model.CreateUser
 import kr.hhplus.be.server.infra.storage.core.concert.jpa.entity.ConcertEntity
 import kr.hhplus.be.server.infra.storage.core.concert.jpa.entity.ConcertScheduleEntity
@@ -22,8 +21,8 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Component
-@Profile("local")
-class LocalDBInit(
+@Profile("loadtest")
+class LoadTestDBInit(
     private val concertEntityJpaRepository: ConcertEntityJpaRepository,
     private val concertScheduleEntityJpaRepository: ConcertScheduleEntityJpaRepository,
     private val seatEntityJpaRepository: SeatEntityJpaRepository,
@@ -89,13 +88,7 @@ class LocalDBInit(
             }
         }
 
-         val seatEntities = seatEntityJpaRepository.saveAll(createSeats.map { SeatEntity.create(it) })
-
-        // 좌석 예약 생성
-        val createReservations = mutableListOf<CreateReservation>()
-        for (i in 1..50) {
-
-        }
+        val seatEntities = seatEntityJpaRepository.saveAll(createSeats.map { SeatEntity.create(it) })
     }
 
     companion object {

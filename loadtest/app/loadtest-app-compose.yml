@@ -1,12 +1,11 @@
+# docker-compose -f loadtest-app-compose.yml up -d
 version: '3'
-
 services:
   mysql:
     image: mysql:8.0
     container_name: mysql
-    restart: unless-stopped
     ports:
-      - "3307:3306"
+      - "3306:3306"
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
@@ -24,7 +23,6 @@ services:
   redis:
     image: redis:6.2.6-alpine
     container_name: redis
-    restart: unless-stopped
     ports:
       - "6379:6379"
     healthcheck:
@@ -35,7 +33,6 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.0
     container_name: zookeeper
-    restart: unless-stopped
     platform: linux/arm64
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -44,24 +41,36 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.9.0
     container_name: kafka
-    restart: unless-stopped
+    ports:
+      - "9092:9092"
     healthcheck:
       test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server=localhost:9092" ]
       interval: 10s
       retries: 5
       timeout: 5s
-    ports:
-      - "9092:9092"
     depends_on:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    ports:
+      - "9091:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
   connect:
     image: debezium/connect:2.6.1.Final
@@ -78,18 +87,29 @@ services:
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    restart: unless-stopped
-    depends_on:
-      - kafka
+  app:
+    container_name: app
+    build:
+      context: ../../
+      dockerfile: Dockerfile
     ports:
-      - "9090:8080"
+      - "8080:8080"
     environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - SPRING_PROFILES_ACTIVE=loadtest
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: '4g'
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      connect:
+        condition: service_started
 
 networks:
   default:

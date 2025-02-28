@@ -43,7 +43,6 @@ spring:
       schema-locations: classpath:sql/schema.sql
 
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: none
     properties:
