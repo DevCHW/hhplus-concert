@@ -6,7 +6,8 @@ services:
     volumes:
       - ./scripts:/scripts
 #    command: run --out influxdb=http://host.docker.internal:8086/hhplus /scripts/${실행할 스크립트 파일명}.js
-    command: run --out influxdb=http://host.docker.internal:8086/hhplus /scripts/createQueueToken.js
+#    command: run --out influxdb=http://host.docker.internal:8086/hhplus /scripts/createQueueToken.js
+    command: run --out influxdb=http://host.docker.internal:8086/hhplus /scripts/getQueueToken.js
 
 networks:
   default:
