@@ -22,6 +22,11 @@ spring:
       hibernate.jdbc.time_zone: UTC
       hibernate.default_batch_fetch_size: 100
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
 ---
 spring.config.activate.on-profile: local
 
@@ -38,7 +43,6 @@ spring:
       schema-locations: classpath:sql/schema.sql
 
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: none
     properties:

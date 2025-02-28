@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [ "step19,20" ]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      # Github Submodule에서 환경변수 가져오기
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.CONFIG_TOKEN}}
+          submodules: true
+
+      # 테스트
+#      - name: Test
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        with:
+#          arguments: test
+
+      # Gradle 빌드
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      # AWS에 접근 인증
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      ## 이미지 태그 시간 설정
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss
+          utcOffset: "+09:00"
+
+      # ECR 로그인
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ECR Push
+      - name: Build, tag, and push image to Amazon ECR
+        run: |
+          docker build -t ${{ secrets.ECR_REPO_NAME }} .
+          docker tag ${{ secrets.ECR_REPO_NAME }}:latest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+          docker push ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+
+      # EC2 Run
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@master # SSH 접속하는 오픈소스
+
+        with:
+          key: ${{ secrets.EC2_PRIVATE_KEY }} # EC2 pem Key
+          host: ${{ secrets.EC2_IP }} # EC2 IP
+          username: ${{ secrets.EC2_USERNAME }} # EC2 유저
+          port: ${{ secrets.EC2_SSH_PORT }} # EC2 SSH Port
+          script: | # 실행할 스크립트
+            sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+            sudo docker system prune -f
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+            docker pull ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+            cd /home/${{ secrets.EC2_USERNAME }}/sidecar
+            docker-compose down
+            docker-compose up -d
+            sudo docker run --name hhplus-concert -d -p 8080:8080 -e spring.profiles.active=loadtest ${{ secrets.ECR_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+            rm -f ~/.dockercfg ~/.docker/config.json || true
+            

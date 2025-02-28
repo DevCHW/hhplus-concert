@@ -1,0 +1,56 @@
+# docker-compose -f monitoring-compose.yml up
+version: '3'
+services:
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    depends_on:
+      - prometheus
+
+  influxdb:
+    image: influxdb:1.11
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+      - "8085:8088"
+    environment:
+      - INFLUXDB_ADMIN_USER_PASSWORD=admin
+      - INFLUXDB_ADMIN_USER_TOKEN=admin
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+      - INFLUXDB_DB=hhplus
+
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+      - --config.file=/etc/prometheus/prometheus.yml
+
+  redis-exporter:
+    image: "bitnami/redis-exporter:latest"
+    container_name: "redis-exporter"
+    environment:
+      - REDIS_ADDR=host.docker.internal:6379
+    ports:
+      - "9121:9121"
+
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    container_name: mysql-exporter
+    command:
+      - "--mysqld.username=application:application"
+      - "--mysqld.address=host.docker.internal:3306"
+    ports:
+      - "9104:9104"
+networks:
+  default:
+    driver: bridge

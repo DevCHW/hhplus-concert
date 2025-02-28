@@ -15,10 +15,11 @@ class RedissonLockClientConfig {
     fun redissonClient(env: Environment): RedissonClient {
         val host = env.getProperty("spring.data.redis.host")
         val port = env.getProperty("spring.data.redis.port")
-        Config()
+        val config = Config()
+        config
             .useSingleServer()
             .setAddress("redis://$host:$port")
-        return Redisson.create()
+        return Redisson.create(config)
     }
 
     @Bean

@@ -63,6 +63,9 @@ dependencies {
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
+	// Prometheus
+	implementation("io.micrometer:micrometer-registry-prometheus")
+
 	// TSID
 	implementation("com.github.f4b6a3:tsid-creator:${property("tsidCreatorVersion")}")
 
@@ -111,8 +114,22 @@ tasks.withType<Test> {
 
 tasks.bootJar {
 	dependsOn(":openapi3")
+	archiveFileName = "app.jar"
+}
+
+tasks.register<Copy>("copyPrivate") {
+	from("concert-config") {
+		include("*.yml")
+	}
+	into("src/main/resources")
+}
+
+tasks.named("processResources") {
+	dependsOn("copyPrivate")
 }
 
 tasks.withType<JavaCompile> {
 	options.compilerArgs.add("-parameters")
 }
+
+

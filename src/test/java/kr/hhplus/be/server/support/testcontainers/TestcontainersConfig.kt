@@ -1,22 +1,33 @@
 package kr.hhplus.be.server.support.testcontainers
 
 import jakarta.annotation.PreDestroy
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class TestcontainersConfig {
 
+    private val log: Logger = LoggerFactory.getLogger(javaClass)
+
     @PreDestroy
     fun preDestroy() {
-        if (mysqlContainer.isRunning) mysqlContainer.stop()
-        if (redisContainer.isRunning) redisContainer.stop()
-        if (kafkaContainer.isRunning) kafkaContainer.stop()
+        try {
+            if (mysqlContainer.isRunning) mysqlContainer.stop()
+            if (redisContainer.isRunning) redisContainer.stop()
+            if (kafkaContainer.isRunning) kafkaContainer.stop()
+        } catch (e: Exception) {
+            log.error("Error while stopping containers", e)
+        }
     }
 
     companion object {
-        val mysqlContainer = MySQLContainer.mySqlContainer
-        val redisContainer = RedisContainer.redisContainer
-        val kafkaContainer = KafkaContainer.kafkaContainer
+        private val mysqlContainer = MySQLContainer.mySqlContainer
+            .apply { start() }
+        private val redisContainer = RedisContainer.redisContainer
+            .apply { start() }
+        private val kafkaContainer = KafkaContainer.kafkaContainer
+            .apply { start() }
 
         init {
             // mysql

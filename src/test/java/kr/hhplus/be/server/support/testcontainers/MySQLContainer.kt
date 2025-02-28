@@ -5,6 +5,7 @@ import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
 
 class MySQLContainer {
+
     companion object {
         val mySqlContainer: MySQLContainer<*> = MySQLContainer(DockerImageName.parse("mysql:8.0"))
             .withDatabaseName("test")
@@ -13,6 +14,5 @@ class MySQLContainer {
             .withInitScript("sql/schema.sql")
             .waitingFor(Wait.forHttp("/"))
             .withReuse(true)
-            .apply { start() }
     }
 }

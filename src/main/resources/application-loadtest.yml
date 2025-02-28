@@ -1,0 +1,46 @@
+spring.config.activate.on-profile: loadtest
+
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
+      username: application
+      password: application
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        timezone.default_storage: NORMALIZE_UTC
+        jdbc.time_zone: UTC
+
+  data:
+    redis.host: redis
+    redis.port: 6379
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      bootstrap-servers: kafka:9092
+    consumer:
+      bootstrap-servers: kafka:9092
+
+  cloud.openfeign:
+    client:
+      config:
+        default:
+          loggerLevel: full
+          connectTimeout: 3000
+          readTimeout: 3000
+    compression:
+      response:
+        enabled: false
+    httpclient:
+      max-connections: 2000
+      max-connections-per-route: 500

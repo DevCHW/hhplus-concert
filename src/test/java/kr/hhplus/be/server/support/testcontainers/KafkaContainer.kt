@@ -7,10 +7,8 @@ class KafkaContainer {
 
     companion object {
         val kafkaContainer: ConfluentKafkaContainer = ConfluentKafkaContainer(
-            DockerImageName.parse("confluentinc/cp-kafka:latest")
-                .asCompatibleSubstituteFor("apache/kafka")
+            DockerImageName.parse("confluentinc/cp-kafka:7.8.1")
         )
             .withReuse(true)
-            .apply { start() }
     }
 }

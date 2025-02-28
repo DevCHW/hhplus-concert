@@ -25,7 +25,7 @@ class KafkaProducerConfig(
     }
 
     @Bean
-    fun kafkaTemplate(): KafkaTemplate<String, String> {
+    fun kafkaTemplate(): KafkaTemplate<*, *> {
         return KafkaTemplate(producerFactory())
     }
 
