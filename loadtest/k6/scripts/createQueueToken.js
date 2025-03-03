@@ -1,6 +1,6 @@
 import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Counter } from 'k6/metrics';
+import {check, sleep} from 'k6';
+import {Counter} from 'k6/metrics';
 
 // 메트릭 정의
 export let errorRate = new Counter('errors');
