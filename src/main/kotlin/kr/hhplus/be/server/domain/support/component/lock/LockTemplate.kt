@@ -10,17 +10,13 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class LockTemplate(
-    private val lockClients: Map<String, LockClient>,
+    private val lockClients: Set<LockClient>,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
     private val lockNamePrefix: String  = "LOCK"
     private val defaultWaitTime: Long = 5L // 기본 락 획득 대기시간
     private val defaultLeaseTime: Long = 3L // 기본 락 해제 시간
     private val defaultTimeUnit: TimeUnit = TimeUnit.SECONDS // 기본 시간 기준
-
-    init {
-        validateDistributedLockClients()
-    }
 
     /**
      * 분산 락 실행
@@ -35,7 +31,7 @@ class LockTemplate(
         action: () -> T
     ): T {
         // 전략에 해당하는 잠금 수행 구현체 선택
-        val lockClient = lockClients[strategy.clientName] ?: throw IllegalStateException("${strategy}전략에 해당하는 잠금 수행 구현체가 없습니다.")
+        val lockClient = find(strategy)
 
         // 데드락 방지를 위하여 스레드에서 이미 락을 획득한 적이 있다면 스킵
         val lockName = generateLockName(resource, key)
@@ -77,22 +73,15 @@ class LockTemplate(
         }
     }
 
-    // 주입받은 <String, LockClient> Map 검증
-    private fun validateDistributedLockClients() {
-        val lockStrategies = LockStrategy.entries.map { it.clientName }.toSet()
-
-        // lockClients에 존재하는 키가 validTypes에 포함되지 않은 경우 예외
-        lockClients.keys.forEach { lockClientName ->
-            if (!lockStrategies.contains(lockClientName)) {
-                throw IllegalStateException("유효하지 않은 잠금 전략입니다. lockClientName=[$lockClientName]")
-            }
-        }
+    // 락 수행 구현체 선택
+    private fun find(strategy: LockStrategy): LockClient {
+        return lockClients
+            .firstOrNull { it.isSupport(strategy) } ?: throw IllegalArgumentException("${strategy}전략에 해당하는 잠금 수행 구현체가 없습니다.")
     }
 
     // 락 이름 생성
     private fun generateLockName(resource: LockResource, key: String): String {
         return "${lockNamePrefix}:${resource.name.lowercase()}:${key}"
-
     }
 
 }

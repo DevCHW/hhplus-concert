@@ -4,7 +4,7 @@ import kr.hhplus.be.server.microservice.dataplatform.support.utils.JsonUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 interface IngestionRepository {
     fun save(data: Any)

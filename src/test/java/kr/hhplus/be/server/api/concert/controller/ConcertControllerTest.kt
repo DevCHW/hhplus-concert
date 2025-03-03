@@ -10,8 +10,6 @@ import io.mockk.mockk
 import io.restassured.http.ContentType
 import kr.hhplus.be.server.api.concert.application.ConcertFacade
 import kr.hhplus.be.server.api.concert.application.dto.result.GetConcertsResult
-import kr.hhplus.be.server.domain.concert.ConcertService
-import kr.hhplus.be.server.domain.concert.fixture.ConcertFixture
 import kr.hhplus.be.server.support.IdGenerator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

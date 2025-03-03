@@ -2,6 +2,7 @@ package kr.hhplus.be.server.infra.lock
 
 import kr.hhplus.be.server.domain.support.component.lock.LockClient
 import kr.hhplus.be.server.domain.support.component.lock.LockHandler
+import kr.hhplus.be.server.domain.support.component.lock.LockStrategy
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.util.concurrent.TimeUnit
@@ -10,6 +11,9 @@ import javax.sql.DataSource
 class NamedLockClient(
     private val dataSource: DataSource,
 ) : LockClient {
+    override fun isSupport(strategy: LockStrategy): Boolean {
+        return strategy == LockStrategy.MYSQL_NAMED_LOCK
+    }
 
     override fun tryLock(key: String, waitTime: Long, leaseTime: Long, timeUnit: TimeUnit): LockHandler? {
         val connection = dataSource.connection
