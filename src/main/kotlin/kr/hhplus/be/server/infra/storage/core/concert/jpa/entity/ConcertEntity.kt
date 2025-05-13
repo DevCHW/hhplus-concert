@@ -10,7 +10,7 @@ import java.math.BigDecimal
 
 @Entity
 @Table(name = "concert")
-class ConcertEntity (
+class ConcertEntity(
     @Column(name = "title")
     val title: String,
 

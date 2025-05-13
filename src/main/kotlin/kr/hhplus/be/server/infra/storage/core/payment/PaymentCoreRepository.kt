@@ -14,7 +14,7 @@ class PaymentCoreRepository(
 ) : PaymentRepository {
 
     override fun save(createPayment: CreatePayment): Payment {
-        val paymentEntity = PaymentEntity.create(createPayment)
+        val paymentEntity = PaymentEntity.create(createPayment) // Pa
         return paymentJpaRepository.save(paymentEntity).toDomain()
     }
 

@@ -7,6 +7,9 @@ import kr.hhplus.be.server.domain.concert.ConcertScheduleService
 import kr.hhplus.be.server.domain.concert.ConcertService
 import kr.hhplus.be.server.domain.concert.SeatService
 import kr.hhplus.be.server.domain.reservation.ReservationService
+import kr.hhplus.be.server.domain.reservation.model.Reservation
+import kr.hhplus.be.server.domain.support.error.CoreException
+import kr.hhplus.be.server.domain.support.error.ErrorType
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -43,7 +46,7 @@ class ConcertFacade(
         if (date.isAfter(LocalDate.now()) || date.isEqual(LocalDate.now())) {
             return emptyList()
         }
-
+        
         // 조회 날짜에 해당하는 모든 예약 건 조회
         val reservations = reservationService.getCompletedReservationsByDate(date)
         val seatIds = reservations.map { it.seatId }.toSet()

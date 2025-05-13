@@ -21,7 +21,7 @@ class QueueScheduler(
         // 대기 큐에서 0 ~ N 토큰 조회
         val activateTargetTokens = waitingQueueService.getRange(0, ADD_ACTIVE_TOKEN_SIZE)
 
-        // 대기큐에서 N개의 토큰 제거
+        // 대기 큐에서 N개의 토큰 제거
         waitingQueueService.removeBySize(ADD_ACTIVE_TOKEN_SIZE)
 
         // 대기 큐에서 조회한 토큰 목록을 활성 큐에 삽입
