@@ -20,6 +20,15 @@ create table balance
 )
     comment '잔고';
 
+CREATE TABLE point (
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   user_id BIGINT NOT NULL,
+   balance INT NOT NULL,
+   version BIGINT NOT NULL
+)
+    comment '포인트';
+
+
 create table concert
 (
     id         varchar(13)  not null comment 'PK'

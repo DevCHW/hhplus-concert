@@ -6,7 +6,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 class ConcertFixture {
-
+    
     companion object {
         fun get(
             id: String = IdGenerator.generate(),

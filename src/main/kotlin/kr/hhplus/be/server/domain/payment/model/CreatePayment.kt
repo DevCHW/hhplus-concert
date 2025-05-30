@@ -6,4 +6,6 @@ data class CreatePayment(
     val userId: String,
     val reservationId: String,
     val amount: BigDecimal,
-)
+) {
+
+}

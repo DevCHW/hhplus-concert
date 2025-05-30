@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "concert_schedule")
-class ConcertScheduleEntity (
+class ConcertScheduleEntity(
     @Column(name = "concert_id")
     val concertId: String,
 

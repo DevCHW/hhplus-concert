@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.infra.feign.client.api
+package kr.hhplus.be.server.infra.clients.feign
 
 import kr.hhplus.be.server.domain.client.dto.DataPlatformPaymentCreateRequest
 import org.springframework.cloud.openfeign.FeignClient
