@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 import java.time.Duration
 
 @Configuration
-class RedisConfig {
+class RedisTemplateConfig {
 
     @Bean
     fun redisConnectionFactory(env: Environment): RedisConnectionFactory {
@@ -36,7 +36,7 @@ class RedisConfig {
             this.keySerializer = StringRedisSerializer()
             this.hashKeySerializer = StringRedisSerializer()
             this.valueSerializer = StringRedisSerializer()
-            setConnectionFactory(redisConnectionFactory)
+            connectionFactory = redisConnectionFactory
         }
     }
 }

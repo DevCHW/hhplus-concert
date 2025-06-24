@@ -33,6 +33,7 @@ class ActiveQueueRedisRepositoryImpl(
         val expiredTokens = activeQueue()
             .rangeByScore(ACTIVE_QUEUE_KEY, 0.0, expirationTime)
 
+        // 만료된 토큰 제거
         expiredTokens?.forEach {
             activeQueue().remove(ACTIVE_QUEUE_KEY, it)
         }

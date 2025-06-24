@@ -18,10 +18,10 @@ import java.time.Duration
 
 @Configuration
 @EnableCaching
-class RedisCacheConfig {
+class CacheManagerConfig {
 
     @Bean
-    fun cacheManager(redisConnectionFactory: LettuceConnectionFactory): CacheManager {
+    fun cacheManager(lettuceConnectionFactory: LettuceConnectionFactory): CacheManager {
         val configuration = RedisCacheConfiguration.defaultCacheConfig()
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
             .serializeValuesWith(
@@ -32,7 +32,7 @@ class RedisCacheConfig {
             .entryTtl(Duration.ofDays(1))
 
         return RedisCacheManager.RedisCacheManagerBuilder
-            .fromConnectionFactory(redisConnectionFactory)
+            .fromConnectionFactory(lettuceConnectionFactory)
             .cacheDefaults(configuration)
             .build()
     }
