@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.api.reservation.application
 
-import io.hhplus.cleanarchitecture.support.concurrent.ConcurrencyTestUtils
 import kr.hhplus.be.server.domain.balance.BalanceRepository
 import kr.hhplus.be.server.domain.concert.model.CreateConcert
 import kr.hhplus.be.server.domain.concert.model.CreateSeat
@@ -14,6 +13,8 @@ import kr.hhplus.be.server.domain.reservation.model.CreateReservation
 import kr.hhplus.be.server.domain.reservation.model.Reservation
 import kr.hhplus.be.server.support.IdGenerator
 import kr.hhplus.be.server.support.IntegrationTestSupport
+import kr.hhplus.be.server.support.concurrent.ConcurrencyTestUtils
+import kr.hhplus.be.server.support.concurrent.ConcurrencyTestUtils2.executeConcurrently
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -190,7 +191,7 @@ class ReservationFacadeIT(
             }
 
             // when
-            ConcurrencyTestUtils.executeConcurrently(5, action)
+            executeConcurrently(5, action)
 
             // then
             assertThat(successCount.get()).isEqualTo(1)
